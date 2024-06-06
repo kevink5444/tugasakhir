@@ -26,7 +26,7 @@
                     <td>{{ $item->total_gaji }}</td>
                     <td>
                         <!-- Mengubah akses parameter untuk route edit -->
-                        <a href="{{ route('penggajian.edit', ['penggajian' => $item->id]) }}">Edit Penggajian</a>
+                        <a href="{{ route('penggajian.edit', $item->id) }}">Edit Penggajian</a>
                         {{-- <form action="{{ route('penggajian.destroy', $item->id) }}" method="POST" style="display:inline-block;">
                             @csrf
                             @method('DELETE')

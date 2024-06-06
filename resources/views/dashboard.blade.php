@@ -242,9 +242,8 @@
               </a>
             </li>
             <li class="nav-item">
-    <a class="nav-link d-flex align-items-center gap-2" href="{{ route('absensi')}}">
-        <svg class="bi"><use xlink:href="#file-earmark"/></svg>
-        Absensi
+              <svg class="bi"><use xlink:href="#file-earmark"/></svg>
+              <a class="nav-link d-flex align-items-center gap-2" href="{{ route('absensi.index') }}">Absensi</a>
     </a>
 </li>
             <li class="nav-item">
