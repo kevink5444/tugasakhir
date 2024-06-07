@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Absensi</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode"></script>
 </head>
 <body>
     <h1>Absensi dengan QR Code</h1>
@@ -13,7 +14,6 @@
     <button onclick="absenMasuk()">Check-in</button>
     <button onclick="absenKeluar()">Check-out</button>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             var qrCodeDiv = document.getElementById("qrcode");
@@ -36,10 +36,14 @@
                     if (!response.ok) {
                         throw new Error('Gagal melakukan absen masuk');
                     }
-                    alert('Absen masuk berhasil');
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    alert('Gagal melakukan absen masuk');
                 });
             }
 
@@ -54,10 +58,14 @@
                     if (!response.ok) {
                         throw new Error('Gagal melakukan absen keluar');
                     }
-                    alert('Absen keluar berhasil');
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    alert('Gagal melakukan absen keluar');
                 });
             }
             
