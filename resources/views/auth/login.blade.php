@@ -1,7 +1,8 @@
 <x-guest-layout>
     <x-auth-card>
-        </x-slot>
-
+        
+    
+        <title>Login</title>
         <!-- Session Status -->
         <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -14,18 +15,16 @@
             <!-- Email Address -->
             <div>
                 <x-label for="email" :value="__('Email')" />
-
                 <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
             </div>
 
             <!-- Password -->
             <div class="mt-4">
                 <x-label for="password" :value="__('Password')" />
-
                 <x-input id="password" class="block mt-1 w-full"
-                                type="password"
-                                name="password"
-                                required autocomplete="current-password" />
+                         type="password"
+                         name="password"
+                         required autocomplete="current-password" />
             </div>
 
             <!-- Remember Me -->
