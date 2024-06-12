@@ -3,64 +3,77 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Karyawan;
 
 class KaryawanController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan daftar semua karyawan.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        $karyawan = Karyawan::all();
+        return view('karyawan.index', compact('karyawan'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan formulir untuk membuat karyawan baru.
      *
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        //
+        return view('karyawan.create');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Simpan karyawan baru ke penyimpanan.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nama' => 'required',
+            'email' => 'required|email|unique:karyawan',
+            'posisi' => 'required',
+            'gaji_bulanan' => 'required|numeric',
+        ]);
+
+        Karyawan::create($request->all());
+
+        return redirect()->route('karyawan.index')->with('success', 'Karyawan berhasil ditambahkan.');
     }
 
     /**
-     * Display the specified resource.
+     * Menampilkan karyawan yang ditentukan.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        //
+        $karyawan = Karyawan::findOrFail($id);
+        return view('karyawan.show', compact('karyawan'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Menampilkan formulir untuk mengedit karyawan yang ditentukan.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
-        //
+        $karyawan = Karyawan::findOrFail($id);
+        return view('karyawan.edit', compact('karyawan'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update karyawan yang ditentukan di penyimpanan.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -68,17 +81,30 @@ class KaryawanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'nama' => 'required',
+            'email' => 'required|email|unique:karyawans,email,'.$id,
+            'posisi' => 'required',
+            'gaji_bulanan' => 'required|numeric',
+        ]);
+
+        $karyawan = Karyawan::findOrFail($id);
+        $karyawan->update($request->all());
+
+        return redirect()->route('karyawan.index')->with('success', 'Karyawan berhasil diperbarui.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Hapus karyawan yang ditentukan dari penyimpanan.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        //
+        $karyawan = Karyawan::findOrFail($id);
+        $karyawan->delete();
+
+        return redirect()->route('karyawan.index')->with('success', 'Karyawan berhasil dihapus.');
     }
 }
