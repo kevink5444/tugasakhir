@@ -1,39 +1,13 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function create()
-    {
-        return view('auth.login');
-    }
-
-    /**
-     * Handle an incoming authentication request.
-     *
-     * @param  \App\Http\Requests\Auth\LoginRequest  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function store(LoginRequest $request)
-    {
-        $request->authenticate();
-
-        $request->session()->regenerate();
-
-        return redirect()->intended(RouteServiceProvider::HOME);
-    }
+    // Bagian lain dari controller
 
     /**
      * Destroy an authenticated session.
@@ -43,12 +17,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request)
     {
-        Auth::guard('web')->logout();
+        Auth::guard('web')->logout(); // Keluar dari guard 'web'
 
-        $request->session()->invalidate();
+        $request->session()->invalidate(); // Menghapus sesi
 
-        $request->session()->regenerateToken();
+        $request->session()->regenerateToken(); // Regenerasi token sesi
 
-        return redirect('/');
+        return redirect('/'); // Redirect ke halaman utama
     }
 }

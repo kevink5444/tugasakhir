@@ -302,9 +302,19 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href="#">
-                <svg class="bi"><use xlink:href="#door-closed"/></svg>
-                Sign out
+              @if(Auth::check())
+              <a class="nav-link d-flex align-items-center gap-2" href="{{ route('logout') }}"
+                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                  <svg class="bi"><use xlink:href="#door-closed"/></svg>
+                  Sign out
+              </a>
+              <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                  @csrf
+              </form>
+          @endif
+      
+              </form>
+          @endif
               </a>
             </li>
           </ul>

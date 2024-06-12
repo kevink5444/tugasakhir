@@ -22,6 +22,7 @@ use App\Http\Controllers\DashboardController;
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
@@ -30,6 +31,9 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
+
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'logout'])->name('logout');
 
 
 use App\Http\Controllers\PenggajianController;
@@ -54,7 +58,9 @@ Route::get('/laporan', function () {
 Route::get('/pengaturan', function () {
     return view('pengaturan');
 });
-
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware('auth');
 
 Route::get('/attendance', function () {
     return view('attendance');
