@@ -22,7 +22,7 @@ use App\Http\Controllers\DashboardController;
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 use App\Http\Controllers\AbsensiController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
@@ -31,6 +31,10 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+
+Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'logout'])->name('logout');
