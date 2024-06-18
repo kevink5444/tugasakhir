@@ -12,7 +12,6 @@
                 <th>Bonus</th>
                 <th>Potongan</th>
                 <th>Total Gaji</th>
-                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>

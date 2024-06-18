@@ -8,9 +8,11 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background: url('https://source.unsplash.com/1600x900/?office,work') no-repeat center center fixed;
+            background-size: cover;
         }
         .navbar {
-            background-color: #007bff;
+            background-color: rgba(0, 123, 255, 0.9);
         }
         .navbar-brand, .nav-link {
             color: #fff !important;
@@ -21,7 +23,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            background-color: #343a40;
+            background-color: rgba(52, 58, 64, 0.9);
             padding-top: 20px;
         }
         .sidebar a {
@@ -39,10 +41,12 @@
             padding: 20px;
         }
         .hero-section {
-            background-color: #f8f9fa;
+            background-color: rgba(248, 249, 250, 0.8);
             color: #343a40;
             padding: 60px 20px;
             text-align: center;
+            border-radius: 10px;
+            animation: fadeIn 2s;
         }
         .hero-section h1 {
             font-size: 2.5rem;
@@ -54,6 +58,10 @@
         }
         .btn-custom {
             margin: 0 10px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
@@ -89,7 +97,7 @@
         <div class="hero-section">
             <div class="container">
                 <h1>Welcome to Sistem Informasi Penggajian dan Absensi Karyawan CV YP Sukses Makmur</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse scelerisque at diam at dapibus.</p>
+                <p>Sistem ini dirancang untuk memudahkan pengelolaan penggajian dan absensi karyawan dengan efektif dan efisien.</p>
                 <a href="/login" class="btn btn-primary btn-lg btn-custom">Login</a>
                 <a href="/register" class="btn btn-success btn-lg btn-custom">Register</a>
             </div>

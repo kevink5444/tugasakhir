@@ -1,5 +1,5 @@
 <?php
-
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,14 +21,17 @@ Route::get('/', function () {
 use App\Http\Controllers\DashboardController;
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+
 use App\Http\Controllers\AbsensiController;
 
+Route::get('/absensi/form', [AbsensiController::class, 'showForm'])->name('absensi.form');
+Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
+Route::post('/absensi/check-in', [AbsensiController::class, 'checkIn'])->name('absen-masuk');
+Route::post('/absensi/check-out', [AbsensiController::class, 'checkOut'])->name('absen-keluar');
+Route::get('/absensi/qr/{id_karyawan}', function ($id_karyawan) {
+    return QrCode::size(300)->generate(route('absen-masuk', ['id_karyawan' => $id_karyawan]));
+})->name('absensi.qr');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
-    Route::post('/absen-masuk/{id_karyawan}', [AbsensiController::class, 'absenMasuk'])->name('absen-masuk');
-    Route::post('/absen-keluar/{id_karyawan}', [AbsensiController::class, 'absenKeluar'])->name('absen-keluar');
-});
 
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -66,9 +69,6 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('auth');
 
-Route::get('/attendance', function () {
-    return view('attendance');
-});
 
 
 require __DIR__.'/auth.php';
