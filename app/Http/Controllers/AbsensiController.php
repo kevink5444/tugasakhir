@@ -52,4 +52,9 @@ class AbsensiController extends Controller
 
         return view('absensi.form');
     }
+    public function index()
+    {
+        $absensi = Absensi::all(); // Mengambil semua data absensi dari database
+        return view('absensi.index', compact('absensi'));
+    }
 }
