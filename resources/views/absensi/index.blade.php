@@ -1,4 +1,3 @@
-<!-- resources/views/absensi/index.blade.php -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,20 +17,22 @@
                     <th>Tanggal</th>
                     <th>Jam Masuk</th>
                     <th>Jam Keluar</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($absensi as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $item->nama }}</td>
-                        <td>{{ $item->tanggal }}</td>
-                        <td>{{ $item->jam_masuk }}</td>
-                        <td>{{ $item->jam_keluar }}</td>
+                        <td>{{ $item->nama }}</td> <!-- Pastikan bahwa $item->nama sudah sesuai dengan field nama yang ada di model -->
+                        <td>{{ $item->tanggal }}</td> <!-- Pastikan bahwa $item->tanggal sudah sesuai dengan field tanggal yang ada di model -->
+                        <td>{{ $item->waktu_masuk }}</td> <!-- Pastikan bahwa $item->waktu_masuk sudah sesuai dengan field waktu_masuk yang ada di model -->
+                        <td>{{ $item->waktu_keluar }}</td> <!-- Pastikan bahwa $item->waktu_keluar sudah sesuai dengan field waktu_keluar yang ada di model -->
+                        <td>{{ $item->status }}</td> <!-- Pastikan bahwa $item->status sudah sesuai dengan field status yang ada di model -->
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="text-center">Tidak ada data absensi</td>
+                        <td colspan="6" class="text-center">Tidak ada data absensi</td>
                     </tr>
                 @endforelse
             </tbody>
