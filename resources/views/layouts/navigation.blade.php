@@ -16,8 +16,14 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     <!-- Tambahkan link untuk karyawan jika sudah didefinisikan -->
+                    <x-nav-link :href="route('absensi.index')" :active="request()->routeIs('absensi.index')">
+                        {{ __('Absensi') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('karyawan.index')" :active="request()->routeIs('karyawan.index')">
                         {{ __('Karyawan') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('penggajian')" :active="request()->routeIs('penggajian')">
+                        {{ __('Penggajian') }}
                     </x-nav-link>
                 </div>
             </div>
