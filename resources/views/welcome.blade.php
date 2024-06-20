@@ -84,15 +84,6 @@
             </div>
         </div>
     </nav>
-
-    <div class="sidebar">
-        <a href="#">Dashboard</a>
-        <a href="#">Penggajian</a>
-        <a href="#">Absensi</a>
-        <a href="#">Laporan</a>
-        <a href="#">Pengaturan</a>
-    </div>
-
     <div class="main-content">
         <div class="hero-section">
             <div class="container">

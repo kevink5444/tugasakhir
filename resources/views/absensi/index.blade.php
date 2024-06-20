@@ -1,3 +1,4 @@
+<!-- resources/views/absensi/index.blade.php -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,6 +10,7 @@
 <body>
     <div class="container mt-5">
         <h1 class="mb-4">Data Absensi</h1>
+        <a href="{{ route('absensi.form') }}" class="btn btn-primary mb-3">Form Absensi</a>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -17,22 +19,20 @@
                     <th>Tanggal</th>
                     <th>Jam Masuk</th>
                     <th>Jam Keluar</th>
-                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($absensi as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $item->nama }}</td> <!-- Pastikan bahwa $item->nama sudah sesuai dengan field nama yang ada di model -->
-                        <td>{{ $item->tanggal }}</td> <!-- Pastikan bahwa $item->tanggal sudah sesuai dengan field tanggal yang ada di model -->
-                        <td>{{ $item->waktu_masuk }}</td> <!-- Pastikan bahwa $item->waktu_masuk sudah sesuai dengan field waktu_masuk yang ada di model -->
-                        <td>{{ $item->waktu_keluar }}</td> <!-- Pastikan bahwa $item->waktu_keluar sudah sesuai dengan field waktu_keluar yang ada di model -->
-                        <td>{{ $item->status }}</td> <!-- Pastikan bahwa $item->status sudah sesuai dengan field status yang ada di model -->
+                        <td>{{ $item->id_karyawan }}</td>
+                        <td>{{ \Carbon\Carbon::parse($item->waktu_masuk)->format('d-m-Y') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($item->waktu_masuk)->format('H:i:s') }}</td>
+                        <td>{{ $item->waktu_keluar ? \Carbon\Carbon::parse($item->waktu_keluar)->format('H:i:s') : '-' }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center">Tidak ada data absensi</td>
+                        <td colspan="5" class="text-center">Tidak ada data absensi</td>
                     </tr>
                 @endforelse
             </tbody>

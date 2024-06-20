@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Absensi</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/qrcode"></script>
     <style>
         body {
@@ -65,11 +66,13 @@
 
     <script>
         function absenMasuk() {
-            fetch("{{ route('absen-masuk', ['id_karyawan' => Auth::id()]) }}", {
+            fetch("{{ route('absen-masuk') }}", {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
             })
             .then(response => {
                 if (!response.ok) {
@@ -79,6 +82,7 @@
             })
             .then(data => {
                 showNotification(data.message, true);
+                location.reload(); // Reload halaman untuk menampilkan data terbaru
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -87,46 +91,10 @@
         }
 
         function absenKeluar() {
-            fetch("{{ route('absen-keluar', ['id_karyawan' => Auth::id()]) }}", {
+            fetch("{{ route('absen-keluar') }}", {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Gagal melakukan absen keluar');
-                }
-                return response.json();
-            })
-            .then(data => {
-                showNotification(data.message, true);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Gagal melakukan absen keluar', false);
-            });
-        }
-
-        function generateQRCode(text) {
-            var qrCodeDiv = document.getElementById("qrcode");
-            qrCodeDiv.innerHTML = "";
-            new QRCode(qrCodeDiv, text);
-        }
-
-        function showNotification(message, isSuccess) {
-            var notificationDiv = document.getElementById("notification");
-            notificationDiv.innerHTML = message;
-            notificationDiv.className = "notification " + (isSuccess ? "success" : "error");
-            notificationDiv.style.display = "block";
-            setTimeout(() => {
-                notificationDiv.style.display = "none";
-            }, 3000);
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            generateQRCode("{{ route('absensi.qr', ['id_karyawan' => Auth::id()]) }}");
-        });
-    </script>
-</body>
-</html>
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringif

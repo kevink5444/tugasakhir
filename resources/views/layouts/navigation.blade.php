@@ -15,6 +15,10 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <!-- Tambahkan link untuk karyawan jika sudah didefinisikan -->
+                    <x-nav-link :href="route('karyawan.index')" :active="request()->routeIs('karyawan.index')">
+                        {{ __('Karyawan') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -65,6 +69,10 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <!-- Tambahkan responsive link untuk karyawan jika sudah didefinisikan -->
+            <x-responsive-nav-link :href="route('karyawan.index')" :active="request()->routeIs('karyawan.index')">
+                {{ __('Karyawan') }}
             </x-responsive-nav-link>
         </div>
 

@@ -42,6 +42,9 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'logout'])->name('logout');
 
+use App\Http\Controllers\KaryawanController;
+Route::get('/karyawan', [KaryawanController::class, 'index'])->name('karyawan.index');
+Route::middleware(['auth:sanctum', 'verified'])->resource('karyawan', KaryawanController::class);
 
 use App\Http\Controllers\PenggajianController;
 Route::get('/penggajian', [PenggajianController::class, 'index'])->name('penggajian');
@@ -65,12 +68,8 @@ Route::get('/laporan', function () {
 Route::get('/pengaturan', function () {
     return view('pengaturan');
 });
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware('auth');
+
 
 
 
 require __DIR__.'/auth.php';
-
-
