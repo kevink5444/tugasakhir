@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ isset($header) ? $header : config('app.name', 'CV YP Sukses Makmur') }}</title>
+    <title>Sistem Penggajian Karyawan dan Absensi Pada CV YP Sukses Makmur</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <script src="{{ asset('js/app.js') }}" defer></script>
 </head>
@@ -14,7 +14,7 @@
 
         <header class="bg-white shadow">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                <h1>{{ $header ?? config('app.name', 'CV YP Sukses Makmur') }}</h1>
+                <h1>Sistem Penggajian Karyawan dan Absensi Pada CV YP Sukses Makmur</h1>
             </div>
         </header>
 
