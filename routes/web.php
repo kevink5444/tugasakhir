@@ -46,30 +46,19 @@ use App\Http\Controllers\KaryawanController;
 Route::get('/karyawan', [KaryawanController::class, 'index'])->name('karyawan.index');
 Route::middleware(['auth:sanctum', 'verified'])->resource('karyawan', KaryawanController::class);
 
+
+
 use App\Http\Controllers\PenggajianController;
-Route::get('/penggajian', [PenggajianController::class, 'index'])->name('penggajian');
-Route::get('penggajian/create', [PenggajianController::class, 'create'])->name('penggajian.create');
 
-// Route untuk menampilkan form edit
-Route::get('penggajian/{penggajian}/edit', [PenggajianController::class, 'edit'])->name('penggajian.edit');
+// Route for displaying the edit form (GET)
+Route::get('penggajian/{id_penggajian}/edit', [PenggajianController::class, 'edit'])->name('penggajian.edit');
 
-
-
-// Route untuk menyimpan perubahan
-Route::put('penggajian/{penggajian}', [PenggajianController::class, 'update'])->name('penggajian.update');
-
-// Pastikan juga ada route untuk menampilkan index penggajian
-Route::delete('penggajian/{penggajian}', [PenggajianController::class, 'destroy'])->name('penggajian.destroy');
-
-Route::get('/laporan', function () {
-    return view('laporan');
-});
-
-Route::get('/pengaturan', function () {
-    return view('pengaturan');
-});
+// Route for updating the record (PUT)
+Route::put('penggajian/{id_penggajian}', [PenggajianController::class, 'update'])->name('penggajian.update');
 
 
+// Route for deleting the record (DELETE)
+Route::delete('penggajian/{id_penggajian}', [PenggajianController::class, 'destroy'])->name('penggajian.destroy');
 
 
 require __DIR__.'/auth.php';

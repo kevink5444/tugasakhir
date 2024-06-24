@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,10 +9,7 @@ class Penggajian extends Model
     use HasFactory;
 
     protected $table = 'penggajian';
-
-    protected $fillable = [
-        'id_karyawan', 'gaji_pokok', 'bonus', 'potongan', 'total_gaji'
-    ];
+    protected $primaryKey = 'id_penggajian';
 
     public function karyawan()
     {

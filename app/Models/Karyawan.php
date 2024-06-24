@@ -9,12 +9,10 @@ class Karyawan extends Model
     use HasFactory;
 
     protected $table = 'karyawan';
+    protected $primaryKey = 'id_karyawan';
 
-    protected $fillable = [
-        'id_karyawan',
-        'nama_karyawan',
-        'email',
-        'alamat_karyawan',
-        'status',
-    ];
+    public function penggajian()
+    {
+        return $this->hasMany(Penggajian::class, 'id_karyawan');
+    }
 }

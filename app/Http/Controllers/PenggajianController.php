@@ -17,14 +17,35 @@ class PenggajianController extends Controller
 
         return view('penggajian.index', compact('penggajian'));
     }
-
-    public function edit($penggajian)
+    public function create()
     {
-        // Menggunakan findOrFail untuk memastikan $penggajian ditemukan berdasarkan id
-        $penggajian = Penggajian::findOrFail($penggajian);
-        $karyawan = Karyawan::all();
+        return view('karyawan.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nama_karyawan' => 'required|string|max:255',
+            'email' => 'required|email|unique:karyawan,email',
+            'alamat_karyawan' => 'required|string',
+        ]);
+
+        Karyawan::create([
+            'nama_karyawan' => $request->nama_karyawan,
+            'email' => $request->email,
+            'alamat_karyawan' => $request->alamat_karyawan,
+        ]);
+
+        return redirect()->route('karyawan.index')->with('success', 'Karyawan berhasil ditambahkan.');
+    }    
+
+    public function edit($id_penggajian)
+    {
+        $penggajian = Penggajian::findOrFail($id_penggajian);
+        $karyawans = Karyawan::all();
         return view('penggajian.edit', compact('penggajian', 'karyawan'));
     }
+
 
     public function update(Request $request, $id)
     {
@@ -55,5 +76,12 @@ class PenggajianController extends Controller
         $penggajian->save();
 
         return redirect()->route('penggajian.index')->with('success', 'Data gaji berhasil diperbarui.');
+    }
+    public function destroy($id_penggajian)
+    {
+        $penggajian = Penggajian::findOrFail($id_penggajian);
+        $penggajian->delete();
+
+        return redirect()->route('penggajian.index')->with('success', 'Data penggajian berhasil dihapus.');
     }
 }

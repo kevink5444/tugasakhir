@@ -1,34 +1,27 @@
-@extends('layout')
+@extends('layouts.app')
 
 @section('content')
-    <h2>Edit Penggajian</h2>
-    <form action="{{ route('gaji.update', $gaji->id) }}" method="POST">
+    <form action="{{ route('penggajian.update', $penggajian->id_penggajian) }}" method="POST">
         @csrf
         @method('PUT')
-        <div>
-            <label for="id_karyawan">Karyawan:</label>
-            <select id="id_karyawan" name="id_karyawan" required>
-                @foreach ($karyawan as $emp)
-                    <option value="{{ $emp->id }}" {{ $emp->id == $gaji->id_karyawan ? 'selected' : '' }}>{{ $emp->nama }}</option>
-                @endforeach
-            </select>
+
+        <div class="form-group">
+            <label for="gaji_pokok">Gaji Pokok</label>
+            <input type="number" name="gaji_pokok" class="form-control" value="{{ $penggajian->gaji_pokok }}" required>
         </div>
-        <div>
-            <label for="gaji_pokok">Gaji Pokok:</label>
-            <input type="number" id="gaji_pokok" name="gaji_pokok" step="0.01" value="{{ $gaji->gaji_pokok }}" required>
+        <div class="form-group">
+            <label for="bonus">Bonus</label>
+            <input type="number" name="bonus" class="form-control" value="{{ $penggajian->bonus }}">
         </div>
-        <div>
-            <label for="bonus">Bonus:</label>
-            <input type="number" id="bonus" name="bonus" step="0.01" value="{{ $gaji->bonus }}" required>
+        <div class="form-group">
+            <label for="denda">Denda</label>
+            <input type="number" name="denda" class="form-control" value="{{ $penggajian->denda }}">
         </div>
-        <div>
-            <label for="denda">Potongan:</label>
-            <input type="number" id="denda" name="denda" step="0.01" value="{{ $gaji->denda }}" required>
+        <div class="form-group">
+            <label for="total_gaji">Total Gaji</label>
+            <input type="number" name="total_gaji" class="form-control" value="{{ $penggajian->total_gaji }}" required>
         </div>
-        <div>
-            <label for="total_gaji">Total Gaji:</label>
-            <input type="number" id="total_gaji" name="total_gaji" step="0.01" value="{{ $gaji->total_gaji }}" required>
-        </div>
-        <button type="submit">Simpan</button>
+        
+        <button type="submit" class="btn btn-primary">Update</button>
     </form>
 @endsection

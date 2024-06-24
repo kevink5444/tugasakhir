@@ -9,8 +9,9 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>No</th>
-                    <th>Nama</th>
+                    <th>Id Absensi</th>
+                    <th>Id Karyawan</th>
+                    <th>Nama Karyawan</th>
                     <th>Tanggal</th>
                     <th>Jam Masuk</th>
                     <th>Jam Keluar</th>
@@ -21,6 +22,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->id_karyawan }}</td>
+                        <td>{{ $item->nama_karyawan}}</td>
                         <td>{{ \Carbon\Carbon::parse($item->waktu_masuk)->format('d-m-Y') }}</td>
                         <td>{{ \Carbon\Carbon::parse($item->waktu_masuk)->format('H:i:s') }}</td>
                         <td>{{ $item->waktu_keluar ? \Carbon\Carbon::parse($item->waktu_keluar)->format('H:i:s') : '-' }}</td>
