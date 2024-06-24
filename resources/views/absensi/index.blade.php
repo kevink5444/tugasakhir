@@ -1,13 +1,8 @@
-<!-- resources/views/absensi/index.blade.php -->
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Data Absensi</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+@extends('layouts.app')
+
+@section('title', 'Data Absensi')
+
+@section('content')
     <div class="container mt-5">
         <h1 class="mb-4">Data Absensi</h1>
         <a href="{{ route('absensi.form') }}" class="btn btn-primary mb-3">Form Absensi</a>
@@ -38,6 +33,4 @@
             </tbody>
         </table>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+@endsection
