@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Karyawan;
 use App\Models\Penggajian;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
 class PenggajianController extends Controller
 {
     public function index()
@@ -48,48 +48,39 @@ class PenggajianController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id_penggajian)
     {
+        try {
+            $penggajian = Penggajian::findOrFail($id_penggajian);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->back()->with('error', 'Penggajian tidak ditemukan.');
+        }
+    
         $request->validate([
-            'id_karyawan' => 'required|exists:karyawan,id_karyawan',
             'gaji_pokok' => 'required|numeric',
-            'bonus' => 'required|numeric',
-            'denda' => 'required|numeric',
+            'bonus' => 'nullable|numeric',
+            'denda' => 'nullable|numeric',
             'total_gaji' => 'required|numeric',
         ]);
-
-        // Validasi $id untuk memastikan bahwa itu adalah angka yang valid
-        if (!is_numeric($id)) {
-            abort(404); // Atau tangani sesuai kebutuhan aplikasi Anda
-        }
-
-        try {
-            $penggajian = Penggajian::findOrFail($id);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404); // Atau tangani sesuai kebutuhan aplikasi Anda
-        }
-
-        // Mengupdate data penggajian
-        $penggajian->id_karyawan = $request->input('id_karyawan');
-        $penggajian->gaji_pokok = $request->input('gaji_pokok');
-        $penggajian->bonus = $request->input('bonus');
-        $penggajian->denda = $request->input('denda');
-        
-        // Menghitung total gaji jika tidak ingin menghitung dari input total_gaji
-        // $penggajian->total_gaji = $penggajian->gaji_pokok + $penggajian->bonus - $penggajian->denda;
-        
-        // Menggunakan input total_gaji dari form
-        $penggajian->total_gaji = $request->input('total_gaji');
-        
+    
+        $penggajian->fill([
+            'gaji_pokok' => $request->gaji_pokok,
+            'bonus' => $request->bonus,
+            'denda' => $request->denda,
+            'total_gaji' => $request->total_gaji,
+        ]);
+    
         $penggajian->save();
-
-        return redirect()->route('penggajian.index')->with('success', 'Data gaji berhasil diperbarui.');
+    
+        return redirect()->route('penggajian')->with('success', 'Data gaji berhasil diperbarui.');
     }
-    public function destroy($id_penggajian)
+    
+    
+    public function delete($id_penggajian)
     {
         $penggajian = Penggajian::findOrFail($id_penggajian);
         $penggajian->delete();
 
-        return redirect()->route('penggajian.index')->with('success', 'Data penggajian berhasil dihapus.');
+        return redirect()->route('penggajian')->with('success', 'Data penggajian berhasil dihapus.');
     }
 }
