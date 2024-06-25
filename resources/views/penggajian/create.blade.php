@@ -1,8 +1,10 @@
 
 @extends('layout')
-
+@section('title', 'Tambah Penggajian')
 @section('content')
-    <h2>Tambah Penggajian</h2>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="my-4 text-center">Tambah Penggajian</h2>
     <form action="{{ route('penggajian.store') }}" method="POST">
         @csrf
         <div>
@@ -17,6 +19,6 @@
             <label for="gaji_pokok">Gaji Pokok</label>
             <input type="number" id="gaji_pokok" name="gaji_pokok" step="0.01" required>
         </div>
-        <button type="submit">Simpan</button>
+        <button type="submit" class="btn btn-primary">Update</button>
     </form>
 @endsection
