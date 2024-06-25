@@ -51,9 +51,10 @@ Route::middleware(['auth:sanctum', 'verified'])->resource('karyawan', KaryawanCo
 use App\Http\Controllers\PenggajianController;
 
 Route::get('/penggajian', [PenggajianController::class, 'index'])->name('penggajian');
+Route::get('penggajian/create', [PenggajianController::class, 'create'])->name('penggajian.create');
 Route::get('penggajian/{id_penggajian}/edit', [PenggajianController::class, 'edit'])->name('penggajian.edit');
 Route::put('penggajian/{id_penggajian}', [PenggajianController::class, 'update'])->name('penggajian.update');
 Route::delete('penggajian/{id_penggajian}', [PenggajianController::class, 'delete'])->name('penggajian.delete');
-
+Route::post('/penggajian', [PenggajianController::class, 'store'])->name('penggajian.store');
 
 require __DIR__.'/auth.php';

@@ -19,7 +19,9 @@ class PenggajianController extends Controller
     }
     public function create()
     {
-        return view('karyawan.create');
+        $karyawans = Karyawan::all();
+        
+        return view('penggajian.create', compact('karyawans'));
     }
 
     public function store(Request $request)
