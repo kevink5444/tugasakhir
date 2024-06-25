@@ -34,7 +34,7 @@ class PenggajianController extends Controller
         Penggajian::create([
             'id_karyawan' => $request->id_karyawan,
             'gaji_pokok' => $request->gaji_pokok,
-            
+            'total_gaji' => $request->gaji_pokok,
         ]);
 
         return redirect()->route('penggajian')->with('success', 'Penggajian berhasil ditambahkan.');
@@ -44,14 +44,14 @@ class PenggajianController extends Controller
     {
         $penggajian = Penggajian::findOrFail($id_penggajian);
         $karyawans = Karyawan::all();
-        return view('penggajian.edit', compact('penggajian', 'karyawan'));
+        return view('penggajian.edit', compact('penggajian', 'karyawans'));
     }
 
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'id_karyawan' => 'required|exists:karyawan,id',
+            'id_karyawan' => 'required|exists:karyawan,id_karyawan',
             'gaji_pokok' => 'required|numeric',
             'bonus' => 'required|numeric',
             'denda' => 'required|numeric',
@@ -69,11 +69,18 @@ class PenggajianController extends Controller
             abort(404); // Atau tangani sesuai kebutuhan aplikasi Anda
         }
 
+        // Mengupdate data penggajian
         $penggajian->id_karyawan = $request->input('id_karyawan');
         $penggajian->gaji_pokok = $request->input('gaji_pokok');
         $penggajian->bonus = $request->input('bonus');
         $penggajian->denda = $request->input('denda');
+        
+        // Menghitung total gaji jika tidak ingin menghitung dari input total_gaji
+        // $penggajian->total_gaji = $penggajian->gaji_pokok + $penggajian->bonus - $penggajian->denda;
+        
+        // Menggunakan input total_gaji dari form
         $penggajian->total_gaji = $request->input('total_gaji');
+        
         $penggajian->save();
 
         return redirect()->route('penggajian.index')->with('success', 'Data gaji berhasil diperbarui.');

@@ -9,6 +9,7 @@
                 <th>Nama Karyawan</th>
                 <th>Gaji Pokok</th>
                 <th>Bonus</th>
+                <th>Denda</th>
                 <th>Total Gaji</th>
                 <th>Tombol</th>
             </tr>
@@ -22,6 +23,7 @@
                     <td>{{ $penggajian->karyawan->nama_karyawan }}</td>
                     <td>{{ $penggajian->gaji_pokok }}</td>
                     <td>{{ $penggajian->bonus }}</td>
+                    <td>{{ $penggajian->denda }}</td>
                     <td>{{ $penggajian->total_gaji }}</td>
                 
                     

@@ -9,7 +9,8 @@ class Penggajian extends Model
     use HasFactory;
     protected $fillable = [
         'id_karyawan',
-        'gaji_pokok'
+        'gaji_pokok',
+        'total_gaji'
     ];
     protected $table = 'penggajian';
     protected $primaryKey = 'id_penggajian';
