@@ -50,15 +50,10 @@ Route::middleware(['auth:sanctum', 'verified'])->resource('karyawan', KaryawanCo
 
 use App\Http\Controllers\PenggajianController;
 
-// Route for displaying the edit form (GET)
+Route::get('/penggajian', [PenggajianController::class, 'index'])->name('penggajian');
 Route::get('penggajian/{id_penggajian}/edit', [PenggajianController::class, 'edit'])->name('penggajian.edit');
-
-// Route for updating the record (PUT)
 Route::put('penggajian/{id_penggajian}', [PenggajianController::class, 'update'])->name('penggajian.update');
-
-
-// Route for deleting the record (DELETE)
-Route::delete('penggajian/{id_penggajian}', [PenggajianController::class, 'destroy'])->name('penggajian.destroy');
+Route::delete('penggajian/{id_penggajian}', [PenggajianController::class, 'delete'])->name('penggajian.delete');
 
 
 require __DIR__.'/auth.php';

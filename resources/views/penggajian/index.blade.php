@@ -13,7 +13,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($penggajians as $penggajian)
+            @foreach ($penggajian as $penggajian)
                 <tr>
                     <td>{{ $penggajian->id_penggajian }}</td>
                     <td>{{ $penggajian->karyawan->nama_karyawan }}</td>
