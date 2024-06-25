@@ -14,20 +14,8 @@
             </select>
         </div>
         <div>
-            <label for="gaji_pokok">Gaji Pokok:</label>
-            <input type="number" id="Gaji Pokok" name="Gaji Pokok" step="0.01" required>
-        </div>
-        <div>
-            <label for="bonus">Bonus:</label>
-            <input type="number" id="bonus" name="bonus" step="0.01" required>
-        </div>
-        <div>
-            <label for="denda">Potongan:</label>
-            <input type="number" id="denda" name="denda" step="0.01" required>
-        </div>
-        <div>
-            <label for="Total Gaji">Total Gaji:</label>
-            <input type="number" id="Total Gaji" name="Total Gaji" step="0.01" required>
+            <label for="gaji_pokok">Gaji Pokok</label>
+            <input type="number" id="gaji_pokok" name="gaji_pokok" step="0.01" required>
         </div>
         <button type="submit">Simpan</button>
     </form>

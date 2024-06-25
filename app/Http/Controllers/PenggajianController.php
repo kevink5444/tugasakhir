@@ -27,18 +27,17 @@ class PenggajianController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_karyawan' => 'required|string|max:255',
-            'email' => 'required|email|unique:karyawan,email',
-            'alamat_karyawan' => 'required|string',
+            'id_karyawan' => 'required|exists:karyawan,id_karyawan',
+            'gaji_pokok' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/'],
         ]);
 
-        Karyawan::create([
-            'nama_karyawan' => $request->nama_karyawan,
-            'email' => $request->email,
-            'alamat_karyawan' => $request->alamat_karyawan,
+        Penggajian::create([
+            'id_karyawan' => $request->id_karyawan,
+            'gaji_pokok' => $request->gaji_pokok,
+            
         ]);
 
-        return redirect()->route('karyawan.index')->with('success', 'Karyawan berhasil ditambahkan.');
+        return redirect()->route('penggajian')->with('success', 'Penggajian berhasil ditambahkan.');
     }    
 
     public function edit($id_penggajian)

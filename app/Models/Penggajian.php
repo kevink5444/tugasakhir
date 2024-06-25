@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Penggajian extends Model
 {
     use HasFactory;
-
+    protected $fillable = [
+        'id_karyawan',
+        'gaji_pokok'
+    ];
     protected $table = 'penggajian';
     protected $primaryKey = 'id_penggajian';
 
