@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\StatusKaryawan;
 use Illuminate\Http\Request;
 use App\Models\Karyawan;
 
@@ -88,19 +87,16 @@ class KaryawanController extends Controller
     ]);
 
     return redirect()->route('karyawan.index')->with('success', 'Data karyawan berhasil diperbarui.');
-}
+}   
 
     public function destroy($id_karyawan)
     {
         // Hapus karyawan berdasarkan ID
-        $deleted = Karyawan::destroy($id_karyawan);
-
-        // Jika karyawan tidak ditemukan, `destroy` akan mengembalikan 0
-        if ($deleted === 0) {
-            return response()->json(['message' => 'Karyawan tidak ditemukan'], 404);
-        }
-
-        // Kembalikan respon sukses
-        return response()->json(['message' => 'Karyawan berhasil dihapus'], 200);
+        $karyawan = Karyawan::findOrFail($id_karyawan);
+        $karyawan->delete();
+        return redirect()->route('karyawan.index')
+                         ->with('success', 'Karyawan berhasil dihapus.');
+        
+       
     }
 }
