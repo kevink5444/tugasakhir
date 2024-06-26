@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use App\Models\Karyawan;
 use App\Models\Penggajian;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 class PenggajianController extends Controller
 {
     public function index()

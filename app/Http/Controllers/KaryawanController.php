@@ -1,61 +1,54 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\StatusKaryawan;
 use Illuminate\Http\Request;
 use App\Models\Karyawan;
 
 class KaryawanController extends Controller
 {
-    /**
-     * Menampilkan daftar semua karyawan.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function index()
     {
-        $karyawan = Karyawan::all();
+        $karyawan = Karyawan::with('karyawan')->get();
         return view('karyawan.index', compact('karyawan'));
     }
 
-    /**
-     * Menampilkan formulir untuk membuat karyawan baru.
-     *
-     * @return \Illuminate\Http\Response
-     */
+   
     public function create()
     {
-        return view('karyawan.create');
+        $karyawans = Karyawan::all();
+        
+        return view('karyawan.create', compact('karyawans'));
+    
     }
 
-    /**
-     * Simpan karyawan baru ke penyimpanan.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(Request $request)
     {
+        // Validasi input
         $request->validate([
-            'nama_karyawan' => 'required|string|max:255',
-            'email' => 'required|email|unique:karyawan,email',
-            'alamat_karyawan' => 'required|string|max:255',
+            'id_karyawan' => 'required|unique:karyawan,id_karyawan',
+            'nama_karyawan' => 'required',
+            'alamat_karyawan' => 'required',
+            'email_karyawan' => 'required|email|unique:karyawan,email_karyawan',
+            'status_karyawan' => 'required|in:Borongan,Harian,Tetap',
         ]);
 
-        Karyawan::create($request->all());
+        // Simpan data karyawan baru
+        $karyawan = new Karyawan();
+        $karyawan->id_karyawan = $request->id_karyawan;
+        $karyawan->nama_karyawan = $request->nama_karyawan;
+        $karyawan->alamat_karyawan = $request->alamat_karyawan;
+        $karyawan->email_karyawan = $request->email_karyawan;
+        $karyawan->status_karyawan = $request->status_karyawan;
+        $karyawan->save();
 
         return redirect()->route('karyawan.index')->with('success', 'Karyawan berhasil ditambahkan.');
     }
-
-    /**
-     * Menampilkan karyawan yang ditentukan.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function show()
     {
-        $karyawan = Karyawan::findOrFail($id);
+        $karyawan = Karyawan::findOrFail();
         return view('karyawan.show', compact('karyawan'));
     }
 
@@ -65,44 +58,49 @@ class KaryawanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id_karyawan)
     {
-        $karyawan = Karyawan::findOrFail($id);
-        return view('karyawan.edit', compact('karyawan'));
+        $karyawan = Karyawan::findOrFail($id_karyawan);
+        $status = [
+            'borongan' => 'Borongan',
+            'harian' => 'Harian',
+            'tetap' => 'Tetap',
+        ];
+
+        return view('karyawan.edit', compact('karyawan','status'));
     }
+    
+    public function update(Request $request, $id_karyawan)
+{
+    $karyawan = Karyawan::findOrFail($id_karyawan);
 
-    /**
-     * Update karyawan yang ditentukan di penyimpanan.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    $request->validate([
+        'nama_karyawan' => 'required',
+        'alamat_karyawan' => 'required',
+        'status_karyawan' => 'required',
+    ]);
+
+    $karyawan->update([
+        'nama_karyawan' => $request->nama_karyawan,
+    
+        'alamat_karyawan' => $request->alamat_karyawan,
+        'status_karyawan' => $request->status_karyawan,
+    ]);
+
+    return redirect()->route('karyawan.index')->with('success', 'Data karyawan berhasil diperbarui.');
+}
+
+    public function destroy($id_karyawan)
     {
-        $request->validate([
-            'nama_karyawan' => 'required|string|max:255',
-            'email' => 'required|email|unique:karyawan,email,'.$id,
-            'alamat_karyawan' => 'required|string|max:255',
-        ]);
+        // Hapus karyawan berdasarkan ID
+        $deleted = Karyawan::destroy($id_karyawan);
 
-        $karyawan = Karyawan::findOrFail($id);
-        $karyawan->update($request->all());
+        // Jika karyawan tidak ditemukan, `destroy` akan mengembalikan 0
+        if ($deleted === 0) {
+            return response()->json(['message' => 'Karyawan tidak ditemukan'], 404);
+        }
 
-        return redirect()->route('karyawan.index')->with('success', 'Karyawan berhasil diperbarui.');
-    }
-
-    /**
-     * Hapus karyawan yang ditentukan dari penyimpanan.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $karyawan = Karyawan::findOrFail($id);
-        $karyawan->delete();
-
-        return redirect()->route('karyawan.index')->with('success', 'Karyawan berhasil dihapus.');
+        // Kembalikan respon sukses
+        return response()->json(['message' => 'Karyawan berhasil dihapus'], 200);
     }
 }

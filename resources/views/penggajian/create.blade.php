@@ -19,6 +19,6 @@
             <label for="gaji_pokok">Gaji Pokok</label>
             <input type="number" id="gaji_pokok" name="gaji_pokok" step="0.01" required>
         </div>
-        <button type="submit" class="btn btn-primary">Update</button>
+        <button type="submit" class="btn btn-primary">Tambah</button>
     </form>
 @endsection

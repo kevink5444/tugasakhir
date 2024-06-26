@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<h1 class="my-4 text-center">Edit Penggajian</h1>
     <form action="{{ route('penggajian.update', $penggajian->id_penggajian) }}" method="POST">
         @csrf
         @method('PUT')
