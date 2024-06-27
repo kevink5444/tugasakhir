@@ -44,7 +44,6 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'logout'])->name(
 
 use App\Http\Controllers\KaryawanController;
 Route::get('/karyawan', [KaryawanController::class, 'index'])->name('karyawan.index');
-Route::middleware(['auth:sanctum', 'verified'])->resource('karyawan', KaryawanController::class);
 Route::get('/karyawan/create', [KaryawanController::class, 'create'])->name('karyawan.create');
 Route::post('/karyawan', [KaryawanController::class, 'store'])->name('karyawan.store');
 Route::get('/karyawan/{id}/edit', [KaryawanController::class, 'edit'])->name('karyawan.edit');
