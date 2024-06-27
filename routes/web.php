@@ -1,4 +1,5 @@
 <?php
+
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Route;
 
@@ -7,57 +8,57 @@ use Illuminate\Support\Facades\Route;
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| Here is where you can register web routes for your application.
 |
 */
 
+// Rute yang bisa diakses oleh semua role
 Route::get('/', function () {
     return view('welcome');
-
 });
 
-use App\Http\Controllers\DashboardController;
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
+Route::post('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
+// Rute yang bisa diakses oleh admin
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
-use App\Http\Controllers\AbsensiController;
+    Route::get('/karyawan', [\App\Http\Controllers\KaryawanController::class, 'index'])->name('karyawan.index');
+    Route::get('/karyawan/create', [\App\Http\Controllers\KaryawanController::class, 'create'])->name('karyawan.create');
+    Route::post('/karyawan', [\App\Http\Controllers\KaryawanController::class, 'store'])->name('karyawan.store');
+    Route::get('/karyawan/{id}/edit', [\App\Http\Controllers\KaryawanController::class, 'edit'])->name('karyawan.edit');
+    Route::put('/karyawan/{id}', [\App\Http\Controllers\KaryawanController::class, 'update'])->name('karyawan.update');
+    Route::delete('/karyawan/{id}', [\App\Http\Controllers\KaryawanController::class, 'destroy'])->name('karyawan.destroy');
 
-Route::get('/absensi/form', [AbsensiController::class, 'showForm'])->name('absensi.form');
-Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
-Route::post('/absensi/check-in', [AbsensiController::class, 'checkIn'])->name('absen-masuk');
-Route::post('/absensi/check-out', [AbsensiController::class, 'checkOut'])->name('absen-keluar');
+    Route::get('/penggajian', [\App\Http\Controllers\PenggajianController::class, 'index'])->name('penggajian');
+    Route::get('penggajian/create', [\App\Http\Controllers\PenggajianController::class, 'create'])->name('penggajian.create');
+    Route::get('penggajian/{id_penggajian}/edit', [\App\Http\Controllers\PenggajianController::class, 'edit'])->name('penggajian.edit');
+    Route::put('penggajian/{id_penggajian}', [\App\Http\Controllers\PenggajianController::class, 'update'])->name('penggajian.update');
+    Route::delete('penggajian/{id_penggajian}', [\App\Http\Controllers\PenggajianController::class, 'delete'])->name('penggajian.delete');
+    Route::post('/penggajian', [\App\Http\Controllers\PenggajianController::class, 'store'])->name('penggajian.store');
+});
+
+// Rute yang bisa diakses oleh karyawan
+Route::middleware(['auth'])->group(function () {
+    Route::get('/absensi/form-absen', [\App\Http\Controllers\AbsensiController::class, 'formAbsen'])->name('absensi.form-absen');
+});
+
+// Rute untuk QR Code
 Route::get('/absensi/qr/{id_karyawan}', function ($id_karyawan) {
     return QrCode::size(300)->generate(route('absen-masuk', ['id_karyawan' => $id_karyawan]));
 })->name('absensi.qr');
 
+// Rute untuk absensi
+Route::prefix('absensi')->group(function () {
+    Route::get('/form', [\App\Http\Controllers\AbsensiController::class, 'showForm'])->name('absensi.form');
+    Route::get('/', [\App\Http\Controllers\AbsensiController::class, 'index'])->name('absensi.index');
+    Route::post('/check-in', [\App\Http\Controllers\AbsensiController::class, 'checkIn'])->name('absen-masuk');
+    Route::post('/check-out', [\App\Http\Controllers\AbsensiController::class, 'checkOut'])->name('absen-keluar');
+});
 
+// Rute untuk halaman welcome
+Route::view('/welcome', 'welcome');
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-
-Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-
-
-Route::post('/logout', [AuthenticatedSessionController::class, 'logout'])->name('logout');
-
-use App\Http\Controllers\KaryawanController;
-Route::get('/karyawan', [KaryawanController::class, 'index'])->name('karyawan.index');
-Route::get('/karyawan/create', [KaryawanController::class, 'create'])->name('karyawan.create');
-Route::post('/karyawan', [KaryawanController::class, 'store'])->name('karyawan.store');
-Route::get('/karyawan/{id}/edit', [KaryawanController::class, 'edit'])->name('karyawan.edit');
-Route::put('/karyawan/{id}', [KaryawanController::class, 'update'])->name('karyawan.update');
-Route::delete('/karyawan/{id}', [KaryawanController::class, 'destroy'])->name('karyawan.destroy');
-
-
-use App\Http\Controllers\PenggajianController;
-
-Route::get('/penggajian', [PenggajianController::class, 'index'])->name('penggajian');
-Route::get('penggajian/create', [PenggajianController::class, 'create'])->name('penggajian.create');
-Route::get('penggajian/{id_penggajian}/edit', [PenggajianController::class, 'edit'])->name('penggajian.edit');
-Route::put('penggajian/{id_penggajian}', [PenggajianController::class, 'update'])->name('penggajian.update');
-Route::delete('penggajian/{id_penggajian}', [PenggajianController::class, 'delete'])->name('penggajian.delete');
-Route::post('/penggajian', [PenggajianController::class, 'store'])->name('penggajian.store');
-
+// Include routes for authentication
 require __DIR__.'/auth.php';

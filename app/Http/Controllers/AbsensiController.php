@@ -59,4 +59,12 @@ class AbsensiController extends Controller
         $absensi = Absensi::all();
         return view('absensi.index', compact('absensi'));
     }
+    public function formAbsen()
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        return view('absensi.karyawan-absensi');
+    }
 }
