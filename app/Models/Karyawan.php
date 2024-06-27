@@ -26,6 +26,6 @@ class Karyawan extends Model
     }
     public function penggajian()
     {
-        return $this->hasMany(Penggajian::class, 'id_karyawan', 'id_karyawan');
+        return $this->hasMany(Penggaan::class, 'id_karyawan', 'id_karyawan');
     }
 }
