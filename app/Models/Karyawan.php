@@ -20,12 +20,12 @@ class Karyawan extends Model
         'updated_at',
         'status_karyawan'
     ];
-    public function karyawan()
-    {
-        return $this->belongsTo(Karyawan::class, 'id_karyawan');
-    }
+    // public function karyawan()
+    // {
+    //     return $this->belongsTo(Karyawan::class, 'id_karyawan');
+    // }
     public function penggajian()
     {
-        return $this->hasMany(Penggajian::class, 'id_karyawan');
+        return $this->hasMany(Penggajian::class, 'id_karyawan', 'id_karyawan');
     }
 }

@@ -8,11 +8,11 @@ class PenggajianController extends Controller
 {
     public function index()
     {
-        // Load relasi karyawan
-        $penggajian = Penggajian::with('karyawan')->get();
-
-        // Debugging untuk memeriksa data
-        // dd($penggajian);
+       
+        $penggajian = Penggajian::with(['karyawan' => function($query) {
+            $query->withTrashed();
+        }])->get();
+      
 
         return view('penggajian.index', compact('penggajian'));
     }

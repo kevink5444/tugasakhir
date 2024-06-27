@@ -27,7 +27,7 @@ class KaryawanController extends Controller
     {
         // Validasi input
         $request->validate([
-            'id_karyawan' => 'required|unique:karyawan,id_karyawan',
+        
             'nama_karyawan' => 'required',
             'alamat_karyawan' => 'required',
             'email_karyawan' => 'required|email|unique:karyawan,email_karyawan',
@@ -36,7 +36,6 @@ class KaryawanController extends Controller
 
         // Simpan data karyawan baru
         $karyawan = new Karyawan();
-        $karyawan->id_karyawan = $request->id_karyawan;
         $karyawan->nama_karyawan = $request->nama_karyawan;
         $karyawan->alamat_karyawan = $request->alamat_karyawan;
         $karyawan->email_karyawan = $request->email_karyawan;
@@ -91,7 +90,7 @@ class KaryawanController extends Controller
 
     public function destroy($id_karyawan)
     {
-        // Hapus karyawan berdasarkan ID
+    
         $karyawan = Karyawan::findOrFail($id_karyawan);
         $karyawan->delete();
         return redirect()->route('karyawan.index')

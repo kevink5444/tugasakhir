@@ -8,21 +8,10 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">Tambah Karyawan</div>
-
+                    
                     <div class="card-body">
                         <form method="POST" action="{{ route('karyawan.store') }}">
                             @csrf
-
-                            <div class="form-group">
-                                <label for="id_karyawan">ID Karyawan</label>
-                                <input type="text" class="form-control @error('id_karyawan') is-invalid @enderror" id="id_karyawan" name="id_karyawan" value="{{ old('id_karyawan') }}" required>
-                                @error('id_karyawan')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-
                             <div class="form-group">
                                 <label for="nama_karyawan">Nama Karyawan</label>
                                 <input type="text" class="form-control @error('nama_karyawan') is-invalid @enderror" id="nama_karyawan" name="nama_karyawan" value="{{ old('nama_karyawan') }}" required>
