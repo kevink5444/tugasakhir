@@ -4,67 +4,59 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Absensi;
+use App\Models\Karyawan;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class AbsensiController extends Controller
 {
-    public function checkIn(Request $request)
+    public function buat()
     {
-        $id_karyawan = Auth::id();
-        $waktu_sekarang = Carbon::now();
-        $waktu_masuk = Carbon::parse('08:00:00');
+        $email = Auth::user()->email;
+        return view('absensi.form', compact('email'));
+    }
 
-        $status = $waktu_sekarang->gt($waktu_masuk) ? 'terlambat' : 'tepat_waktu';
-        $jumlah = $status == 'terlambat' ? -25000 : 50000;
+    public function simpan(Request $request)
+{
+    $request->validate([
+        'foto' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'latitude' => 'required|numeric',
+        'longitude' => 'required|numeric',
+        'email_karyawan' => 'required|email|exists:karyawan,email_karyawan',  // validasi email yang benar
+    ]);
 
-        Absensi::create([
-            'id_karyawan' => $id_karyawan,
-            'waktu_masuk' => $waktu_sekarang,
-            'status' => $status,
-            'jumlah' => $jumlah,
+    $namaFoto = time().'.'.$request->foto->extension();
+    $request->foto->move(public_path('foto'), $namaFoto);
+
+    $tanggalHariIni = Carbon::now()->toDateString();
+
+    $absensi = Absensi::where('email_karyawan', $request->email_karyawan)
+                        ->whereDate('tanggal', $tanggalHariIni)
+                        ->first();
+
+    if ($absensi) {
+        $absensi->update([
+            'foto' => $namaFoto,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'jam_keluar' => Carbon::now()->toTimeString(),
         ]);
-
-        return response()->json(['message' => 'Check-in berhasil']);
+    } else {
+        Absensi::create([
+            'foto' => $namaFoto,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'email_karyawan' => $request->email_karyawan,
+            'jam_masuk' => Carbon::now()->toTimeString(),
+            'tanggal' => $tanggalHariIni,
+        ]);
     }
 
-    public function checkOut(Request $request)
-    {
-        $id_karyawan = Auth::id();
-        $absensi = Absensi::where('id_karyawan', $id_karyawan)
-                          ->whereNull('waktu_keluar')
-                          ->first();
-
-        if ($absensi) {
-            $absensi->update([
-                'waktu_keluar' => Carbon::now()
-            ]);
-            return response()->json(['message' => 'Check-out berhasil']);
-        }
-
-        return response()->json(['message' => 'Gagal melakukan check-out'], 400);
-    }
-
-    public function showForm()
-    {
-        if (!Auth::check()) {
-            return redirect()->route('login');
-        }
-
-        return view('absensi.form');
-    }
-
-    public function index()
-    {
-        $absensi = Absensi::all();
-        return view('absensi.index', compact('absensi'));
-    }
-    public function formAbsen()
-    {
-        if (!Auth::check()) {
-            return redirect()->route('login');
-        }
-
-        return view('absensi.karyawan-absensi');
-    }
+    return redirect()->route('absensi.form')->with('success', 'Absensi berhasil disimpan.');
+}
+public function index()
+{
+    $absensi = Absensi::with('karyawan')->get(); // Menggunakan eager loading untuk mengambil relasi karyawan
+    return view('absensi.index', compact('absensi'));
+}
 }

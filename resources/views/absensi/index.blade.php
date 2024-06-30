@@ -10,7 +10,7 @@
             <thead>
                 <tr>
                     <th>Id Absensi</th>
-                    <th>Id Karyawan</th>
+                    <th>Email</th>
                     <th>Nama Karyawan</th>
                     <th>Tanggal</th>
                     <th>Jam Masuk</th>
@@ -21,9 +21,9 @@
                 @forelse($absensi as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $item->id_karyawan }}</td>
-                        <td>{{ $item->nama_karyawan}}</td>
-                        <td>{{ \Carbon\Carbon::parse($item->waktu_masuk)->format('d-m-Y') }}</td>
+                        <td>{{ $item->email_karyawan }}</td>
+                        <td>{{ $item->karyawan->nama_karyawan}}</td>
+                        <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d-m-Y') }}</td>
                         <td>{{ \Carbon\Carbon::parse($item->waktu_masuk)->format('H:i:s') }}</td>
                         <td>{{ $item->waktu_keluar ? \Carbon\Carbon::parse($item->waktu_keluar)->format('H:i:s') : '-' }}</td>
                     </tr>

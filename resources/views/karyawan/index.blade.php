@@ -23,9 +23,9 @@
                     <tr>
                         <td style="text-align: center;">{{ $karyawan->id_karyawan }}</td>
                         <td style="text-align: center;">{{ $karyawan->nama_karyawan }}</td>
-                        <td style="text-align: center;">{{ $karyawan->email }}</td>
+                        <td style="text-align: center;">{{ $karyawan->email_karyawan }}</td>
                         <td style="text-align: center;">{{ $karyawan->alamat_karyawan }}</td>
-                        <td style="text-align: center;">{{ $karyawan->status }}</td>
+                        <td style="text-align: center;">{{ $karyawan->status_karyawan }}</td>
                         <td style="text-align: center;">{{ $karyawan->created_at ? $karyawan->created_at->format('d-m-Y H:i') : 'N/A' }}</td>
                         <td style="text-align: center;">{{ $karyawan->updated_at ? $karyawan->updated_at->format('d-m-Y H:i') : 'N/A' }}</td>
 

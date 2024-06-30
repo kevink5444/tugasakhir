@@ -41,7 +41,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 // Rute yang bisa diakses oleh karyawan
 Route::middleware(['auth'])->group(function () {
-    Route::get('/absensi/form-absen', [\App\Http\Controllers\AbsensiController::class, 'formAbsen'])->name('absensi.form-absen');
+    // Route::get('/form', [\App\Http\Controllers\AbsensiController::class, 'showForm'])->name('absensi.form');
+    Route::get('/form', [\App\Http\Controllers\AbsensiController::class, 'buat'])->name('absensi.form');
+Route::post('/absensi/simpan', [\App\Http\Controllers\AbsensiController::class, 'simpan'])->name('absensi.simpan');
+    // Route::get('/absensi/form-absen', [\App\Http\Controllers\AbsensiController::class, 'formAbsen'])->name('absensi.form-absen');
 });
 
 // Rute untuk QR Code
@@ -51,7 +54,7 @@ Route::get('/absensi/qr/{id_karyawan}', function ($id_karyawan) {
 
 // Rute untuk absensi
 Route::prefix('absensi')->group(function () {
-    Route::get('/form', [\App\Http\Controllers\AbsensiController::class, 'showForm'])->name('absensi.form');
+;
     Route::get('/', [\App\Http\Controllers\AbsensiController::class, 'index'])->name('absensi.index');
     Route::post('/check-in', [\App\Http\Controllers\AbsensiController::class, 'checkIn'])->name('absen-masuk');
     Route::post('/check-out', [\App\Http\Controllers\AbsensiController::class, 'checkOut'])->name('absen-keluar');

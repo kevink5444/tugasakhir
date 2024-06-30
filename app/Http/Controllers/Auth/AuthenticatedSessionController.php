@@ -36,7 +36,7 @@ class AuthenticatedSessionController extends Controller
         if (Auth::user()->role->name === 'admin') {
             return redirect()->intended(RouteServiceProvider::HOME); // Redirect admin ke /dashboard
         } elseif (Auth::user()->role->name === 'karyawan') {
-            return redirect()->intended('/absensi/form-absen'); // Redirect karyawan ke /absensi/form-absen
+            return redirect()->intended('/form'); // Redirect karyawan ke /absensi/form-absen
         } else {
             return redirect()->back(); // Jika role bukan admin, karyawan, atau jika tidak ada role
         }

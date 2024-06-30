@@ -28,4 +28,8 @@ class Karyawan extends Model
     {
         return $this->hasMany(Penggajian::class, 'id_karyawan', 'id_karyawan');
     }
+    public function absensi()
+    {
+        return $this->hasMany(Absensi::class, 'email_karyawan', 'email_karyawan');
+    }
 }
