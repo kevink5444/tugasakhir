@@ -7,7 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Session;
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-
+        Session::flash('success', 'Login berhasil.');
         // Memeriksa role pengguna setelah berhasil login
         if (Auth::user()->role->name === 'admin') {
             return redirect()->intended(RouteServiceProvider::HOME); // Redirect admin ke /dashboard

@@ -20,4 +20,8 @@ class Absensi extends Model
         'jam_keluar',
         'tanggal'
     ];
+    public function karyawan()
+    {
+        return $this->belongsTo(Karyawan::class, 'id_karyawan');
+    }
 }

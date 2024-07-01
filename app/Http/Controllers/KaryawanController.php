@@ -42,7 +42,7 @@ class KaryawanController extends Controller
         $karyawan->status_karyawan = $request->status_karyawan;
         $karyawan->save();
 
-        return redirect()->route('karyawan')->with('success', 'Karyawan berhasil ditambahkan.');
+        return redirect()->route('karyawan.index')->with('success', 'Karyawan berhasil ditambahkan.');
     }
     public function show()
     {
