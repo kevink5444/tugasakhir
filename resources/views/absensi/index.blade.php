@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Data Absensi')
 
 @section('content')
     <div class="container mt-5">
         <h1 class="mb-4">Data Absensi</h1>
         <a href="{{ route('absensi.form') }}" class="btn btn-primary mb-3">Form Absensi</a>
-        <table class="table table-striped">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
             <thead>
                 <tr>
                     <th>Id Absensi</th>
@@ -29,7 +29,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="text-center">Tidak ada data absensi</td>
+                        <td colspan="6" class="text-center">Tidak ada data absensi</td>
                     </tr>
                 @endforelse
             </tbody>

@@ -1,7 +1,11 @@
 @extends('layouts.app')
 @section('content')
 <a href="{{ route('penggajian.create') }}"class="btn btn-primary">Tambah Penggajian</a>
-    <table class="table">
+<div class="container">
+    <h1 class="my-4 text-center">Data Penggajian</h1>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">   
         <thead>
             <tr>
                 <th>ID Penggajian</th>
