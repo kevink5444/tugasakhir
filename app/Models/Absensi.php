@@ -18,10 +18,14 @@ class Absensi extends Model
         'email_karyawan',
         'jam_masuk',
         'jam_keluar',
-        'tanggal'
+        'tanggal',
+        'status_kehadiran',
+        'bonus',
+        'denda',
     ];
+
     public function karyawan()
     {
-        return $this->belongsTo(Karyawan::class, 'id_karyawan');
+        return $this->belongsTo(Karyawan::class, 'email_karyawan', 'email_karyawan');
     }
 }

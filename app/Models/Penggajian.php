@@ -14,7 +14,8 @@ class Penggajian extends Model
         'denda',
         'total_gaji',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'email_karyawan'
     ];
     protected $table = 'penggajian';
     protected $primaryKey = 'id_penggajian';
@@ -22,6 +23,6 @@ class Penggajian extends Model
     public function karyawan(): BelongsTo
     {
         // return $this->belongsTo(Karyawan::class)->withTrashed();
-        return $this->belongsTo(Karyawan::class, 'id_karyawan', 'id_karyawan')->withTrashed();
+        return $this->belongsTo(Karyawan::class, 'email_karyawan', 'email_karyawan')->withTrashed();
     }
 }

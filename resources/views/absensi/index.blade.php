@@ -14,23 +14,25 @@
                     <th>Nama Karyawan</th>
                     <th>Tanggal</th>
                     <th>Jam Masuk</th>
-                    <th>Jam Keluar</th>
+                    <th>Bonus</th>
+                    <th>Denda</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($absensi as $item)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $item->email_karyawan }}</td>
-                        <td>{{ $item->karyawan->nama_karyawan}}</td>
-                        <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d-m-Y') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($item->waktu_masuk)->format('H:i:s') }}</td>
-                        <td>{{ $item->waktu_keluar ? \Carbon\Carbon::parse($item->waktu_keluar)->format('H:i:s') : '-' }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="6" class="text-center">Tidak ada data absensi</td>
-                    </tr>
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $item->email_karyawan }}</td>
+                    <td>{{ $item->karyawan->nama_karyawan }}</td>
+                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d-m-Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($item->jam_masuk)->format('H:i:s') }}</td>
+                    <td>{{ $item->bonus }}</td>
+                    <td>{{ $item->denda }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="8" class="text-center">Tidak ada data absensi</td>
+                </tr>
                 @endforelse
             </tbody>
         </table>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Informasi Penggajian dan Absensi Karyawan CV YP Sukses Makmur</title>
+    <title>UMKM Sistem Informasi Penggajian dan Absensi Karyawan CV YP Sukses Makmur</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-kWu3wGbuRl5rKvxV3H3kOu0E2Bp1Tt2fKZr3EJoNvChvU1N0J1y23iigw4jPSJ5b" crossorigin="anonymous">
     <style>
         body {
@@ -93,7 +93,7 @@
     </div>
 
     <footer>
-        <p>&copy; 2024 CV YP Sukses Makmur. All rights reserved.</p>
+        <p>&copy; 2024 UMKM CV YP Sukses Makmur. All rights reserved.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gqzXVst2iQAPvDJXjBfF/yJ2yHYdyhFw4ZQwX0pB8a7zToah4i2zyW+CU27h8v4f" crossorigin="anonymous"></script>
