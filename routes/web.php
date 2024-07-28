@@ -2,7 +2,9 @@
 
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\CapaianController;
+use App\Http\Controllers\PekerjaanController;
+use App\Http\Controllers\PengaturanTargetController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,7 +18,30 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+use App\Http\Controllers\LaporanController;
+Route::get('capaian', [CapaianController::class, 'index'])->name('capaian.index');
+Route::get('capaian/create', [CapaianController::class, 'create'])->name('capaian.create');
+Route::post('capaian', [CapaianController::class, 'store'])->name('capaian.store');
+Route::get('capaian/{id}/edit', [CapaianController::class, 'edit'])->name('capaian.edit');
+Route::put('capaian/{id}', [CapaianController::class, 'update'])->name('capaian.update');
+Route::delete('capaian/{id}', [CapaianController::class, 'destroy'])->name('capaian.destroy');
 
+Route::get('pekerjaan', [PekerjaanController::class, 'index'])->name('pekerjaan.index');
+Route::get('pekerjaan/create', [PekerjaanController::class, 'create'])->name('pekerjaan.create');
+Route::post('pekerjaan', [PekerjaanController::class, 'store'])->name('pekerjaan.store');
+Route::get('pekerjaan/{id}/edit', [PekerjaanController::class, 'edit'])->name('pekerjaan.edit');
+Route::put('pekerjaan/{id}', [PekerjaanController::class, 'update'])->name('pekerjaan.update');
+Route::delete('pekerjaan/{id}', [PekerjaanController::class, 'destroy'])->name('pekerjaan.destroy');
+
+Route::get('pengaturan_target', [PengaturanTargetController::class, 'index'])->name('pengaturan_target.index');
+Route::get('pengaturan_target/create', [PengaturanTargetController::class, 'create'])->name('pengaturan_target.create');
+Route::post('pengaturan_target', [PengaturanTargetController::class, 'store'])->name('pengaturan_target.store');
+Route::get('pengaturan_target/{id}/edit', [PengaturanTargetController::class, 'edit'])->name('pengaturan_target.edit');
+Route::put('pengaturan_target/{id}', [PengaturanTargetController::class, 'update'])->name('pengaturan_target.update');
+Route::delete('pengaturan_target/{id}', [PengaturanTargetController::class, 'destroy'])->name('pengaturan_target.destroy');
+Route::get('laporan/absensi', [LaporanController::class, 'laporanAbsensi'])->name('laporan.absensi');
+Route::get('laporan/penggajian', [LaporanController::class, 'laporanPenggajian'])->name('laporan.penggajian');
+Route::get('laporan/karyawan', [LaporanController::class, 'laporanKaryawan'])->name('laporan.karyawan');
 Route::get('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
 Route::post('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
 

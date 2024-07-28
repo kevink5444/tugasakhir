@@ -56,6 +56,18 @@
                                     </span>
                                 @enderror
                             </div>
+                            <div class="form-group">
+                                <label for="pekerjaan">Pekerjaan</label>
+                                <input type="text" class="form-control" id="pekerjaan" name="pekerjaan" value="{{ old('pekerjaan', $karyawan->pekerjaan ?? '') }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="target_borongan">Target Borongan</label>
+                                <input type="number" class="form-control" id="target_borongan" name="target_borongan" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="target_harian">Target Harian</label>
+                                <input type="number" class="form-control" id="target_harian" name="target_harian" required>
+                            </div>
 
                             <button type="submit" class="btn btn-primary">Simpan</button>
                         </form>

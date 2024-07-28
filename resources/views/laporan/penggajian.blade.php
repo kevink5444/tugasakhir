@@ -1,8 +1,8 @@
 @extends('layouts.app')
+
 @section('content')
-<a href="{{ route('penggajian.create') }}" class="btn btn-primary">Tambah Penggajian</a>
 <div class="container">
-    <h1 class="my-4 text-center">Data Penggajian</h1>
+    <h1 class="my-4 text-center">Laporan Penggajian</h1>
     <div class="table-responsive">
         <table class="table table-striped table-bordered">
             <thead class="thead-dark">
@@ -16,7 +16,6 @@
                     <th>Lembur</th>
                     <th>Denda</th>
                     <th>Total Gaji</th>
-                    <th>Tombol</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,14 +30,6 @@
                         <td>{{ $item->hitungLembur($item->id_karyawan) }}</td>
                         <td>{{ $item->denda }}</td>
                         <td>{{ $item->total_gaji }}</td>
-                        <td>
-                            <a href="{{ route('penggajian.edit', $item->id_penggajian) }}" class="btn btn-primary">Edit</a>
-                            <form action="{{ route('penggajian.delete', $item->id_penggajian) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Hapus</button>
-                            </form>
-                        </td>
                     </tr>
                 @endforeach
             </tbody>

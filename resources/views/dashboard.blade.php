@@ -39,7 +39,7 @@
                 <div class="card-body">
                     <ul>
                         <li>Jumlah Karyawan: 50</li>
-                        <li>Distribusi Karyawan:
+                        <li>Pembagian Karyawan:
                             <ul>
                                 <li>Karyawan Harian: 15</li>
                                 <li>Karyawan Borongan: 20</li>
