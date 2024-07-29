@@ -50,6 +50,18 @@ class PenggajianController extends Controller
 
     // Total Gaji = (capaian mingguan * bonus per unit) + bonus - denda
     $totalGaji = ($capaianMingguan * $bonusPerUnit) + $bonus - $denda;
+    Penggajian::updateOrCreate(
+        ['id_karyawan' => $id_karyawan],
+        [
+            'bonus' => $bonus,
+            'denda' => $denda,
+            'total_gaji' => $totalGaji,
+            'email_karyawan' => $karyawan->email_karyawan,
+            'jumlah_capaian' => $capaianMingguan,
+            'status_karyawan' => $karyawan->status_karyawan,
+            'tanggal' => Carbon::now()->toDateString()
+        ]
+    );
 
     // Kirim data ke view
     return view('penggajian.show', compact('karyawan', 'capaianMingguan', 'bonus', 'denda', 'totalGaji'));
