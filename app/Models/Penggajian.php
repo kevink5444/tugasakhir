@@ -11,12 +11,14 @@ class Penggajian extends Model
 
     protected $fillable = [
         'id_karyawan',
-        'gaji_pokok',
+        'jumlah_capaian',
+        'target_mingguan',
+        'target_harian',
         'bonus',
         'denda',
         'total_gaji',
-        'capaian',
-        'status_karyawan'
+        'status_karyawan',
+        'email_karyawan'
     ];
 
     protected $table = 'penggajian';
@@ -26,25 +28,26 @@ class Penggajian extends Model
     {
         return $this->belongsTo(Karyawan::class, 'id_karyawan', 'id_karyawan');
     }
+
     public function hitungLembur($id_karyawan)
-{
-    $lembur = Lembur::where('id_karyawan', $id_karyawan)->sum('jam_lembur');
-    $karyawan = Karyawan::find($id_karyawan);
-    $gajiHarian = 0;
+    {
+        $lembur = Lembur::where('id_karyawan', $id_karyawan)->sum('jam_lembur');
+        $karyawan = Karyawan::find($id_karyawan);
+        $gajiHarian = 0;
 
-    switch ($karyawan->status_karyawan) {
-        case 'borongan':
-            $gajiHarian = 150000; // gaji harian contoh untuk borongan
-            break;
-        case 'harian':
-            $gajiHarian = 90000; // gaji harian contoh untuk harian
-            break;
-        case 'tetap':
-            $gajiHarian = 3500000 / 30; // gaji harian contoh untuk tetap
-            break;
+        switch ($karyawan->status_karyawan) {
+            case 'borongan':
+                $gajiHarian = 150000; // gaji harian contoh untuk borongan
+                break;
+            case 'harian':
+                $gajiHarian = 90000; // gaji harian contoh untuk harian
+                break;
+            case 'tetap':
+                $gajiHarian = 3500000 / 30; // gaji harian contoh untuk tetap
+                break;
+        }
+
+        $gajiPerJam = $gajiHarian / 8; // asumsikan 8 jam kerja per hari
+        return $lembur * $gajiPerJam;
     }
-
-    $gajiPerJam = $gajiHarian / 8; // asumsikan 8 jam kerja per hari
-    return $lembur * $gajiPerJam;
-}
 }

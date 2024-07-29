@@ -8,13 +8,14 @@ class Lembur extends Model
 {
     use HasFactory;
 
-    protected $table = 'lembur';
     protected $fillable = [
         'id_karyawan',
-        'tanggal',
         'jam_lembur',
-        'disetujui_oleh'
+        'tanggal',
+        'status_lembur'
     ];
+
+    protected $table = 'lembur';
 
     public function karyawan()
     {

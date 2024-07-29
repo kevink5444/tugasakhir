@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CapaianController;
 use App\Http\Controllers\PekerjaanController;
 use App\Http\Controllers\PengaturanTargetController;
+use App\Http\Controllers\PenggajianController;
+use App\Http\Controllers\LemburController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -55,13 +57,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/karyawan/{id}/edit', [\App\Http\Controllers\KaryawanController::class, 'edit'])->name('karyawan.edit');
     Route::put('/karyawan/{id}', [\App\Http\Controllers\KaryawanController::class, 'update'])->name('karyawan.update');
     Route::delete('/karyawan/{id}', [\App\Http\Controllers\KaryawanController::class, 'destroy'])->name('karyawan.destroy');
+    Route::get('/penggajian', [PenggajianController::class, 'index'])->name('penggajian.index');
+    Route::get('/penggajian/{id_karyawan}', [PenggajianController::class, 'hitungGaji'])->name('penggajian.hitung');
+    
 
-    Route::get('/penggajian', [\App\Http\Controllers\PenggajianController::class, 'index'])->name('penggajian');
-    Route::get('penggajian/create', [\App\Http\Controllers\PenggajianController::class, 'create'])->name('penggajian.create');
-    Route::get('penggajian/{id_penggajian}/edit', [\App\Http\Controllers\PenggajianController::class, 'edit'])->name('penggajian.edit');
-    Route::put('penggajian/{id_penggajian}', [\App\Http\Controllers\PenggajianController::class, 'update'])->name('penggajian.update');
-    Route::delete('penggajian/{id_penggajian}', [\App\Http\Controllers\PenggajianController::class, 'delete'])->name('penggajian.delete');
-    Route::post('/penggajian', [\App\Http\Controllers\PenggajianController::class, 'store'])->name('penggajian.store');
+Route::get('/lembur/{id}/approve', [LemburController::class, 'approveLembur'])->name('lembur.approve');
+Route::get('/lembur/{id}/reject', [LemburController::class, 'rejectLembur'])->name('lembur.reject');
 });
 
 // Rute yang bisa diakses oleh karyawan

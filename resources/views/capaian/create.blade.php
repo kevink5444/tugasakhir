@@ -19,11 +19,11 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="pekerjaan_id">Pekerjaan</label>
-                            <select class="form-control" id="pekerjaan_id" name="pekerjaan_id" required>
-                                <option value="" disabled selected>Pilih Pekerjaan</option>
+                            <label for="id_pekerjaan">Pekerjaan</label>
+                            <select id="id_pekerjaan" name="id_pekerjaan" class="form-control" required>
+                                <option value="">Pilih Pekerjaan</option>
                                 @foreach($pekerjaan as $pekerjaanItem)
-                                    <option value="{{ $pekerjaanItem->id }}">{{ $pekerjaanItem->nama_pekerjaan }}</option>
+                                    <option value="{{ $pekerjaanItem->id_pekerjaan }}">{{ $pekerjaanItem->nama_pekerjaan }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -31,6 +31,11 @@
                             <label for="jumlah_capaian">Jumlah Capaian</label>
                             <input type="number" class="form-control" id="jumlah_capaian" name="jumlah_capaian" required>
                         </div>
+                        <div class="form-group">
+                            <label for="tanggal">Tanggal</label>
+                            <input type="date" id="tanggal" name="tanggal" class="form-control" required>
+                        </div>
+                    
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>

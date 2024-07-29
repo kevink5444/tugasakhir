@@ -13,7 +13,7 @@ class Karyawan extends Model
         'alamat_karyawan',
         'email_karyawan',
         'status_karyawan',
-        'target_borongan',
+        'target_mingguan',
         'target_harian'
     ];
 

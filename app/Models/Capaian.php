@@ -8,7 +8,7 @@ class Capaian extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['id_capaian','id_karyawan', 'id_pekerjaan', 'jumlah_capaian','created_at','updated_at'];
+    protected $fillable = ['id_karyawan', 'id_pekerjaan', 'jumlah_capaian','tanggal'];
 
     protected $table = 'capaian';
     protected $primaryKey = 'id_capaian';

@@ -14,7 +14,7 @@
               </a>
           </li>
           <li class="nav-item">
-              <a class="nav-link @if(request()->is('penggajian')) active @endif" href="{{ route('penggajian') }}">
+              <a class="nav-link @if(request()->is('penggajian')) active @endif" href="{{ route('penggajian.index') }}">
                   <span data-feather="shopping-cart" class="align-text-bottom"></span>
                   Penggajian
               </a>

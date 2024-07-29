@@ -28,7 +28,7 @@ class KaryawanController extends Controller
             'email_karyawan' => 'required|email|unique:karyawan,email_karyawan',
             'status_karyawan' => 'required|in:Borongan,Harian,Tetap',
             'pekerjaan' => 'required|string|max:255',
-            'target_borongan' => 'required|integer|min:0',
+            'target_mingguan' => 'required|integer|min:0',
             'target_harian' => 'required|integer|min:0',
         ]);
 
@@ -39,7 +39,7 @@ class KaryawanController extends Controller
             'email_karyawan' => $request->email_karyawan,
             'status_karyawan' => $request->status_karyawan,
             'pekerjaan' => $request->pekerjaan,
-            'target_borongan' => $request->target_borongan,
+            'target_mingguan' => $request->target_mingguan,
             'target_harian' => $request->target_harian,
         ]);
 

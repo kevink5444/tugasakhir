@@ -1,40 +1,38 @@
+<!-- resources/views/capaian/create.blade.php -->
 @extends('layouts.app')
+
 @section('content')
-<a href="{{ route('capaian.create') }}" class="btn btn-primary">Tambah Capaian</a>
 <div class="container">
-    <h1 class="my-4 text-center">Data Capaian</h1>
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <th>ID Capaian</th>
-                    <th>Karyawan</th>
-                    <th>Pekerjaan</th>
-                    <th>Tanggal</th>
-                    <th>Jumlah Capaian</th>
-                    <th>Tombol</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($capaian as $capaian)
-                    <tr>
-                        <td>{{ $capaian->id_capaian }}</td>
-                        <td>{{ $capaian->karyawan->nama_karyawan }}</td>
-                        <td>{{ $capaian->pekerjaan->nama_pekerjaan }}</td>
-                        <td>{{ $capaian->tanggal }}</td>
-                        <td>{{ $capaian->jumlah_capaian }}</td>
-                        <td>
-                            <a href="{{ route('capaian.edit', $capaian->id_capaian) }}" class="btn btn-primary">Edit</a>
-                            <form action="{{ route('capaian.delete', $capaian->id_capaian) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
+    <h1>Tambah Capaian</h1>
+    <form action="{{ route('capaian.store') }}" method="POST">
+        @csrf
+        <div class="form-group">
+            <label for="id_karyawan">Karyawan</label>
+            <select id="id_karyawan" name="id_karyawan" class="form-control" required>
+                <option value="">Pilih Karyawan</option>
+                @foreach ($karyawan as $karyawanItem)
+                    <option value="{{ $karyawanItem->id_karyawan }}">{{ $karyawanItem->nama_karyawan }}</option>
                 @endforeach
-            </tbody>
-        </table>
-    </div>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="pekerjaan">Pekerjaan</label>
+            <select id="pekerjaan" name="pekerjaan_id" class="form-control" required>
+                <option value="">Pilih Pekerjaan</option>
+                @foreach ($pekerjaan as $pekerjaanItem)
+                    <option value="{{ $pekerjaanItem->id }}">{{ $pekerjaanItem->nama_pekerjaan }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="jumlah_capaian">Jumlah Capaian</label>
+            <input type="number" id="jumlah_capaian" name="jumlah_capaian" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="tanggal">Tanggal</label>
+            <input type="date" id="tanggal" name="tanggal" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+    </form>
 </div>
 @endsection

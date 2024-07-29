@@ -12,7 +12,7 @@
                     <th style="text-align: center;">Nama</th>
                     <th style="text-align: center;">Alamat</th>
                     <th style="text-align: center;">Status</th>
-                    <th style="text-align: center;">Target Borongan</th>
+                    <th style="text-align: center;">Target Mingguan</th>
                     <th style="text-align: center;">Target Harian</th>
                     <th style="text-align: center;">Created At</th>
                     <th style="text-align: center;">Updated At</th>
@@ -26,7 +26,7 @@
                         <td style="text-align: center;">{{ $karyawan->nama_karyawan }}</td>
                         <td style="text-align: center;">{{ $karyawan->alamat_karyawan }}</td>
                         <td style="text-align: center;">{{ $karyawan->status_karyawan }}</td>
-                        <td style="text-align: center;">{{ $karyawan->target_borongan }}</td>
+                        <td style="text-align: center;">{{ $karyawan->target_mingguan }}</td>
                         <td style="text-align: center;">{{ $karyawan->target_harian }}</td>
                         <td style="text-align: center;">{{ $karyawan->created_at ? $karyawan->created_at->format('d-m-Y H:i') : 'N/A' }}</td>
                         <td style="text-align: center;">{{ $karyawan->updated_at ? $karyawan->updated_at->format('d-m-Y H:i') : 'N/A' }}</td>

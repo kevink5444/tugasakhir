@@ -14,8 +14,15 @@ class CreateCapaianTable extends Migration
     public function up()
     {
         Schema::create('capaian', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_capaian');
+            $table->unsignedBigInteger('id_karyawan');
+            $table->unsignedBigInteger('id_pekerjaan');
+            $table->integer('jumlah_capaian');
+            $table->date('tanggal');
             $table->timestamps();
+            $table->foreign('id_karyawan')->references('id_karyawan')->on('karyawan');
+            $table->foreign('id_pekerjaan')->references('id_pekerjaan')->on('pekerjaan');
+        
         });
     }
 

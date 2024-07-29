@@ -1,50 +1,44 @@
 <?php
+// app/Http/Controllers/CapaianController.php
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Capaian;
 use App\Models\Karyawan;
-use App\Models\Pekerjaan;
-use Illuminate\Http\Request;
+use App\Models\Pekerjaan; // Pastikan Anda memiliki model Pekerjaan
 
 class CapaianController extends Controller
 {
-    public function index()
-    {
-        $capaian = Capaian::with('karyawan', 'pekerjaan')->get();
-        return view('capaian.index', compact('capaian'));
-    }
-
     public function create()
     {
-        $karyawan = Karyawan::all();
-        $pekerjaan = Pekerjaan::all();
-        
+        $karyawan = Karyawan::all(); // Mengambil semua karyawan untuk dropdown
+        $pekerjaan = Pekerjaan::all(); // Mengambil semua pekerjaan untuk dropdown
         return view('capaian.create', compact('karyawan', 'pekerjaan'));
     }
 
-    public function store(Request $request)
+   // app/Http/Controllers/CapaianController.php
+
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'id_karyawan' => 'required|exists:karyawan,id_karyawan',
+        'id_pekerjaan' => 'required|exists:pekerjaan,id_pekerjaan', // Update field name
+        'jumlah_capaian' => 'required|integer',
+        'tanggal' => 'required|date',
+    ]);
+
+    Capaian::create([
+        'id_karyawan' => $validated['id_karyawan'],
+        'id_pekerjaan' => $validated['id_pekerjaan'], // Update field name
+        'jumlah_capaian' => $validated['jumlah_capaian'],
+        'tanggal' => $validated['tanggal'],
+    ]);
+
+    return redirect()->route('capaian.index')->with('success', 'Data capaian berhasil disimpan.');
+}
+    public function index()
     {
-        // Validasi data
-        $request->validate([
-            'id_karyawan' => 'required|integer',
-            'id_pekerjaan' => 'required|integer',
-            'jumlah_capaian' => 'required|integer',
-        ]);
-
-        try {
-            // Simpan data capaian baru
-            Capaian::create([
-                'id_karyawan' => $request->id_karyawan,
-                'id_pekerjaan' => $request->id_pekerjaan,
-                'jumlah_capaian' => $request->jumlah_capaian,
-            ]);
-
-            // Redirect ke halaman yang diinginkan dengan pesan sukses
-            return redirect()->route('capaian.index')->with('success', 'Capaian berhasil ditambahkan.');
-
-        } catch (\Exception $e) {
-            // Tangani kesalahan dan tampilkan pesan
-            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()]);
-        }
+        $capaian = Capaian::all(); // Ambil semua data capaian
+        return view('capaian.index', compact('capaian'));
     }
 }
