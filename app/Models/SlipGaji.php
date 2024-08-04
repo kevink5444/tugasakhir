@@ -1,24 +1,29 @@
 <?php
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Absensi extends Model
+class SlipGaji extends Model
 {
     use HasFactory;
+
+    protected $table = 'slip_gaji';
+
     protected $fillable = [
         'id_karyawan',
-        'status',
-        'waktu_masuk',
-        'waktu_pulang',
+        'periode',
+        'tanggal_slip',
+        'total_gaji',
         'bonus',
         'denda',
+        'total_pekerjaan',
+        'total_lembur',
+        'bonus_lembur',
+        'uang_transport',
+        'uang_makan',
+        'thr',
     ];
-
-    protected $dates = ['waktu_masuk', 'waktu_pulang'];
-
-    protected $table = 'absensi';
-    protected $primaryKey = 'id_absensi';
 
     public function karyawan()
     {

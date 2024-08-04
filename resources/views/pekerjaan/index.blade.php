@@ -10,7 +10,7 @@
                     <th>ID Pekerjaan</th>
                     <th>Nama Pekerjaan</th>
                     <th>Target Harian</th>
-                    <th>Harga per Unit</th>
+                    <th>Gaji per Unit</th>
                     <th>Tombol</th>
                 </tr>
             </thead>
@@ -20,7 +20,7 @@
                         <td>{{ $pekerjaan->id_pekerjaan }}</td>
                         <td>{{ $pekerjaan->nama_pekerjaan }}</td>
                         <td>{{ $pekerjaan->target_harian }}</td>
-                        <td>{{ $pekerjaan->harga_per_unit }}</td>
+                        <td>{{ $pekerjaan->gaji_per_unit }}</td>
                         <td>
                             <a href="{{ route('pekerjaan.edit', $pekerjaan->id_pekerjaan) }}" class="btn btn-primary">Edit</a>
                             <form action="{{ route('pekerjaan.destroy', $pekerjaan->id_pekerjaan) }}" method="POST" style="display:inline;">

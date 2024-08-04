@@ -9,10 +9,9 @@ class Lembur extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id_karyawan',
         'jam_lembur',
         'tanggal',
-        'status_lembur'
+        'bonus_lembur'
     ];
 
     protected $table = 'lembur';

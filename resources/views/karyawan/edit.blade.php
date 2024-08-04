@@ -22,11 +22,11 @@
             <input type="text" id="alamat_karyawan" name="alamat_karyawan" class="form-control" value="{{ old('alamat_karyawan', $karyawan->alamat_karyawan) }}" required>
         </div>
         <div class="form-group">
-            <label for="status_karyawan">Status Karyawan</label>
-            <select id="status_karyawan" name="status_karyawan" class="form-control" required>
+            <label for="jenis_karyawan">Status Karyawan</label>
+            <select id="jenis_karyawan" name="jenis_karyawan" class="form-control" required>
                 <option value="">Pilih Status Karyawan</option>
-                @foreach($status as $key => $value)
-                    <option value="{{ $key }}" {{ $key == old('status_karyawan', $karyawan->status_karyawan) ? 'selected' : '' }}>
+                @foreach($jenis as $key => $value)
+                    <option value="{{ $key }}" {{ $key == old('jenis_karyawan', $karyawan->jenis_karyawan) ? 'selected' : '' }}>
                         {{ $value }}
                     </option>
                 @endforeach

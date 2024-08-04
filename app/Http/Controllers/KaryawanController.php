@@ -26,10 +26,9 @@ class KaryawanController extends Controller
             'nama_karyawan' => 'required|string|max:255',
             'alamat_karyawan' => 'required|string|max:100',
             'email_karyawan' => 'required|email|unique:karyawan,email_karyawan',
-            'status_karyawan' => 'required|in:Borongan,Harian,Tetap',
-            'pekerjaan' => 'required|string|max:255',
-            'target_mingguan' => 'required|integer|min:0',
-            'target_harian' => 'required|integer|min:0',
+            'jenis_karyawan' => 'required|in:Borongan,Harian,Tetap',
+            'posisi' => 'required|string|max:255',
+            
         ]);
 
         // Simpan data karyawan baru
@@ -37,10 +36,9 @@ class KaryawanController extends Controller
             'nama_karyawan' => $request->nama_karyawan,
             'alamat_karyawan' => $request->alamat_karyawan,
             'email_karyawan' => $request->email_karyawan,
-            'status_karyawan' => $request->status_karyawan,
-            'pekerjaan' => $request->pekerjaan,
-            'target_mingguan' => $request->target_mingguan,
-            'target_harian' => $request->target_harian,
+            'jenis_karyawan' => $request->jenis_karyawan,
+            'posisi' => $request->posisi,
+          
         ]);
 
         return redirect()->route('karyawan.index')->with('success', 'Karyawan berhasil ditambahkan.');
@@ -55,13 +53,13 @@ class KaryawanController extends Controller
     public function edit($id_karyawan)
     {
         $karyawan = Karyawan::findOrFail($id_karyawan);
-        $status = [
+        $jenis = [
             'Borongan' => 'Borongan',
             'Harian' => 'Harian',
             'Tetap' => 'Tetap',
         ];
 
-        return view('karyawan.edit', compact('karyawan', 'status'));
+        return view('karyawan.edit', compact('karyawan', 'jenis'));
     }
 
     public function update(Request $request, $id_karyawan)
@@ -72,13 +70,13 @@ class KaryawanController extends Controller
             $request->validate([
                 'nama_karyawan' => 'required|string|max:255',
                 'alamat_karyawan' => 'required|string|max:100',
-                'status_karyawan' => 'required|in:Borongan,Harian,Tetap',
+                'jenis_karyawan' => 'required|in:Borongan,Harian,Tetap',
             ]);
         
             $karyawan->update([
                 'nama_karyawan' => $request->nama_karyawan,
                 'alamat_karyawan' => $request->alamat_karyawan,
-                'status_karyawan' => $request->status_karyawan,
+                'jenis_karyawan' => $request->jenis_karyawan,
             ]);
 
         return redirect()->route('karyawan.index')->with('success', 'Data karyawan berhasil diperbarui.');

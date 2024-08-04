@@ -12,9 +12,10 @@ class Karyawan extends Model
         'nama_karyawan',
         'alamat_karyawan',
         'email_karyawan',
-        'status_karyawan',
-        'target_mingguan',
-        'target_harian'
+        'jenis_karyawan',
+        'posisi',
+        'tanggal_masuk',
+        'status'
     ];
 
     protected $table = 'karyawan';

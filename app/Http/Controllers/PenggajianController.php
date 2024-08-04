@@ -1,69 +1,136 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Karyawan;
-use App\Models\Capaian;
-use App\Models\Penggajian;
+use App\Models\GajiBulanan;
+use App\Models\GajiMingguan;
+use App\Models\GajiHarian;
+use App\Models\SlipGaji;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
-
 
 class PenggajianController extends Controller
 {
+    // Menampilkan halaman utama penggajian
     public function index()
     {
-        $karyawans = Karyawan::all();
-        $penggajian = Penggajian::with('karyawan')->get();
-        return view('penggajian.index', compact('penggajian', 'karyawans'));
+        return view('penggajian.index');
     }
 
-    public function hitungGaji($id_karyawan)
-{
-    $karyawan = Karyawan::findOrFail($id_karyawan);
+    // Menampilkan data gaji bulanan
+    public function showGajiBulanan()
+    {
+        $gaji_bulanan = GajiBulanan::with('karyawan')->get();
+        return view('penggajian.gaji_bulanan', compact('gaji_bulanan'));
+    }
 
-    $targetHarian = $karyawan->target_harian;
-    $targetMingguan = $karyawan->target_mingguan;
+    // Menampilkan data gaji mingguan
+    public function showGajiMingguan()
+    {
+        $gaji_mingguan = GajiMingguan::with('karyawan')->get();
+        return view('penggajian.gaji_mingguan', compact('gaji_mingguan'));
+    }
 
-    $startOfWeek = Carbon::now()->startOfWeek()->toDateString();
-    $endOfWeek = Carbon::now()->endOfWeek()->toDateString();
+    // Menghitung dan menyimpan gaji bulanan
+    public function generateGajiBulanan()
+    {
+        $karyawanTetap = Karyawan::where('jenis_karyawan', 'Tetap')->get();
+    
+        foreach ($karyawanTetap as $karyawan) {
+            $lastPaidAt = $karyawan->last_paid_at;
+            $currentMonth = Carbon::now()->startOfMonth();
+    
+            if ($lastPaidAt && $lastPaidAt->greaterThanOrEqualTo($currentMonth)) {
+                continue;
+            }
+    
+            $gajiBulanan = new GajiBulanan();
+            $gajiBulanan->id_karyawan = $karyawan->id;
+            $gajiBulanan->bulan = $currentMonth;
+            $gajiBulanan->gaji_pokok = 5000000;
+            $gajiBulanan->uang_transport = 250000;
+            $gajiBulanan->uang_makan = 300000;
+            $gajiBulanan->bonus = 500000;
+            $gajiBulanan->thr = 0;
+            $gajiBulanan->total_lembur = 10;
+            $gajiBulanan->bonus_lembur = $gajiBulanan->total_lembur * 10000;
+            $gajiBulanan->denda = 50000;
+            $gajiBulanan->total_gaji = $gajiBulanan->gaji_pokok
+                                  + $gajiBulanan->uang_transport
+                                  + $gajiBulanan->uang_makan
+                                  + $gajiBulanan->bonus
+                                  + $gajiBulanan->thr
+                                  + $gajiBulanan->bonus_lembur
+                                  - $gajiBulanan->denda;
+            $gajiBulanan->save();
+    
+            $karyawan->last_paid_at = now();
+            $karyawan->save();
+        }
+    
+        return redirect()->route('penggajian.gaji_bulanan')->with('success', 'Gaji bulanan berhasil dihitung.');
+    }
+    
+    // Menghitung dan menyimpan gaji mingguan
+    public function generateGajiMingguan()
+    {
+        $karyawanHarianBorongan = Karyawan::whereIn('jenis_karyawan', ['Harian', 'Borongan'])->get();
+    
+        foreach ($karyawanHarianBorongan as $karyawan) {
+            $lastPaidAt = $karyawan->last_paid_at;
+            $currentWeek = Carbon::now()->startOfWeek();
+    
+            if ($lastPaidAt && $lastPaidAt->greaterThanOrEqualTo($currentWeek)) {
+                continue;
+            }
+    
+            $mingguMulai = Carbon::now()->startOfWeek();
+            $mingguSelesai = Carbon::now()->endOfWeek();
+    
+            $gajiHarian = GajiHarian::where('id_karyawan', $karyawan->id)
+                                    ->whereBetween('tanggal', [$mingguMulai, $mingguSelesai])
+                                    ->get();
+    
+            $totalGajiMingguan = 0;
+            $totalBonus = 0;
+            $totalDenda = 0;
+            $totalPekerjaan = 0;
+            $totalLembur = 0;
+            $bonusLembur = 0;
+    
+            foreach ($gajiHarian as $hari) {
+                $totalGajiMingguan += $hari->gaji_harian;
+                $totalBonus += $hari->bonus_harian;
+                $totalDenda += $hari->denda_harian;
+                $totalPekerjaan += $hari->jumlah_pekerjaan;
+            }
+    
+            $gajiMingguan = new GajiMingguan();
+            $gajiMingguan->id_karyawan = $karyawan->id;
+            $gajiMingguan->minggu_mulai = $mingguMulai;
+            $gajiMingguan->minggu_selesai = $mingguSelesai;
+            $gajiMingguan->total_gaji_mingguan = $totalGajiMingguan;
+            $gajiMingguan->total_bonus = $totalBonus;
+            $gajiMingguan->total_denda = $totalDenda;
+            $gajiMingguan->total_pekerjaan = $totalPekerjaan;
+            $gajiMingguan->total_lembur = $totalLembur;
+            $gajiMingguan->bonus_lembur = $bonusLembur;
+            $gajiMingguan->save();
+    
+            $karyawan->last_paid_at = now();
+            $karyawan->save();
+        }
+    
+        return redirect()->route('penggajian.gaji_mingguan')->with('success', 'Gaji mingguan berhasil dihitung.');
+    }
 
-    // Query untuk mengambil data capaian mingguan
-    $capaianData = Capaian::where('id_karyawan', $id_karyawan)
-                          ->whereBetween(DB::raw('DATE(tanggal)'), [$startOfWeek, $endOfWeek])
-                          ->get();
-
-    // Menghitung jumlah capaian mingguan
-    $capaianMingguan = $capaianData->sum('jumlah_capaian');
-
-    // Debugging: Pastikan data capaian mingguan terambil dengan benar
-    // dd($capaianData, $capaianMingguan);
-
-    $bonusPerUnit = 500;
-    $dendaPerUnit = 200;
-
-    // Hitung bonus hanya jika capaian melebihi target
-    $bonus = max(0, $capaianMingguan - $targetMingguan) * $bonusPerUnit;
-
-    // Hitung denda hanya jika capaian kurang dari target
-    $denda = max(0, $targetMingguan - $capaianMingguan) * $dendaPerUnit;
-
-    // Total Gaji = (capaian mingguan * bonus per unit) + bonus - denda
-    $totalGaji = ($capaianMingguan * $bonusPerUnit) + $bonus - $denda;
-    Penggajian::updateOrCreate(
-        ['id_karyawan' => $id_karyawan],
-        [
-            'bonus' => $bonus,
-            'denda' => $denda,
-            'total_gaji' => $totalGaji,
-            'email_karyawan' => $karyawan->email_karyawan,
-            'jumlah_capaian' => $capaianMingguan,
-            'status_karyawan' => $karyawan->status_karyawan,
-            'tanggal' => Carbon::now()->toDateString()
-        ]
-    );
-
-    // Kirim data ke view
-    return view('penggajian.show', compact('karyawan', 'capaianMingguan', 'bonus', 'denda', 'totalGaji'));
+    // Menampilkan slip gaji untuk karyawan tertentu
+    public function showSlipGaji($id_karyawan)
+    {
+        $karyawan = Karyawan::findOrFail($id_karyawan);
+        $slipGaji = SlipGaji::where('id_karyawan', $id_karyawan)->get();
+        
+        return view('penggajian.slip_gaji', compact('karyawan', 'slipGaji'));
     }
 }

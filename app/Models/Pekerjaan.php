@@ -8,7 +8,7 @@ class Pekerjaan extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama_pekerjaan', 'target_harian','harga_per_unit'];
+    protected $fillable = ['nama_pekerjaan', 'target_harian','gaji_per_unit'];
 
     protected $table = 'pekerjaan';
     protected $primaryKey = 'id_pekerjaan';

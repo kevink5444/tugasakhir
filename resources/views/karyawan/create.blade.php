@@ -43,14 +43,14 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="status_karyawan">Status Karyawan</label>
-                                <select class="form-control @error('status_karyawan') is-invalid @enderror" id="status_karyawan" name="status_karyawan" required>
+                                <label for="jenis_karyawan">Jenis Karyawan</label>
+                                <select class="form-control @error('jenis_karyawan') is-invalid @enderror" id="jenis_karyawan" name="jenis_karyawan" required>
                                     <option value="">Pilih Status</option>
-                                    <option value="Borongan" @if(old('status_karyawan') == 'Borongan') selected @endif>Borongan</option>
-                                    <option value="Harian" @if(old('status_karyawan') == 'Harian') selected @endif>Harian</option>
-                                    <option value="Tetap" @if(old('status_karyawan') == 'Tetap') selected @endif>Tetap</option>
+                                    <option value="Harian" @if(old('jenis_karyawan') == 'Harian') selected @endif>Harian</option>
+                                    <option value="Borongan" @if(old('jenis_karyawan') == 'Borongan') selected @endif>Borongan</option>
+                                    <option value="Tetap" @if(old('jenis_karyawan') == 'Tetap') selected @endif>Tetap</option>
                                 </select>
-                                @error('status_karyawan')
+                                @error('jenis_karyawan')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -61,14 +61,14 @@
                                 <input type="text" class="form-control" id="pekerjaan" name="pekerjaan" value="{{ old('pekerjaan', $karyawan->pekerjaan ?? '') }}">
                             </div>
                             <div class="form-group">
-                                <label for="target_borongan">Target Borongan</label>
-                                <input type="number" class="form-control" id="target_borongan" name="target_borongan" required>
+                                <label for="posisi">Posisi</label>
+                                <input type="text" class="form-control @error('posisi') is-invalid @enderror" id="posisi" name="posisi" value="{{ old('posisi') }}" required>
+                                @error('posisi')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
-                            <div class="form-group">
-                                <label for="target_harian">Target Harian</label>
-                                <input type="number" class="form-control" id="target_harian" name="target_harian" required>
-                            </div>
-
                             <button type="submit" class="btn btn-primary">Simpan</button>
                         </form>
                     </div>
