@@ -16,18 +16,62 @@
             <li class="nav-item">
                 <a class="nav-link @if(request()->routeIs('penggajian.index')) active @endif" href="{{ route('penggajian.index') }}">
                     <span data-feather="shopping-cart" class="align-text-bottom"></span>
-                    Gaji Borongan
+                    Penggajian
                 </a>
-                <li class="nav-item">
-                    <a class="nav-link @if(request()->routeIs('penggajian.index')) active @endif" href="{{ route('penggajian.index') }}">
-                        <span data-feather="shopping-cart" class="align-text-bottom"></span>
-                        Gaji Harian
-                    </a>
-                <li class="nav-item">
-                    <a class="nav-link @if(request()->routeIs('penggajian.index')) active @endif" href="{{ route('penggajian.index') }}">
-                        <span data-feather="shopping-cart" class="align-text-bottom"></span>
-                        Gaji Bulanan
-                    </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @if(request()->routeIs('gaji_borongan.index')) active @endif" href="{{ route('gaji_borongan.index') }}">
+                    <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                    Daftar Gaji Borongan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @if(request()->routeIs('gaji_borongan.create')) active @endif" href="{{ route('gaji_borongan.create') }}">
+                    <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                    Tambah Gaji Borongan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @if(request()->routeIs('gaji_borongan.edit', '*')) active @endif" href="{{ route('gaji_borongan.index') }}">
+                    <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                    Edit Gaji Borongan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @if(request()->routeIs('gaji_harian.index')) active @endif" href="{{ route('gaji_harian.index') }}">
+                    <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                    Daftar Gaji Harian
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @if(request()->routeIs('gaji_harian.create')) active @endif" href="{{ route('gaji_harian.create') }}">
+                    <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                    Tambah Gaji Harian
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @if(request()->routeIs('gaji_harian.edit', '*')) active @endif" href="{{ route('gaji_harian.index') }}">
+                    <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                    Edit Gaji Harian
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @if(request()->routeIs('gaji_bulanan.index')) active @endif" href="{{ route('gaji_bulanan.index') }}">
+                    <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                    Daftar Gaji Bulanan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @if(request()->routeIs('gaji_bulanan.create')) active @endif" href="{{ route('gaji_bulanan.create') }}">
+                    <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                    Tambah Gaji Bulanan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @if(request()->routeIs('gaji_bulanan.edit', '*')) active @endif" href="{{ route('gaji_bulanan.index') }}">
+                    <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                    Edit Gaji Bulanan
+                </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link @if(request()->routeIs('karyawan.index')) active @endif" href="{{ route('karyawan.index') }}">

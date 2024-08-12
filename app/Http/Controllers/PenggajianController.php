@@ -26,11 +26,7 @@ class PenggajianController extends Controller
     }
 
     // Menampilkan data gaji mingguan
-    public function showGajiMingguan()
-    {
-        $gaji_mingguan = GajiMingguan::with('karyawan')->get();
-        return view('penggajian.gaji_mingguan', compact('gaji_mingguan'));
-    }
+   
 
     // Menghitung dan menyimpan gaji bulanan
     public function generateGajiBulanan()
@@ -106,17 +102,8 @@ class PenggajianController extends Controller
                 $totalPekerjaan += $hari->jumlah_pekerjaan;
             }
     
-            $gajiMingguan = new GajiMingguan();
-            $gajiMingguan->id_karyawan = $karyawan->id;
-            $gajiMingguan->minggu_mulai = $mingguMulai;
-            $gajiMingguan->minggu_selesai = $mingguSelesai;
-            $gajiMingguan->total_gaji_mingguan = $totalGajiMingguan;
-            $gajiMingguan->total_bonus = $totalBonus;
-            $gajiMingguan->total_denda = $totalDenda;
-            $gajiMingguan->total_pekerjaan = $totalPekerjaan;
-            $gajiMingguan->total_lembur = $totalLembur;
-            $gajiMingguan->bonus_lembur = $bonusLembur;
-            $gajiMingguan->save();
+        
+        
     
             $karyawan->last_paid_at = now();
             $karyawan->save();

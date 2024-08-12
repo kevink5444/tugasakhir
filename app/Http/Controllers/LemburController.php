@@ -3,24 +3,49 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Lembur;
+use App\Models\GajiBorongan;
+use App\Models\Karyawan;
 
 class LemburController extends Controller
 {
-    public function approveLembur($id)
+    public function ajukanLembur(Request $request)
     {
-        $lembur = Lembur::findOrFail($id);
-        $lembur->status_lembur = 'Disetujui';
-        $lembur->save();
+        $request->validate([
+            'id_karyawan' => 'required|exists:karyawan,id_karyawan',
+            'tanggal' => 'required|date',
+        ]);
 
-        return redirect()->back()->with('success', 'Lembur telah disetujui.');
+        $lembur = Lembur::create([
+            'id_karyawan' => $request->id_karyawan,
+            'tanggal' => $request->tanggal,
+            'status_lembur' => 'pending',
+        ]);
+
+        return redirect()->back()->with('status', 'Pengajuan lembur berhasil, menunggu persetujuan.');
     }
 
-    public function rejectLembur($id)
+    public function setujuiLembur($id)
     {
         $lembur = Lembur::findOrFail($id);
-        $lembur->status_lembur = 'Ditolak';
+        $lembur->status_lembur = 'approved';
+        $lembur->jam_lembur = now()->format('H:i:s'); // Set waktu lembur saat ini
+        $lembur->bonus_lembur = $this->hitungBonusLembur($lembur);
         $lembur->save();
 
-        return redirect()->back()->with('success', 'Lembur telah ditolak.');
+        // Update total lembur dan bonus lembur pada tabel gaji_borongan
+        $gajiBorongan = GajiBorongan::where('id_karyawan', $lembur->id_karyawan)->first();
+        if ($gajiBorongan) {
+            $gajiBorongan->total_lembur += 1; // Tambah total lembur
+            $gajiBorongan->bonus_lembur += $lembur->bonus_lembur; // Tambah bonus lembur
+            $gajiBorongan->save();
+        }
+
+        return redirect()->back()->with('status', 'Lembur disetujui.');
+    }
+
+    public function hitungBonusLembur(Lembur $lembur)
+    {
+        // Asumsi bonus lembur adalah Rp 50.000 per jam
+        return 50000; 
     }
 }
