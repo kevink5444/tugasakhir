@@ -40,6 +40,11 @@
                             <a href="{{ route('gaji_harian.ambil_gaji', $gaji->id_gaji_harian) }}" class="btn btn-success btn-sm">Ambil Gaji</a>
                         @endif
                         <a href="{{ route('gaji_harian.edit', $gaji->id_gaji_harian) }}" class="btn btn-warning btn-sm">Edit</a>
+                        <form action="{{ route('gaji_harian.destroy', $gaji->id_gaji_harian) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</button>
+                        </form>
                         <a href="{{ route('gaji_harian.cetak_slip', $gaji->id_gaji_harian) }}" class="btn btn-info btn-sm">Cetak Slip</a>
                     </td>
                 </tr>

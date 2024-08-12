@@ -90,6 +90,7 @@ Route::post('/lembur/setujui/{id}', [LemburController::class, 'setujuiLembur'])-
     Route::prefix('penggajian')->group(function () {
         Route::get('/penggajian/gaji_borongan/{id_gaji_borongan}/cetak_pdf', [PenggajianController::class, 'cetakSlipGajiPdf'])->name('gaji_borongan.cetak_pdf');
         Route::get('/gaji-borongan/{id}/download-pdf', [GajiBoronganController::class, 'downloadPdf'])->name('gaji-borongan.downloadPdf');
+        Route::delete('/gaji_harian/{id}', [GajiHarianController::class, 'destroy'])->name('gaji_harian.destroy');
 
         Route::get('/', [PenggajianController::class, 'index'])->name('penggajian.index');
         Route::get('gaji-bulanan', [PenggajianController::class, 'showGajiBulanan'])->name('penggajian.gaji_bulanan');

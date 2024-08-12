@@ -9,8 +9,8 @@
         <div class="form-group">
             <label for="id_karyawan">Nama Karyawan</label>
             <select name="id_karyawan" id="id_karyawan" class="form-control">
-                @foreach($karyawan as $k)
-                    <option value="{{ $k->id }}" {{ $gaji_harian->id_karyawan == $k->id ? 'selected' : '' }}>{{ $k->nama }}</option>
+                @foreach($karyawan as $karyawan)
+                    <option value="{{ $karyawan->id_karyawan }}" {{ $gaji_harian->id_karyawan == $karyawan->id_karyawan ? 'selected' : '' }}>{{ $karyawan->nama_karyawan }}</option>
                 @endforeach
             </select>
         </div>
@@ -21,8 +21,8 @@
         <div class="form-group">
             <label for="id_pekerjaan">Jenis Pekerjaan</label>
             <select name="id_pekerjaan" id="id_pekerjaan" class="form-control">
-                @foreach($pekerjaan as $p)
-                    <option value="{{ $p->id }}" {{ $gaji_harian->id_pekerjaan == $p->id ? 'selected' : '' }}>{{ $p->nama_pekerjaan }}</option>
+                @foreach($pekerjaan as $pekerjaan)
+                    <option value="{{ $pekerjaan->id }}" {{ $gaji_harian->id_pekerjaan == $pekerjaan->id_pekerjaan ? 'selected' : '' }}>{{ $pekerjaan->nama_pekerjaan }}</option>
                 @endforeach
             </select>
         </div>

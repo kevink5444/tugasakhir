@@ -169,4 +169,15 @@ class GajiHarianController extends Controller
         // Download PDF
         return $dompdf->stream('slip_gaji_'.$gaji_harian->id_gaji_harian.'.pdf');
     }
+    public function destroy($id)
+{
+    $gajiHarian = GajiHarian::find($id);
+
+    if ($gajiHarian) {
+        $gajiHarian->delete();
+        return redirect()->route('gaji_harian.index')->with('success', 'Data gaji harian berhasil dihapus.');
+    } else {
+        return redirect()->route('gaji_harian.index')->with('error', 'Data gaji harian tidak ditemukan.');
+    }
+}
 }
