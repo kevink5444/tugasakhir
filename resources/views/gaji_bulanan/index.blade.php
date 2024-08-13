@@ -31,8 +31,8 @@
         <tbody>
             @foreach($gajiBulanan as $gaji)
                 <tr>
-                    <td>{{ $gaji->id }}</td>
-                    <td>{{ $gaji->karyawan->name }}</td>
+                    <td>{{ $gaji->id_gaji_harian }}</td>
+                    <td>{{ $gaji->karyawan->nama_karyawan }}</td>
                     <td>{{ $gaji->bulan }}</td>
                     <td>Rp {{ number_format($gaji->gaji_pokok) }}</td>
                     <td>Rp {{ number_format($gaji->total_gaji) }}</td>

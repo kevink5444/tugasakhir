@@ -8,8 +8,10 @@
         <div class="form-group">
             <label for="id_karyawan">Nama Karyawan</label>
             <select name="id_karyawan" id="id_karyawan" class="form-control">
-                @foreach($karyawan as $k)
-                    <option value="{{ $k->id_karyawan }}" {{ old('id_karyawan') == $k->id ? 'selected' : '' }}>{{ $k->id_karyawan }}</option>
+                @foreach($karyawan as $karyawanItem)
+                    <option value="{{ $karyawanItem->id_karyawan }}" {{ old('id_karyawan') == $karyawanItem->id_karyawan ? 'selected' : '' }}>
+                        {{ $karyawanItem->nama_karyawan }}
+                    </option>
                 @endforeach
             </select>
         </div>
@@ -18,13 +20,12 @@
             <input type="date" name="tanggal" id="tanggal" class="form-control" value="{{ old('tanggal') }}">
         </div>
         <div class="form-group">
-            <label for="id_pekerjaan">Jenis Pekerjaan</label>
-            <select name="id_pekerjaan" id="id_pekerjaan" class="form-control">
-                @foreach($pekerjaan as $p)
-                    <option value="{{ $p->id }}" {{ old('id_pekerjaan') == $p->id ? 'selected' : '' }}>{{ $p->nama_pekerjaan }}</option>
-                @endforeach
-            </select>
-        </div>
+            <label for="jenis_pekerjaan">Jenis Pekerjaan</label>
+        <select name="id_pekerjaan" id="id_pekerjaan" class="form-control">
+            @foreach($pekerjaan as $pekerjaan)
+                <option value="{{ $pekerjaan->id_pekerjaan }}" {{ old('id_pekerjaan') == $pekerjaan->id_pekerjaan ? 'selected' : '' }}>{{ $pekerjaan->nama_pekerjaan }}</option>
+            @endforeach
+        </select>
         <div class="form-group">
             <label for="jumlah_pekerjaan">Jumlah Pekerjaan</label>
             <input type="number" name="jumlah_pekerjaan" id="jumlah_pekerjaan" class="form-control" value="{{ old('jumlah_pekerjaan') }}">

@@ -91,7 +91,6 @@ Route::post('/lembur/setujui/{id}', [LemburController::class, 'setujuiLembur'])-
         Route::get('/penggajian/gaji_borongan/{id_gaji_borongan}/cetak_pdf', [PenggajianController::class, 'cetakSlipGajiPdf'])->name('gaji_borongan.cetak_pdf');
         Route::get('/gaji-borongan/{id}/download-pdf', [GajiBoronganController::class, 'downloadPdf'])->name('gaji-borongan.downloadPdf');
         Route::delete('/gaji_harian/{id}', [GajiHarianController::class, 'destroy'])->name('gaji_harian.destroy');
-
         Route::get('/', [PenggajianController::class, 'index'])->name('penggajian.index');
         Route::get('gaji-bulanan', [PenggajianController::class, 'showGajiBulanan'])->name('penggajian.gaji_bulanan');
         Route::get('gaji-mingguan', [PenggajianController::class, 'showGajiMingguan'])->name('penggajian.gaji_mingguan');
@@ -99,7 +98,18 @@ Route::post('/lembur/setujui/{id}', [LemburController::class, 'setujuiLembur'])-
         Route::post('generate-gaji-bulanan', [PenggajianController::class, 'generateGajiBulanan'])->name('penggajian.generate_gaji_bulanan');
         Route::post('generate-gaji-mingguan', [PenggajianController::class, 'generateGajiMingguan'])->name('penggajian.generate_gaji_mingguan');
         Route::resource('gaji_borongan', GajiBoronganController::class);
+        // Rute untuk menampilkan form tambah gaji harian
+Route::get('/gaji_harian/create', [GajiHarianController::class, 'create'])->name('gaji_harian.create');
 
+// Rute untuk menyimpan data gaji harian baru
+Route::post('/gaji_harian', [GajiHarianController::class, 'store'])->name('gaji_harian.store');
+
+// Rute untuk menampilkan form edit gaji harian
+Route::get('/gaji_harian/{id}/edit', [GajiHarianController::class, 'edit'])->name('gaji_harian.edit');
+
+// Rute untuk memperbarui data gaji harian
+Route::put('/gaji_harian/{id}', [GajiHarianController::class, 'update'])->name('gaji_harian.update');
+Route::get('/gaji_harian/{id}/download-pdf', [GajiHarianController::class, 'downloadPdf'])->name('gaji_harian.downloadPdf');
         Route::resource('gaji_bulanan', GajiBulananController::class);
         Route::get('gaji_borongan/{id}/cetak_slip', [GajiBoronganController::class, 'cetakSlipGaji'])->name('gaji_borongan.cetak_slip');
 Route::put('gaji_borongan/{id}/ambil_gaji', [GajiBoronganController::class, 'ambilGaji'])->name('gaji_borongan.ambil_gaji');

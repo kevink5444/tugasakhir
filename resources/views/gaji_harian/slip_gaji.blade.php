@@ -73,52 +73,52 @@
         <table>
             <tr>
                 <th>ID Gaji Harian</th>
-                <td>{{ $gaji_harian->id_gaji_harian }}</td>
+                <td>{{ $gajiHarian->id_gaji_harian }}</td>
             </tr>
             <tr>
                 <th>Nama Karyawan</th>
-                <td>{{ $gaji_harian->karyawan->nama_karyawan }}</td>
+                <td>{{ $gajiHarian->karyawan->nama_karyawan }}</td>
             </tr>
             <tr>
                 <th>Tanggal</th>
-                <td>{{ \Carbon\Carbon::parse($gaji_harian->tanggal)->format('d-m-Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($gajiHarian->tanggal)->format('d-m-Y') }}</td>
             </tr>
             <tr>
                 <th>Jenis Pekerjaan</th>
-                <td>{{ $gaji_harian->pekerjaan->nama_pekerjaan }}</td>
+                <td>{{ $gajiHarian->pekerjaan->nama_pekerjaan }}</td>
             </tr>
             <tr>
                 <th>Jumlah Pekerjaan</th>
-                <td>{{ $gaji_harian->jumlah_pekerjaan }}</td>
+                <td>{{ $gajiHarian->jumlah_pekerjaan }}</td>
             </tr>
             <tr>
                 <th>Target Harian</th>
-                <td>{{ $gaji_harian->target_harian }}</td>
+                <td>{{ $gajiHarian->target_harian }}</td>
             </tr>
             <tr>
                 <th>Capaian Harian</th>
-                <td>{{ $gaji_harian->capaian_harian }}</td>
+                <td>{{ $gajiHarian->capaian_harian }}</td>
             </tr>
             <tr>
                 <th>Gaji Harian</th>
-                <td>Rp {{ number_format($gaji_harian->gaji_harian, 0, ',', '.') }}</td>
+                <td>Rp {{ number_format($gajiHarian->gaji_harian, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <th>Bonus Harian</th>
-                <td>Rp {{ number_format($gaji_harian->bonus_harian, 0, ',', '.') }}</td>
+                <td>Rp {{ number_format($gajiHarian->bonus_harian, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <th>Denda Harian</th>
-                <td>Rp {{ number_format($gaji_harian->denda_harian, 0, ',', '.') }}</td>
+                <td>Rp {{ number_format($gajiHarian->denda_harian, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <th>Status Pengambilan</th>
-                <td>{{ $gaji_harian->status_pengambilan ? 'Sudah Diambil' : 'Belum Diambil' }}</td>
+                <td>{{ $gajiHarian->status_pengambilan ? 'Sudah Diambil' : 'Belum Diambil' }}</td>
             </tr>
         </table>
 
         <div class="download-pdf">
-            <form action="{{ route('gaji_harian.downloadPdf', $gaji_harian->id_gaji_harian) }}" method="GET" id="download-form">
+            <form action="{{ route('gaji_harian.downloadPdf', $gajiHarian->id_gaji_harian) }}" method="GET" id="download-form">
                 <button type="submit">Unduh PDF</button>
             </form>
         </div>

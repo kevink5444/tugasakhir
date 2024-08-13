@@ -3,6 +3,15 @@
 @section('content')
 <div class="container">
     <h1>Edit Gaji Harian</h1>
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
     <form action="{{ route('gaji_harian.update', $gaji_harian->id_gaji_harian) }}" method="POST">
         @csrf
         @method('PUT')
@@ -22,7 +31,7 @@
             <label for="id_pekerjaan">Jenis Pekerjaan</label>
             <select name="id_pekerjaan" id="id_pekerjaan" class="form-control">
                 @foreach($pekerjaan as $pekerjaan)
-                    <option value="{{ $pekerjaan->id }}" {{ $gaji_harian->id_pekerjaan == $pekerjaan->id_pekerjaan ? 'selected' : '' }}>{{ $pekerjaan->nama_pekerjaan }}</option>
+                    <option value="{{ $pekerjaan->id_pekerjaan }}" {{ $gaji_harian->id_pekerjaan == $pekerjaan->id_pekerjaan ? 'selected' : '' }}>{{ $pekerjaan->nama_pekerjaan }}</option>
                 @endforeach
             </select>
         </div>

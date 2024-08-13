@@ -25,7 +25,7 @@
             @foreach($gaji_harian as $gaji)
                 <tr>
                     <td>{{ $gaji->id_gaji_harian }}</td>
-                    <td>{{ $gaji->karyawan->id_karyawan }}</td>
+                    <td>{{ $gaji->karyawan->nama_karyawan }}</td>
                     <td>{{ $gaji->tanggal }}</td>
                     <td>{{ $gaji->pekerjaan->nama_pekerjaan }}</td>
                     <td>{{ $gaji->jumlah_pekerjaan }}</td>
@@ -45,7 +45,7 @@
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</button>
                         </form>
-                        <a href="{{ route('gaji_harian.cetak_slip', $gaji->id_gaji_harian) }}" class="btn btn-info btn-sm">Cetak Slip</a>
+                        <a href="{{ route('gaji_harian.cetak_slip', $gaji->id_gaji_harian) }}" class="btn btn-info btn-sm">Slip Gaji</a>
                     </td>
                 </tr>
             @endforeach

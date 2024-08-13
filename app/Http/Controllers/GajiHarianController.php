@@ -9,7 +9,7 @@ use App\Models\Pekerjaan;
 use App\Models\Absensi;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 class GajiHarianController extends Controller
 {
     public function index()
@@ -26,6 +26,7 @@ class GajiHarianController extends Controller
     }
 
     public function store(Request $request)
+    
     {
         $request->validate([
             'id_karyawan' => 'required|exists:karyawan,id_karyawan',
@@ -149,26 +150,18 @@ class GajiHarianController extends Controller
 
         return redirect()->route('gaji_harian.index')->with('success', 'Gaji berhasil diambil.');
     }
-
     public function cetakSlipGaji($id)
-    {
-        $gaji_harian = GajiHarian::with('karyawan', 'pekerjaan')->findOrFail($id);
+{
+    $gajiHarian = GajiHarian::findOrFail($id);
+    return view('gaji_harian.slip_gaji', compact('gajiHarian'));
+}
 
-        // Setup Dompdf
-        $options = new Options();
-        $options->set('isHtml5ParserEnabled', true);
-        $options->set('isPhpEnabled', true);
-        $dompdf = new Dompdf($options);
-
-        // Render view into PDF
-        $html = view('gaji_harian.slip_gaji', compact('gaji_harian'))->render();
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-
-        // Download PDF
-        return $dompdf->stream('slip_gaji_'.$gaji_harian->id_gaji_harian.'.pdf');
-    }
+    public function downloadPdf($id)
+{
+    $gajiHarian = GajiHarian::findOrFail($id);
+    $pdf = Pdf::loadView('gaji_harian.slip_gaji', compact('gajiHarian'));
+    return $pdf->download('slip_gaji_harian' . $gajiHarian->id . '.pdf');
+}
     public function destroy($id)
 {
     $gajiHarian = GajiHarian::find($id);
@@ -179,5 +172,6 @@ class GajiHarianController extends Controller
     } else {
         return redirect()->route('gaji_harian.index')->with('error', 'Data gaji harian tidak ditemukan.');
     }
+    
 }
 }
