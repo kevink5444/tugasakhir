@@ -12,6 +12,7 @@ class GajiBulanan extends Model
     protected $table = 'gaji_bulanan';
 
     protected $fillable = [
+
         'id_karyawan',
         'bulan',
         'gaji_pokok',
@@ -23,13 +24,10 @@ class GajiBulanan extends Model
         'total_lembur',
         'bonus_lembur',
         'denda',
-        'is_salary_taken',
+        'status_pengambilan',
     ];
-
-    protected $casts = [
-        'is_salary_taken' => 'boolean',
-    ];
-
+    protected $primaryKey = 'id_gaji_bulanan';
+    
     public function karyawan()
     {
         return $this->belongsTo(Karyawan::class, 'id_karyawan');

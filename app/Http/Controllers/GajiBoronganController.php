@@ -6,8 +6,6 @@ use App\Models\GajiBorongan;
 use App\Models\Karyawan;
 use App\Models\Absensi;
 use Carbon\Carbon;
-use Dompdf\Dompdf;
-use Dompdf\Options;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class GajiBoronganController extends Controller
@@ -25,174 +23,168 @@ class GajiBoronganController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'id_karyawan' => 'required|exists:karyawan,id_karyawan',
-        'minggu_mulai' => 'required|date',
-        'minggu_selesai' => 'required|date|after:minggu_mulai',
-        'pekerjaan' => 'required|string',
-        'total_pekerjaan' => 'required|numeric',
-        'total_lembur' => 'required|numeric',
-        'bonus_lembur' => 'required|numeric',
-    ]);
+    {
+        $request->validate([
+            'id_karyawan' => 'required|exists:karyawan,id_karyawan',
+            'tanggal' => 'required|date',
+            'pekerjaan' => 'required|in:kancing,lubang,obras_baju,obras_tangan,obras_lengan',
+            'jumlah_pekerjaan' => 'required|integer',
+            'capaian_harian' => 'required|integer',
+        ]);
 
-    $total_gaji_borongan = $this->calculateTotalGaji($request->id_karyawan, $request->pekerjaan, $request->total_pekerjaan);
-    $total_bonus = $this->calculateTotalBonus($request->id_karyawan, $request->minggu_mulai, $request->minggu_selesai);
-    $total_denda = $this->calculateTotalDenda($request->id_karyawan, $request->minggu_mulai, $request->minggu_selesai);
-
-    $gaji_borongan = new GajiBorongan();
-    $gaji_borongan->id_karyawan = $request->id_karyawan;
-    $gaji_borongan->minggu_mulai = $request->minggu_mulai;
-    $gaji_borongan->minggu_selesai = $request->minggu_selesai;
-    $gaji_borongan->total_gaji_borongan = $total_gaji_borongan;
-    $gaji_borongan->total_bonus = $total_bonus;
-    $gaji_borongan->total_denda = $total_denda;
-    $gaji_borongan->total_pekerjaan = json_encode([$request->pekerjaan => $request->total_pekerjaan]);
-    $gaji_borongan->total_lembur = $request->total_lembur;
-    $gaji_borongan->bonus_lembur = $request->bonus_lembur;
-    $gaji_borongan->status_pengambilan = 0;
-    $gaji_borongan->save();
-
-        return redirect()->route('gaji_borongan.index')->with('success', 'Gaji borongan berhasil ditambahkan.');
-    }
-
-    private function calculateTotalGaji($pekerjaan, $total_pekerjaan)
-    {$total_gaji = 0;
-        $gaji_per_item = [
+        $harga_per_unit = [
             'kancing' => 1200,
-            'lubang' => 1300,
+            'lubang' => 1260,
             'obras_baju' => 1900,
             'obras_tangan' => 1500,
             'obras_lengan' => 1200,
         ];
 
-        if (array_key_exists($pekerjaan, $gaji_per_item)) {
-            $total_gaji = $total_pekerjaan * $gaji_per_item[$pekerjaan];
-        }
+        $capaian_harian = [
+            'kancing' => 350,
+            'lubang' => 300,
+            'obras_baju' => 550,
+            'obras_tangan' => 600,
+            'obras_lengan' => 1000,
+        ];
 
-        return $total_gaji;
-    }
+        $pekerjaan = $request->pekerjaan;
+        $jumlah_pekerjaan = $request->jumlah_pekerjaan;
+        $capaian_harian = $capaian_harian[$pekerjaan];
+        $harga = $harga_per_unit[$pekerjaan];
 
-    private function calculateTotalBonus($id_karyawan, $minggu_mulai, $minggu_selesai)
-    {
-        $total_bonus = 0;
-        $absensi = Absensi::where('id_karyawan', $id_karyawan)
-                            ->whereBetween('tanggal', [$minggu_mulai, $minggu_selesai])
-                            ->get();
+        $total_gaji = $capaian_harian * $harga;
+        $bonus = ($jumlah_pekerjaan >= $capaian_harian) ? 0.20 * $total_gaji : 0;
+        $denda = ($jumlah_pekerjaan < $capaian_harian) ? 0.05 * $total_gaji : 0;
 
-        foreach ($absensi as $absen) {
-            $jam_masuk = new Carbon($absen->jam_masuk);
+        $absensi = Absensi::where('id_karyawan', $request->id_karyawan)
+                          ->whereDate('tanggal', $request->tanggal)
+                          ->first();
+        $bonus_absensi = 0;
+        $denda_absensi = 0;
+        if ($absensi) {
+            $jam_masuk = new Carbon($absensi->jam_masuk);
             if ($jam_masuk->hour < 8 || ($jam_masuk->hour == 8 && $jam_masuk->minute <= 0)) {
-                $total_bonus += 25000; // Bonus Rp 25.000 untuk datang tepat waktu atau lebih awal
+                $bonus_absensi = 25000;
+            } else if ($jam_masuk->hour > 8) {
+                $denda_absensi = 10000;
             }
         }
 
-        return $total_bonus;
+        GajiBorongan::create([
+            'id_karyawan' => $request->id_karyawan,
+            'tanggal' => $request->tanggal,
+            'pekerjaan' => $pekerjaan,
+            'capaian_harian' => $capaian_harian,
+            'harga_per_unit' => $harga,
+            'total_gaji' => $total_gaji,
+            'bonus' => $bonus,
+            'denda' => $denda,
+            'bonus_absensi' => $bonus_absensi,
+            'denda_absensi' => $denda_absensi,
+        ]);
+
+        return redirect()->route('gaji_borongan.index')->with('success', 'Gaji borongan berhasil ditambahkan.');
     }
 
-    private function calculateTotalDenda($id_karyawan, $minggu_mulai, $minggu_selesai)
+    public function edit($id)
     {
-        $total_denda = 0;
-        $absensi = Absensi::where('id_karyawan', $id_karyawan)
-                            ->whereBetween('tanggal', [$minggu_mulai, $minggu_selesai])
-                            ->get();
-
-        foreach ($absensi as $absen) {
-            $jam_masuk = new Carbon($absen->jam_masuk);
-            if ($jam_masuk->hour > 8 || ($jam_masuk->hour == 8 && $jam_masuk->minute > 5)) {
-                $total_denda += 10000; // Denda Rp 10.000 untuk keterlambatan lebih dari 5 menit
-            }
-        }
-
-        return $total_denda;
-    }
-
-    public function edit($id_karyawan)
-    {
-        $gaji_borongan = GajiBorongan::findOrFail($id_karyawan);
+        $gaji_borongan = GajiBorongan::findOrFail($id);
         $karyawan = Karyawan::all();
-        
-        // Ubah $total_pekerjaan menjadi format yang sesuai
-        $total_pekerjaan = json_decode($gaji_borongan->total_pekerjaan, true);
-        
-        return view('gaji_borongan.edit', compact('gaji_borongan', 'karyawan', 'total_pekerjaan'));
+        return view('gaji_borongan.edit', compact('gaji_borongan', 'karyawan'));
     }
 
-
-    
-    public function update(Request $request, $id_karyawan)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'id_karyawan' => 'required|exists:karyawan,id_karyawan',
-            'minggu_mulai' => 'required|date',
-            'minggu_selesai' => 'required|date|after:minggu_mulai',
-            'total_pekerjaan' => 'required|array',
-            'total_pekerjaan.*' => 'required|numeric',
-            'total_lembur' => 'required|numeric',
-            'bonus_lembur' => 'required|numeric',
-            'status_pengambilan' => 'required|boolean',
+            'tanggal' => 'required|date',
+            'pekerjaan' => 'required|in:kancing,lubang,obras_baju,obras_tangan,obras_lengan',
+            'jumlah_pekerjaan' => 'required|integer',
+            'capaian_harian' => 'required|integer',
         ]);
-    
-        $gaji_borongan = GajiBorongan::findOrFail($id_karyawan);
-        $total_gaji_borongan = $this->calculateTotalGaji($request->id_karyawan, $request->total_pekerjaan);
-        $total_bonus = $this->calculateTotalBonus($request->id_karyawan, $request->minggu_mulai, $request->minggu_selesai);
-        $total_denda = $this->calculateTotalDenda($request->id_karyawan, $request->minggu_mulai, $request->minggu_selesai);
-    
+
+        $gaji_borongan = GajiBorongan::findOrFail($id);
+        $harga_per_unit = [
+            'kancing' => 1200,
+            'lubang' => 1260,
+            'obras_baju' => 1900,
+            'obras_tangan' => 1500,
+            'obras_lengan' => 1200,
+        ];
+
+        $capaian_harian = [
+            'kancing' => 350,
+            'lubang' => 300,
+            'obras_baju' => 550,
+            'obras_tangan' => 600,
+            'obras_lengan' => 1000,
+        ];
+
+        $pekerjaan = $request->pekerjaan;
+        $jumlah_pekerjaan = $request->jumlah_pekerjaan;
+        $target = $capaian_harian[$pekerjaan];
+        $harga = $harga_per_unit[$pekerjaan];
+
+        $total_gaji = $jumlah_pekerjaan * $harga;
+        $bonus = ($jumlah_pekerjaan >= $target) ? 0.20 * $total_gaji : 0;
+        $denda = ($jumlah_pekerjaan < $target) ? 0.05 * $total_gaji : 0;
+
+        $absensi = Absensi::where('id_karyawan', $request->id_karyawan)
+                          ->whereDate('tanggal', $request->tanggal)
+                          ->first();
+        $bonus_absensi = 0;
+        $denda_absensi = 0;
+        if ($absensi) {
+            $jam_masuk = new Carbon($absensi->jam_masuk);
+            if ($jam_masuk->hour < 8 || ($jam_masuk->hour == 8 && $jam_masuk->minute <= 0)) {
+                $bonus_absensi = 25000;
+            } else if ($jam_masuk->hour > 8) {
+                $denda_absensi = 10000;
+            }
+        }
+
         $gaji_borongan->update([
             'id_karyawan' => $request->id_karyawan,
-            'minggu_mulai' => $request->minggu_mulai,
-            'minggu_selesai' => $request->minggu_selesai,
-            'total_gaji_borongan' => $total_gaji_borongan,
-            'total_bonus' => $total_bonus,
-            'total_denda' => $total_denda,
-            'total_pekerjaan' => json_encode($request->total_pekerjaan), // Encode array to JSON
-            'total_lembur' => $request->total_lembur,
-            'bonus_lembur' => $request->bonus_lembur,
-            'status_pengambilan' => $request->status_pengambilan,
+            'tanggal' => $request->tanggal,
+            'pekerjaan' => $pekerjaan,
+            'jumlah_pekerjaan' => $jumlah_pekerjaan,
+            'capaian_harian' => $capaian_harian,
+            'harga_per_unit' => $harga,
+            'total_gaji' => $total_gaji,
+            'bonus' => $bonus,
+            'denda' => $denda,
+            'bonus_absensi' => $bonus_absensi,
+            'denda_absensi' => $denda_absensi,
         ]);
-    
+
         return redirect()->route('gaji_borongan.index')->with('success', 'Gaji borongan berhasil diperbarui.');
     }
 
-    public function destroy($id_karyawan)
+    public function destroy($id)
     {
-        $gaji_borongan = GajiBorongan::findOrFail($id_karyawan);
+        $gaji_borongan = GajiBorongan::findOrFail($id);
         $gaji_borongan->delete();
-
         return redirect()->route('gaji_borongan.index')->with('success', 'Gaji borongan berhasil dihapus.');
     }
-
-    public function cetakSlipGaji($id_gaji_borongan)
-{
-    $gaji = GajiBorongan::with('karyawan')->findOrFail($id_gaji_borongan);
-    return view('gaji_borongan.slip_gaji', compact('gaji'));
-}
 
     public function ambilGaji($id)
     {
         $gaji_borongan = GajiBorongan::findOrFail($id);
+
         if ($gaji_borongan->status_pengambilan) {
-            return redirect()->back()->with('error', 'Gaji sudah diambil.');
+            return redirect()->route('gaji_borongan.index')->with('error', 'Gaji sudah diambil.');
         }
 
-        $gaji_borongan->status_pengambilan = 1;
-        $gaji_borongan->save();
+        $gaji_borongan->update(['status_pengambilan' => 1]);
 
         return redirect()->route('gaji_borongan.index')->with('success', 'Gaji berhasil diambil.');
     }
-    public function downloadPdf($id)
+
+    public function cetakSlipGaji($id)
     {
-        // Fetch the gaji borongan record based on the ID
-        $gaji = GajiBorongan::findOrFail($id);
-
-        // Load the view and pass the data to it
-        $pdf = PDF::loadView('gaji_borongan.slip_gaji', compact('gaji'));
-
-        // Return the PDF download response
-        return $pdf->download('Slip_Gaji_Borongan_' . $gaji->id_gaji_borongan . '.pdf');
-
-        return redirect()->route('gaji_borongan.index')->with('success', 'Slip Gaji berhasil diunduh.');
-    
+        $gaji_borongan = GajiBorongan::findOrFail($id);
+        $pdf = Pdf::loadView('gaji_borongan.slip', compact('gaji_borongan'));
+        return $pdf->download('slip_gaji_' . $gaji_borongan->id_gaji_borongan . '.pdf');
     }
-    
 }

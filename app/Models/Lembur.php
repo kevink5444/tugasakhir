@@ -6,10 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 class Lembur extends Model
 {
     protected $table = 'lembur';
-    protected $fillable = ['id_karyawan', 'jam_lembur', 'tanggal', 'status_lembur', 'bonus_lembur'];
-
+    protected $fillable = [
+        'id_karyawan', 'jam_lembur', 'tanggal_lembur', 
+        'status_lembur', 'bonus_lembur'
+    ];
+    protected $primaryKey = 'id_lembur';
     public function karyawan()
     {
         return $this->belongsTo(Karyawan::class, 'id_karyawan');
     }
+
+    public function hitungBonusLembur($jam_lembur, $gaji_per_hari)
+    {
+        $rate_per_jam = $gaji_per_hari / 8; // Misal, dihitung dari gaji per 8 jam kerja
+        return $jam_lembur * $rate_per_jam; 
+    }
 }
+

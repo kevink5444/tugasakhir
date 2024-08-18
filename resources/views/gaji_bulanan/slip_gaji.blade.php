@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slip Gaji Harian</title>
+    <title>Slip Gaji Bulanan</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -69,62 +69,71 @@
 </head>
 <body>
     <div class="slip-gaji">
-        <h2>Slip Gaji Harian</h2>
+        <h2>Slip Gaji Bulanan</h2>
         <table>
             <tr>
-                <th>ID Gaji Harian</th>
-                <td>{{ $gaji_harian->id_gaji_harian }}</td>
+                <th>ID Gaji Bulanan</th>
+                <td>{{ $gajiBulanan->id_gaji_bulanan }}</td>
             </tr>
             <tr>
                 <th>Nama Karyawan</th>
-                <td>{{ $gaji_harian->karyawan->nama_karyawan }}</td>
+                <td>{{ $gajiBulanan->karyawan->nama_karyawan }}</td>
             </tr>
             <tr>
-                <th>Tanggal Awal</th>
-                <td>{{ \Carbon\Carbon::parse($gaji_harian->tanggal_awal)->format('d-m-Y') }}</td>
+                <th>Bulan</th>
+                <td>{{ \Carbon\Carbon::parse($gajiBulanan->bulan)->format('F Y') }}</td>
             </tr>
             <tr>
-                <th>Tanggal Akhir</th>
-                <td>{{ \Carbon\Carbon::parse($gaji_harian->tanggal_akhir)->format('d-m-Y') }}</td>
+                <th>Gaji Pokok</th>
+                <td>Rp {{ number_format($gajiBulanan->gaji_pokok, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <th>Jenis Pekerjaan</th>
-                <td>{{ $gaji_harian->pekerjaan->nama_pekerjaan }}</td>
+                <th>Uang Transport</th>
+                <td>Rp {{ number_format($gajiBulanan->uang_transport, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <th>Jumlah Pekerjaan</th>
-                <td>{{ $gaji_harian->jumlah_pekerjaan }}</td>
+                <th>Uang Makan</th>
+                <td>Rp {{ number_format($gajiBulanan->uang_makan, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <th>Target Harian</th>
-                <td>{{ $gaji_harian->target_harian }}</td>
+                <th>Bonus</th>
+                <td>Rp {{ number_format($gajiBulanan->bonus, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <th>Capaian Harian</th>
-                <td>{{ $gaji_harian->capaian_harian }}</td>
+                <th>THR</th>
+                <td>Rp {{ number_format($gajiBulanan->thr, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <th>Gaji Harian</th>
-                <td>Rp {{ number_format($gaji_harian->gaji_harian, 0, ',', '.') }}</td>
+                <th>Total Lembur</th>
+                <td>Rp {{ number_format($gajiBulanan->total_lembur, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <th>Bonus Harian</th>
-                <td>Rp {{ number_format($gaji_harian->bonus_harian, 0, ',', '.') }}</td>
+                <th>Bonus Lembur</th>
+                <td>Rp {{ number_format($gajiBulanan->bonus_lembur, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <th>Denda Harian</th>
-                <td>Rp {{ number_format($gaji_harian->denda_harian, 0, ',', '.') }}</td>
+                <th>Denda</th>
+                <td>Rp {{ number_format($gajiBulanan->denda, 0, ',', '.') }}</td>
             </tr>
             <tr class="total">
                 <th>Total Gaji</th>
-                <td>Rp {{ number_format($totalGajiPeriode, 0, ',', '.') }}</td>
+                <td>Rp {{ number_format($gajiBulanan->total_gaji, 0, ',', '.') }}</td>
             </tr>
         </table>
+
         <div class="download-pdf">
-            <form action="{{ route('gaji_harian.downloadPdf', $gaji_harian->id_gaji_harian) }}" method="GET">
-                <button type="submit">Download PDF</button>
+            <form action="{{ route('gaji_bulanan.slip_gaji', $gajiBulanan->id_gaji_bulanan) }}" method="GET" id="download-form">
+                <button type="submit">Unduh PDF</button>
             </form>
         </div>
     </div>
+
+    <script>
+        document.getElementById('download-form').addEventListener('submit', function() {
+            setTimeout(function() {
+                window.location.href = '{{ route('gaji_bulanan.index') }}';
+            }, 500); // Redirect after download
+        });
+    </script>
 </body>
 </html>

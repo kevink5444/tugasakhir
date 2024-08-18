@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-use Dompdf\Dompdf;
-use Dompdf\Options;
+
 use App\Models\GajiBulanan;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Dompdf\Options;
+use App\Models\Absensi;
+use App\Models\Lembur;
 
 class GajiBulananController extends Controller
 {
@@ -23,32 +25,55 @@ class GajiBulananController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'id_karyawan' => 'required|exists:karyawan,id',
-            'bulan' => 'required|date_format:Y-m',
-        ]);
+{
+    $request->validate([
+        'id_karyawan' => 'required|exists:karyawan,id_karyawan',
+        'bulan' => 'required|date_format:Y-m',
+    ]);
+    
+    $bulan = $request->bulan . '-01';
+    $karyawan = Karyawan::find($request->id_karyawan);
+    $posisi = $karyawan->posisi; // Dapatkan posisi dari objek karyawan
 
-        $karyawan = Karyawan::find($request->id_karyawan);
-        $gajiPokok = ($karyawan->position === 'admin') ? 3000000 : 2500000;
+    $gajiPokok = $this->getGajiPokokByPosisi($posisi); // Panggil method untuk mendapatkan gaji pokok
+    
+    $uangTransport = 350000;
+    $uangMakan = 300000;
 
-        GajiBulanan::create([
-            'id_karyawan' => $request->id_karyawan,
-            'bulan' => $request->bulan,
-            'gaji_pokok' => $gajiPokok,
-            'uang_transport' => 0,
-            'uang_makan' => 0,
-            'bonus' => 0,
-            'thr' => 0,
-            'total_gaji' => $gajiPokok,
-            'total_lembur' => 0,
-            'bonus_lembur' => 0,
-            'denda' => 0,
-            'is_salary_taken' => false,
-        ]);
+    GajiBulanan::create([
+        'id_karyawan' => $request->id_karyawan,
+        'bulan' => $bulan,
+        'gaji_pokok' => $gajiPokok,
+        'uang_transport' => $uangTransport,
+        'uang_makan' => $uangMakan,
+        'bonus' => 0,
+        'thr' => 0,
+        'total_gaji' => $gajiPokok + $uangTransport + $uangMakan,
+        'total_lembur' => 0,
+        'bonus_lembur' => 0,
+        'denda' => 0,
+        'status_pengambilan' => false,
+    ]);
 
-        return redirect()->route('gaji_bulanan.index');
+    return redirect()->route('gaji_bulanan.index');
+}
+private function getGajiPokokByPosisi($posisi)
+{
+    switch ($posisi) {
+        case 'Karyawan Administrasi':
+            return 3000000;
+        case 'Sopir':
+            return 2500000;
+        case 'Supervisor Produksi':
+            return 3000000;
+        case 'Manager Produksi':
+            return 4000000;
+        case 'Karyawan Quality Control':
+            return 4500000;
+        default:
+            return 0; // Nilai default jika posisi tidak ditemukan
     }
+}
 
     public function edit(GajiBulanan $gajiBulanan)
     {
@@ -67,33 +92,61 @@ class GajiBulananController extends Controller
         return redirect()->route('gaji_bulanan.index');
     }
 
-    public function takeSalary(GajiBulanan $gajiBulanan)
+    public function ambilGaji(GajiBulanan $gajiBulanan)
     {
-        if ($gajiBulanan->is_salary_taken) {
+        if ($gajiBulanan->status_pengambilan) {
             return redirect()->back()->with('error', 'Gaji sudah diambil bulan ini.');
         }
 
-        $gajiBulanan->update(['is_salary_taken' => true]);
+        $gajiBulanan->update(['status_pengambilan' => true]);
         return redirect()->back()->with('success', 'Gaji berhasil diambil.');
     }
 
-    public function generatePayslip($id)
+    public function slipGaji(GajiBulanan $gajiBulanan)
     {
-        $gajiBulanan = GajiBulanan::with('karyawan')->findOrFail($id);
-
-        // Setup Dompdf
         $options = new Options();
         $options->set('isHtml5ParserEnabled', true);
         $options->set('isPhpEnabled', true);
         $dompdf = new \Dompdf\Dompdf($options);
 
-        // Render view into PDF
-        $html = view('gaji_bulanan.payslip', compact('gajiBulanan'))->render();
+        $html = view('gaji_bulanan.slip_gaji', compact('gajiBulanan'))->render();
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
 
-        // Download PDF
         return $dompdf->stream('slip_gaji_' . $gajiBulanan->id . '.pdf');
     }
+
+    public function cetakSlipGaji($id)
+    {
+        $gajiBulanan = GajiBulanan::findOrFail($id);
+        return view('gaji_bulanan.slip_gaji', compact('gajiBulanan'));
+    }
+
+    public function calculateGajiBulanan($id_karyawan, $bulan, $tahun)
+{
+    $absensi = Absensi::where('id_karyawan', $id_karyawan)
+        ->whereMonth('tanggal', $bulan)
+        ->whereYear('tanggal', $tahun)
+        ->get();
+
+    $total_denda = $absensi->sum('denda');
+    $total_bonus = $absensi->sum('bonus');
+
+    $lembur = Lembur::where('id_karyawan', $id_karyawan)
+        ->whereMonth('tanggal_lembur', $bulan)
+        ->whereYear('tanggal_lembur', $tahun)
+        ->where('status_lembur', 'Disetujui') // Gunakan 'status_lembur' dan enum nilai
+        ->sum('bonus_lembur'); // Ganti dengan field yang sesuai
+
+    $gaji_bulanan = GajiBulanan::where('id_karyawan', $id_karyawan)
+        ->whereMonth('bulan', $bulan)
+        ->whereYear('bulan', $tahun)
+        ->first();
+
+    if ($gaji_bulanan) {
+        $gaji_bulanan->total_gaji = $gaji_bulanan->gaji_pokok + $gaji_bulanan->uang_transport + $gaji_bulanan->uang_makan + $gaji_bulanan->bonus + $total_bonus + $lembur - $total_denda;
+        $gaji_bulanan->save();
+    }
+}
 }

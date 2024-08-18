@@ -11,7 +11,8 @@ class GajiHarian extends Model
 
     protected $fillable = [
         'id_karyawan',
-        'tanggal',
+        'tanggal_awal', 
+        'tanggal_akhir', 
         'id_pekerjaan',
         'jumlah_pekerjaan',
         'target_harian',
@@ -20,18 +21,23 @@ class GajiHarian extends Model
         'bonus_harian',
         'denda_harian',
         'status_pengambilan',
+        'total_gaji'
     ];
-
+    protected $dates = ['tanggal']; 
     protected $table = 'gaji_harian';
     protected $primaryKey = 'id_gaji_harian';
 
     public function karyawan()
-    {
-        return $this->belongsTo(Karyawan::class, 'id_karyawan', 'id_karyawan');
-    }
+{
+    return $this->belongsTo(Karyawan::class, 'id_karyawan');
+}
 
-    public function pekerjaan()
-    {
-        return $this->belongsTo(Pekerjaan::class, 'id_pekerjaan', 'id_pekerjaan');
-    }
+public function pekerjaan()
+{
+    return $this->belongsTo(Pekerjaan::class, 'id_pekerjaan');
+}
+public function getTotalGajiSemingguAttribute()
+{
+    return $this->gaji_harian * 6;
+}
 }

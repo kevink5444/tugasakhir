@@ -25,7 +25,6 @@
                     Daftar Gaji Harian
                 </a>
             </li>
-          
             <li class="nav-item">
                 <a class="nav-link @if(request()->routeIs('gaji_bulanan.index')) active @endif" href="{{ route('gaji_bulanan.index') }}">
                     <span data-feather="shopping-cart" class="align-text-bottom"></span>
@@ -42,6 +41,12 @@
                 <a class="nav-link @if(request()->routeIs('pekerjaan.index')) active @endif" href="{{ route('pekerjaan.index') }}">
                     <span data-feather="briefcase" class="align-text-bottom"></span>
                     Pekerjaan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @if(request()->routeIs('lembur.index')) active @endif" href="{{ route('lembur.index') }}">
+                    <span data-feather="clock" class="align-text-bottom"></span>
+                    Lembur
                 </a>
             </li>
             <li class="nav-item">

@@ -82,11 +82,15 @@ Route::delete('/karyawan/{id}', [\App\Http\Controllers\KaryawanController::class
 // Rute untuk penggajian
 
 
-
+// Route untuk menampilkan form pengajuan lembur
+Route::get('/lembur', [LemburController::class, 'index'])->name('lembur.index');
+Route::get('/lembur/ajukan', [LemburController::class, 'create'])->name('lembur.create');
+Route::post('/lembur', [LemburController::class, 'store'])->name('lembur.store');
+Route::get('/lembur/{id}/edit', [LemburController::class, 'edit'])->name('lembur.edit');
+Route::patch('/lembur/{id}', [LemburController::class, 'update'])->name('lembur.update');
+Route::get('/lembur/{id}', [LemburController::class, 'show'])->name('lembur.show');
 Route::post('/lembur/ajukan', [LemburController::class, 'ajukanLembur'])->name('lembur.ajukan');
 Route::post('/lembur/setujui/{id}', [LemburController::class, 'setujuiLembur'])->name('lembur.setujui');
-
-
     Route::prefix('penggajian')->group(function () {
         Route::get('/penggajian/gaji_borongan/{id_gaji_borongan}/cetak_pdf', [PenggajianController::class, 'cetakSlipGajiPdf'])->name('gaji_borongan.cetak_pdf');
         Route::get('/gaji-borongan/{id}/download-pdf', [GajiBoronganController::class, 'downloadPdf'])->name('gaji-borongan.downloadPdf');
@@ -98,31 +102,27 @@ Route::post('/lembur/setujui/{id}', [LemburController::class, 'setujuiLembur'])-
         Route::post('generate-gaji-bulanan', [PenggajianController::class, 'generateGajiBulanan'])->name('penggajian.generate_gaji_bulanan');
         Route::post('generate-gaji-mingguan', [PenggajianController::class, 'generateGajiMingguan'])->name('penggajian.generate_gaji_mingguan');
         Route::resource('gaji_borongan', GajiBoronganController::class);
-        // Rute untuk menampilkan form tambah gaji harian
+
+        Route::get('/gaji_harian', [GajiHarianController::class, 'index'])->name('gaji_harian.index');
 Route::get('/gaji_harian/create', [GajiHarianController::class, 'create'])->name('gaji_harian.create');
-
-// Rute untuk menyimpan data gaji harian baru
-Route::post('/gaji_harian', [GajiHarianController::class, 'store'])->name('gaji_harian.store');
-
-// Rute untuk menampilkan form edit gaji harian
 Route::get('/gaji_harian/{id}/edit', [GajiHarianController::class, 'edit'])->name('gaji_harian.edit');
-
+Route::get('/gaji_harian{id}/cetak_slip', [GajiHarianController::class, 'cetakSlipGaji'])->name('gaji_harian.cetak_slip');
+Route::get('gaji_harian/{id}/ambil_gaji', [GajiHarianController::class, 'ambilGaji'])->name('gaji_harian.ambil_gaji');
+        Route::post('/gaji_harian', [GajiHarianController::class, 'store'])->name('gaji_harian.store');
+        Route::delete('/gaji_harian/{id}', [GajiHarianController::class, 'destroy'])->name('gaji_harian.destroy');
 // Rute untuk memperbarui data gaji harian
 Route::put('/gaji_harian/{id}', [GajiHarianController::class, 'update'])->name('gaji_harian.update');
 Route::get('/gaji_harian/{id}/download-pdf', [GajiHarianController::class, 'downloadPdf'])->name('gaji_harian.downloadPdf');
         Route::resource('gaji_bulanan', GajiBulananController::class);
         Route::get('gaji_borongan/{id}/cetak_slip', [GajiBoronganController::class, 'cetakSlipGaji'])->name('gaji_borongan.cetak_slip');
 Route::put('gaji_borongan/{id}/ambil_gaji', [GajiBoronganController::class, 'ambilGaji'])->name('gaji_borongan.ambil_gaji');
-Route::resource('gaji_harian', GajiHarianController::class);
-Route::get('gaji_harian/ambil_gaji/{id}', [GajiHarianController::class, 'ambilGaji'])->name('gaji_harian.ambil_gaji');
-Route::get('gaji_harian/cetak_slip/{id}', [GajiHarianController::class, 'cetakSlipGaji'])->name('gaji_harian.cetak_slip');
 Route::resource('gaji_borongan', GajiBoronganController::class);
 Route::put('gaji_borongan/{id}', [GajiBoronganController::class, 'update'])->name('gaji_borongan.update');
 
 Route::resource('gaji_bulanan', GajiBulananController::class);
-Route::get('gaji_bulanan/{gaji_bulanan}/takeSalary', [GajiBulananController::class, 'takeSalary'])->name('gaji_bulanan.takeSalary');
-Route::get('gaji_bulanan/{gaji_bulanan}/generatePayslip', [GajiBulananController::class, 'generatePayslip'])->name('gaji_bulanan.generatePayslip');
-    
+Route::get('gaji_bulanan/{gaji_bulanan}/ambil_gaji', [GajiBulananController::class, 'ambilGaji'])->name('gaji_bulanan.ambil_gaji');
+Route::get('gaji_bulanan/{gaji_bulanan}/slip_gaji', [GajiBulananController::class, 'slipGaji'])->name('gaji_bulanan.slip_gaji');
+Route::get('gaji_bulanan/cetak_slip/{id}', [GajiBulananController::class, 'cetakSlipGaji'])->name('gaji_bulanan.cetak_slip');
 });
     
 // Rute untuk lembur
