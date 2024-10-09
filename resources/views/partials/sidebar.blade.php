@@ -62,9 +62,23 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link @if(request()->routeIs('laporan.penggajian')) active @endif" href="{{ route('laporan.penggajian') }}">
+                <a class="nav-link @if(request()->routeIs('laporan.gaji_borongan')) active @endif" href="{{ route('laporan.gaji_borongan') }}">
                     <span data-feather="bar-chart-2" class="align-text-bottom"></span>
-                    Laporan Penggajian
+                    Laporan Gaji Borongan
+                </a>
+            </li>
+            <!-- Laporan Gaji Harian -->
+            <li class="nav-item">
+                <a class="nav-link @if(request()->routeIs('laporan.gaji_harian')) active @endif" href="{{ route('laporan.gaji_harian') }}">
+                    <span data-feather="bar-chart-2" class="align-text-bottom"></span>
+                    Laporan Gaji Harian
+                </a>
+            </li>
+            <!-- Laporan Gaji Bulanan -->
+            <li class="nav-item">
+                <a class="nav-link @if(request()->routeIs('laporan.gaji_bulanan')) active @endif" href="{{ route('laporan.gaji_bulanan') }}">
+                    <span data-feather="bar-chart-2" class="align-text-bottom"></span>
+                    Laporan Gaji Bulanan
                 </a>
             </li>
         </ul>

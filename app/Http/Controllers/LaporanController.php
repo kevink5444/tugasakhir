@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Absensi;
 use App\Models\Penggajian;
 use App\Models\Karyawan;
+use App\Models\GajiBorongan;
+use App\Models\GajiHarian;
+use App\Models\GajiBulanan;
 use Illuminate\Http\Request;
 
 class LaporanController extends Controller
@@ -15,10 +18,33 @@ class LaporanController extends Controller
         return view('laporan.absensi', compact('absensi'));
     }
 
-    public function laporanPenggajian()
+    public function gajiBorongan()
     {
-        $penggajian = Penggajian::with('karyawan')->get();
-        return view('laporan.penggajian', compact('penggajian'));
+        $laporan = GajiBorongan::selectRaw('id_karyawan, SUM(total_gaji_borongan) AS total_gaji, MONTH(minggu_mulai) AS bulan, YEAR(minggu_mulai) AS tahun')
+            ->groupBy('id_karyawan', 'bulan', 'tahun')
+            ->get();
+
+        return view('laporan.gaji_borongan', compact('laporan'));
+    }
+
+    // Laporan Gaji Harian
+    public function gajiHarian()
+    {
+        $laporan = GajiHarian::selectRaw('id_karyawan, SUM(total_gaji_harian) AS total_gaji, MONTH(tanggal) AS bulan, YEAR(tanggal) AS tahun')
+            ->groupBy('id_karyawan', 'bulan', 'tahun')
+            ->get();
+
+        return view('laporan.gaji_harian', compact('laporan'));
+    }
+
+    // Laporan Gaji Bulanan
+    public function gajiBulanan()
+    {
+        $laporan = GajiBulanan::selectRaw('id_karyawan, SUM(total_gaji_bulanan) AS total_gaji, MONTH(bulan) AS bulan, YEAR(bulan) AS tahun')
+            ->groupBy('id_karyawan', 'bulan', 'tahun')
+            ->get();
+
+        return view('laporan.gaji_bulanan', compact('laporan'));
     }
 
     public function laporanKaryawan()

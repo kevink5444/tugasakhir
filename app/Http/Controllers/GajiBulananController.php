@@ -12,86 +12,100 @@ use App\Models\Lembur;
 
 class GajiBulananController extends Controller
 {
+    // Menampilkan daftar gaji bulanan
     public function index()
     {
         $gajiBulanan = GajiBulanan::with('karyawan')->get();
         return view('gaji_bulanan.index', compact('gajiBulanan'));
     }
 
+    // Menampilkan form untuk menambah gaji bulanan
     public function create()
     {
         $karyawans = Karyawan::all();
         return view('gaji_bulanan.create', compact('karyawans'));
     }
 
+    // Proses penyimpanan data gaji bulanan ke database
     public function store(Request $request)
-{
-    $request->validate([
-        'id_karyawan' => 'required|exists:karyawan,id_karyawan',
-        'bulan' => 'required|date_format:Y-m',
-    ]);
-    
-    $bulan = $request->bulan . '-01';
-    $karyawan = Karyawan::find($request->id_karyawan);
-    $posisi = $karyawan->posisi; // Dapatkan posisi dari objek karyawan
+    {
+        // Validasi input
+        $request->validate([
+            'id_karyawan' => 'required|exists:karyawan,id_karyawan',
+            'bulan' => 'required|date_format:Y-m',
+        ]);
+        
+        // Menggabungkan bulan dengan tanggal pertama untuk keperluan penyimpanan
+        $bulan = $request->bulan . '-01';
+        $karyawan = Karyawan::find($request->id_karyawan);
+        $posisi = $karyawan->posisi;
 
-    $gajiPokok = $this->getGajiPokokByPosisi($posisi); // Panggil method untuk mendapatkan gaji pokok
-    
-    $uangTransport = 350000;
-    $uangMakan = 300000;
+        // Hitung gaji pokok berdasarkan posisi karyawan
+        $gajiPokok = $this->getGajiPokokByPosisi($posisi);
 
-    GajiBulanan::create([
-        'id_karyawan' => $request->id_karyawan,
-        'bulan' => $bulan,
-        'gaji_pokok' => $gajiPokok,
-        'uang_transport' => $uangTransport,
-        'uang_makan' => $uangMakan,
-        'bonus' => 0,
-        'thr' => 0,
-        'total_gaji' => $gajiPokok + $uangTransport + $uangMakan,
-        'total_lembur' => 0,
-        'bonus_lembur' => 0,
-        'denda' => 0,
-        'status_pengambilan' => false,
-    ]);
+        // Uang transport dan makan
+        $uangTransport = 350000;
+        $uangMakan = 300000;
 
-    return redirect()->route('gaji_bulanan.index');
-}
-private function getGajiPokokByPosisi($posisi)
-{
-    switch ($posisi) {
-        case 'Karyawan Administrasi':
-            return 3000000;
-        case 'Sopir':
-            return 2500000;
-        case 'Supervisor Produksi':
-            return 3000000;
-        case 'Manager Produksi':
-            return 4000000;
-        case 'Karyawan Quality Control':
-            return 4500000;
-        default:
-            return 0; // Nilai default jika posisi tidak ditemukan
+        // Menyimpan data gaji bulanan ke database
+        GajiBulanan::create([
+            'id_karyawan' => $request->id_karyawan,
+            'bulan' => $bulan,
+            'gaji_pokok' => $gajiPokok,
+            'uang_transport' => $uangTransport,
+            'uang_makan' => $uangMakan,
+            'bonus' => 0,
+            'thr' => 0,
+            'total_gaji' => $gajiPokok + $uangTransport + $uangMakan,
+            'total_lembur' => 0,
+            'bonus_lembur' => 0,
+            'denda' => 0,
+            'status_pengambilan' => false,
+        ]);
+
+        return redirect()->route('gaji_bulanan.index');
     }
-}
 
+    // Metode untuk menentukan gaji pokok berdasarkan posisi karyawan
+    private function getGajiPokokByPosisi($posisi)
+    {
+        switch ($posisi) {
+            case 'Karyawan Administrasi':
+                return 3000000;
+            case 'Sopir':
+                return 2500000;
+            case 'Supervisor Produksi':
+                return 3000000;
+            case 'Manager Produksi':
+                return 4000000;
+            case 'Karyawan Quality Control':
+                return 4500000;
+            default:
+                return 0; // Nilai default jika posisi tidak ditemukan
+        }
+    }
+
+    // Mengedit data gaji bulanan
     public function edit(GajiBulanan $gajiBulanan)
     {
         return view('gaji_bulanan.edit', compact('gajiBulanan'));
     }
 
+    // Mengupdate data gaji bulanan
     public function update(Request $request, GajiBulanan $gajiBulanan)
     {
         $gajiBulanan->update($request->all());
         return redirect()->route('gaji_bulanan.index');
     }
 
+    // Menghapus data gaji bulanan
     public function destroy(GajiBulanan $gajiBulanan)
     {
         $gajiBulanan->delete();
         return redirect()->route('gaji_bulanan.index');
     }
 
+    // Memproses pengambilan gaji oleh karyawan
     public function ambilGaji(GajiBulanan $gajiBulanan)
     {
         if ($gajiBulanan->status_pengambilan) {
@@ -102,6 +116,7 @@ private function getGajiPokokByPosisi($posisi)
         return redirect()->back()->with('success', 'Gaji berhasil diambil.');
     }
 
+    // Mencetak slip gaji bulanan dalam bentuk PDF
     public function slipGaji(GajiBulanan $gajiBulanan)
     {
         $options = new Options();
@@ -117,36 +132,34 @@ private function getGajiPokokByPosisi($posisi)
         return $dompdf->stream('slip_gaji_' . $gajiBulanan->id . '.pdf');
     }
 
-    public function cetakSlipGaji($id)
-    {
-        $gajiBulanan = GajiBulanan::findOrFail($id);
-        return view('gaji_bulanan.slip_gaji', compact('gajiBulanan'));
-    }
-
+    // Menghitung total gaji bulanan dengan menghitung lembur, bonus, denda, dll
     public function calculateGajiBulanan($id_karyawan, $bulan, $tahun)
-{
-    $absensi = Absensi::where('id_karyawan', $id_karyawan)
-        ->whereMonth('tanggal', $bulan)
-        ->whereYear('tanggal', $tahun)
-        ->get();
+    {
+        // Ambil data absensi dan lembur berdasarkan bulan dan tahun
+        $absensi = Absensi::where('id_karyawan', $id_karyawan)
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->get();
 
-    $total_denda = $absensi->sum('denda');
-    $total_bonus = $absensi->sum('bonus');
+        $total_denda = $absensi->sum('denda');
+        $total_bonus = $absensi->sum('bonus');
 
-    $lembur = Lembur::where('id_karyawan', $id_karyawan)
-        ->whereMonth('tanggal_lembur', $bulan)
-        ->whereYear('tanggal_lembur', $tahun)
-        ->where('status_lembur', 'Disetujui') // Gunakan 'status_lembur' dan enum nilai
-        ->sum('bonus_lembur'); // Ganti dengan field yang sesuai
+        $lembur = Lembur::where('id_karyawan', $id_karyawan)
+            ->whereMonth('tanggal_lembur', $bulan)
+            ->whereYear('tanggal_lembur', $tahun)
+            ->where('status_lembur', 'Disetujui')
+            ->sum('bonus_lembur');
 
-    $gaji_bulanan = GajiBulanan::where('id_karyawan', $id_karyawan)
-        ->whereMonth('bulan', $bulan)
-        ->whereYear('bulan', $tahun)
-        ->first();
+        // Cari data gaji bulanan yang sesuai
+        $gaji_bulanan = GajiBulanan::where('id_karyawan', $id_karyawan)
+            ->whereMonth('bulan', $bulan)
+            ->whereYear('bulan', $tahun)
+            ->first();
 
-    if ($gaji_bulanan) {
-        $gaji_bulanan->total_gaji = $gaji_bulanan->gaji_pokok + $gaji_bulanan->uang_transport + $gaji_bulanan->uang_makan + $gaji_bulanan->bonus + $total_bonus + $lembur - $total_denda;
-        $gaji_bulanan->save();
+        // Jika data gaji bulanan ditemukan, hitung total gaji
+        if ($gaji_bulanan) {
+            $gaji_bulanan->total_gaji = $gaji_bulanan->gaji_pokok + $gaji_bulanan->uang_transport + $gaji_bulanan->uang_makan + $gaji_bulanan->bonus + $total_bonus + $lembur - $total_denda;
+            $gaji_bulanan->save();
+        }
     }
-}
 }

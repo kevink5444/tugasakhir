@@ -18,39 +18,46 @@
     @endif
 
     <table class="table table-bordered table-striped">
-        <thead class="thead-dark">
+        <thead>
             <tr>
-                <th>ID Gaji Bulanan</th>
                 <th>Nama Karyawan</th>
                 <th>Bulan</th>
                 <th>Gaji Pokok</th>
+                <th>Uang Transport</th>
+                <th>Uang Makan</th>
+                <th>Bonus</th>
+                <th>Denda</th>
+                <th>Bonus Lembur</th>
                 <th>Total Gaji</th>
                 <th>Status Pengambilan</th>
-                <th>Tombol</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($gajiBulanan as $gaji)
+            <tbody>
+                @foreach($gajiBulanan as $gaji)
                 <tr>
-                    <td>{{ $gaji->id_gaji_bulanan }}</td>
                     <td>{{ $gaji->karyawan->nama_karyawan }}</td>
-                    <td>{{ $gaji->bulan }}</td>
-                    <td>Rp {{ number_format($gaji->gaji_pokok) }}</td>
-                    <td>Rp {{ number_format($gaji->total_gaji) }}</td>
-                    <td>{{ $gaji->status_pengambilan ? 'Diambil' : 'Belum Diambil' }}</td>
-                    <td>
-                        @if(!$gaji->status_pengambilan)
-                            <a href="{{ route('gaji_bulanan.ambil_gaji', $gaji->id_gaji_bulanan) }}" class="btn btn-success btn-sm">Ambil Gaji</a>
-                        @endif
-                        <a href="{{ route('gaji_bulanan.cetak_slip', $gaji->id_gaji_bulanan) }}" class="btn btn-info btn-sm">Slip Gaji</a>
-                        <a href="{{ route('gaji_bulanan.edit', $gaji->id_gaji_bulanan) }}" class="btn btn-warning btn-sm">Edit</a>
-                        <form action="{{ route('gaji_bulanan.destroy', $gaji->id_gaji_bulanan) }}" method="POST" class="d-inline-block">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</button>
-                        </form>
-                    </td>
-                </tr>
+                    <td>{{ \Carbon\Carbon::parse($gaji->bulan)->format('F Y') }}</td>
+                    <td>{{ number_format($gaji->gaji_pokok, 0, ',', '.') }}</td>
+                    <td>{{ number_format($gaji->uang_transport, 2) }}</td>
+                    <td>{{ number_format($gaji->uang_makan, 2) }}</td>
+                    <td>{{ number_format($gaji->bonus, 2) }}</td> 
+                    <td>{{ number_format($gaji->denda, 2) }}</td> 
+                    <td>{{ number_format($gaji->bonus_lembur, 2) }}</td> 
+                    <td>{{ number_format($gaji->total_gaji, 0, ',', '.') }}</td>
+                    <td>{{ $gaji->status_pengambilan ? 'Sudah Diambil' : 'Belum Diambil' }}</td>
+        
+                <td>
+                    <a href="{{ route('gaji_bulanan.cetak_slip', $gaji->id_gaji_bulanan) }}" class="btn btn-info btn-sm">Slip Gaji</a>
+                    <a href="{{ route('gaji_bulanan.edit', $gaji->id_gaji_bulanan) }}" class="btn btn-warning">Edit</a>
+                    <form action="{{ route('gaji_bulanan.destroy', $gaji->id_gaji_bulanan) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                    </form>
+                </td>
+            </tr>
             @endforeach
         </tbody>
     </table>

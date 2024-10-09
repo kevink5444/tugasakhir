@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,6 +9,8 @@ class GajiBorongan extends Model
 {
     use HasFactory;
 
+    protected $table = 'gaji_borongan';
+    protected $primaryKey = 'id_gaji_borongan';
     protected $fillable = [
         'id_karyawan',
         'minggu_mulai',
@@ -15,17 +18,16 @@ class GajiBorongan extends Model
         'total_gaji_borongan',
         'total_bonus',
         'total_denda',
-        'total_pekerjaan',
+        'capaian_harian',
         'total_lembur',
         'bonus_lembur',
         'status_pengambilan',
+        'bulan',
+        'tahun',
     ];
-
-    protected $table = 'gaji_borongan';
-    protected $primaryKey = 'id_gaji_borongan';
 
     public function karyawan()
     {
-        return $this->belongsTo(Karyawan::class, 'id_karyawan', 'id_karyawan');
+        return $this->belongsTo(Karyawan::class, 'id_karyawan');
     }
 }

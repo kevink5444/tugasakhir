@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Absensi;
 use App\Models\Karyawan;
+use App\Models\GajiBulanan;
+use App\Models\GajiHarian;
+use App\Models\GajiBorongan;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -34,10 +37,8 @@ class AbsensiController extends Controller
         $absensi->id_karyawan = $request->id_karyawan;
         $absensi->status = $request->status;
 
-        // Mengatur zona waktu
         $timezone = config('app.timezone');
 
-        // Mengatur waktu masuk dan waktu pulang dengan zona waktu yang benar
         $absensi->waktu_masuk = $request->waktu_masuk 
             ? Carbon::parse($request->waktu_masuk)->setTimezone($timezone)
             : Carbon::now($timezone);
@@ -46,47 +47,66 @@ class AbsensiController extends Controller
             ? Carbon::parse($request->waktu_pulang)->setTimezone($timezone)
             : Carbon::now($timezone);
 
-        // Jika status 'masuk' tapi waktu masuk tidak diisi, set ke waktu sekarang
-        if ($absensi->status == 'masuk' && !$absensi->waktu_masuk) {
-            $absensi->waktu_masuk = Carbon::now($timezone);
-        }
-
-        // Jika status 'pulang' tapi waktu pulang tidak diisi, set ke waktu sekarang
-        if ($absensi->status == 'pulang' && !$absensi->waktu_pulang) {
-            $absensi->waktu_pulang = Carbon::now($timezone);
-        }
-
-        // Perhitungan bonus dan denda berdasarkan waktu masuk
         $bonus = 0;
         $denda = 0;
 
         if ($absensi->waktu_masuk) {
             $jamMasuk = Carbon::parse($absensi->waktu_masuk);
-            $jamBatas = Carbon::today($timezone)->setTime(8, 0, 0); // Jam batas pukul 08:00:00 pada hari ini
-            $jamBatasTerlambat = $jamBatas->copy()->addMinutes(5); // Jam batas terlambat pukul 08:05:00
-            $jamBatasMaksDenda = $jamBatas->copy()->addHours(1); // Jam maksimal denda pukul 09:00:00
+            $jamBatas = Carbon::today($timezone)->setTime(8, 0, 0);
+            $jamBatasTerlambat = $jamBatas->copy()->addMinutes(5);
+            $jamBatasMaksDenda = $jamBatas->copy()->addHours(1);
 
-            Log::info('Jam Masuk: ' . $jamMasuk);
-            Log::info('Jam Batas: ' . $jamBatas);
-            Log::info('Jam Batas Terlambat: ' . $jamBatasTerlambat);
-            Log::info('Jam Batas Maks Denda: ' . $jamBatasMaksDenda);
-
-            // Perhitungan bonus
             if ($jamMasuk->lt($jamBatas)) {
-                $bonus = 25000; // Bonus sebesar Rp 25.000 jika masuk sebelum pukul 08:00
+                $bonus = 25000;
             }
 
-            // Perhitungan denda
             if ($jamMasuk->gt($jamBatasTerlambat) && $jamMasuk->lte($jamBatasMaksDenda)) {
-                $denda = 10000; // Denda sebesar Rp 10.000 jika terlambat lebih dari 5 menit setelah pukul 08:00, maksimal 1 jam
+                $denda = 10000;
             }
         }
 
-        // Simpan nilai bonus dan denda
         $absensi->bonus = $bonus;
         $absensi->denda = $denda;
         $absensi->save();
 
+        // Integrasi bonus dan denda ke dalam gaji
+        $this->updateGaji($absensi);
+
         return redirect()->route('absensi.index')->with('success', 'Absensi berhasil dicatat.');
+    }
+
+    private function updateGaji(Absensi $absensi)
+    {
+        $karyawan = $absensi->karyawan;
+        $bulan = Carbon::now()->format('Y-m');
+
+        switch ($karyawan->tipe_gaji) {
+            case 'bulanan':
+                $gaji = GajiBulanan::firstOrCreate(
+                    ['id_karyawan' => $karyawan->id_karyawan, 'bulan' => $bulan],
+                    ['total_gaji' => 0, 'bonus' => 0, 'denda' => 0]
+                );
+                break;
+
+            case 'harian':
+                $tanggal = Carbon::now()->format('Y-m-d');
+                $gaji = GajiHarian::firstOrCreate(
+                    ['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => $tanggal],
+                    ['total_gaji' => 0, 'bonus' => 0, 'denda' => 0]
+                );
+                break;
+
+            case 'borongan':
+                $gaji = GajiBorongan::firstOrCreate(
+                    ['id_karyawan' => $karyawan->id_karyawan, 'bulan' => $bulan],
+                    ['total_gaji' => 0, 'bonus' => 0, 'denda' => 0]
+                );
+                break;
+        }
+
+        // Update bonus dan denda
+        $gaji->bonus += $absensi->bonus;
+        $gaji->denda += $absensi->denda;
+        $gaji->save();
     }
 }

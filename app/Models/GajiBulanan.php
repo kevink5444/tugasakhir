@@ -12,7 +12,6 @@ class GajiBulanan extends Model
     protected $table = 'gaji_bulanan';
 
     protected $fillable = [
-
         'id_karyawan',
         'bulan',
         'gaji_pokok',
@@ -26,6 +25,7 @@ class GajiBulanan extends Model
         'denda',
         'status_pengambilan',
     ];
+    
     protected $primaryKey = 'id_gaji_bulanan';
     
     public function karyawan()

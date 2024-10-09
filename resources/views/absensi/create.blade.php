@@ -9,7 +9,9 @@
             <label for="id_karyawan">Karyawan</label>
             <select name="id_karyawan" id="id_karyawan" class="form-control" required>
                 @foreach($karyawan as $karyawan)
-                    <option value="{{ $karyawan->id_karyawan }}">{{ $karyawan->id_karyawan }}</option>
+                    <option value="{{ $karyawan->id_karyawan }}">
+                        {{ $karyawan->nama_karyawan }} - {{ $karyawan->jenis_karyawan }}
+                    </option>
                 @endforeach
             </select>
         </div>
@@ -23,11 +25,11 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="waktu_masuk">Waktu Masuk </label>
+            <label for="waktu_masuk">Waktu Masuk</label>
             <input type="datetime-local" name="waktu_masuk" id="waktu_masuk" class="form-control">
         </div>
         <div class="form-group">
-            <label for="waktu_pulang">Waktu Pulang </label>
+            <label for="waktu_pulang">Waktu Pulang</label>
             <input type="datetime-local" name="waktu_pulang" id="waktu_pulang" class="form-control">
         </div>
         <button type="submit" class="btn btn-primary">Simpan</button>

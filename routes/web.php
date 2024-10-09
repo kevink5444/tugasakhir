@@ -46,8 +46,10 @@ Route::put('pengaturan_target/{id}', [PengaturanTargetController::class, 'update
 Route::delete('pengaturan_target/{id}', [PengaturanTargetController::class, 'destroy'])->name('pengaturan_target.destroy');
 
 Route::get('laporan/absensi', [LaporanController::class, 'laporanAbsensi'])->name('laporan.absensi');
-Route::get('laporan/penggajian', [LaporanController::class, 'laporanPenggajian'])->name('laporan.penggajian');
 Route::get('laporan/karyawan', [LaporanController::class, 'laporanKaryawan'])->name('laporan.karyawan');
+Route::get('/laporan/gaji-borongan', [LaporanController::class, 'gajiBorongan'])->name('laporan.gaji_borongan');
+Route::get('/laporan/gaji-harian', [LaporanController::class, 'gajiHarian'])->name('laporan.gaji_harian');
+Route::get('/laporan/gaji-bulanan', [LaporanController::class, 'gajiBulanan'])->name('laporan.gaji_bulanan');
 
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

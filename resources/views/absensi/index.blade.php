@@ -26,7 +26,7 @@
             @foreach ($absensi as $item)
                 <tr>
                     <td>{{ $item->id_absensi }}</td>
-                    <td>{{ $item->karyawan->id_karyawan }}</td>
+                    <td>{{ $item->karyawan->nama_karyawan }}</td>
                     <td>{{ $item->status }}</td>
                     <td>{{ $item->waktu_masuk }}</td>
                     <td>{{ $item->waktu_pulang }}</td>
