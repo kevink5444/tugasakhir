@@ -21,7 +21,9 @@ class GajiHarian extends Model
         'bonus_harian',
         'denda_harian',
         'status_pengambilan',
-        'total_gaji'
+        'total_gaji',
+        'bonus',
+        'denda'
     ];
     protected $dates = ['tanggal']; 
     protected $table = 'gaji_harian';

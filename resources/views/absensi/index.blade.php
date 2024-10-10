@@ -19,7 +19,6 @@
                 <th>Waktu Pulang</th>
                 <th>Bonus</th>
                 <th>Denda</th>
-                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>

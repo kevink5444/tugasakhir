@@ -79,7 +79,7 @@ class AbsensiController extends Controller
     {
         $karyawan = $absensi->karyawan;
         $bulan = Carbon::now()->format('Y-m');
-
+    
         switch ($karyawan->tipe_gaji) {
             case 'bulanan':
                 $gaji = GajiBulanan::firstOrCreate(
@@ -87,7 +87,7 @@ class AbsensiController extends Controller
                     ['total_gaji' => 0, 'bonus' => 0, 'denda' => 0]
                 );
                 break;
-
+    
             case 'harian':
                 $tanggal = Carbon::now()->format('Y-m-d');
                 $gaji = GajiHarian::firstOrCreate(
@@ -95,18 +95,29 @@ class AbsensiController extends Controller
                     ['total_gaji' => 0, 'bonus' => 0, 'denda' => 0]
                 );
                 break;
-
+    
             case 'borongan':
                 $gaji = GajiBorongan::firstOrCreate(
                     ['id_karyawan' => $karyawan->id_karyawan, 'bulan' => $bulan],
                     ['total_gaji' => 0, 'bonus' => 0, 'denda' => 0]
                 );
                 break;
+    
+            // Tambahkan default case untuk menangani tipe_gaji yang tidak dikenali
+            default:
+                return back()->with('error', 'Tipe gaji karyawan tidak valid.');
         }
-
-        // Update bonus dan denda
-        $gaji->bonus += $absensi->bonus;
-        $gaji->denda += $absensi->denda;
-        $gaji->save();
+    
+        // Pastikan variabel $gaji sudah didefinisikan dan tidak null
+        if (isset($gaji)) {
+            // Update bonus dan denda jika gaji ditemukan atau berhasil dibuat
+            $gaji->bonus += $absensi->bonus;
+            $gaji->denda += $absensi->denda;
+            $gaji->save();
+        } else {
+            // Logging atau handling error
+            Log::error('Gagal memperbarui gaji: Objek gaji tidak ditemukan atau tidak bisa dibuat.');
+        }
+    
     }
 }

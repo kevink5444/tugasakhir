@@ -24,6 +24,8 @@ class GajiBorongan extends Model
         'status_pengambilan',
         'bulan',
         'tahun',
+        'bonus',
+        'denda'
     ];
 
     public function karyawan()
