@@ -94,8 +94,7 @@ Route::get('/lembur/{id}', [LemburController::class, 'show'])->name('lembur.show
 Route::post('/lembur/ajukan', [LemburController::class, 'ajukanLembur'])->name('lembur.ajukan');
 Route::post('/lembur/setujui/{id}', [LemburController::class, 'setujuiLembur'])->name('lembur.setujui');
     Route::prefix('penggajian')->group(function () {
-        Route::get('/penggajian/gaji_borongan/{id_gaji_borongan}/cetak_pdf', [PenggajianController::class, 'cetakSlipGajiPdf'])->name('gaji_borongan.cetak_pdf');
-        Route::get('/gaji-borongan/{id}/download-pdf', [GajiBoronganController::class, 'downloadPdf'])->name('gaji-borongan.downloadPdf');
+      
         Route::delete('/gaji_harian/{id}', [GajiHarianController::class, 'destroy'])->name('gaji_harian.destroy');
         Route::get('/', [PenggajianController::class, 'index'])->name('penggajian.index');
         Route::get('gaji-bulanan', [PenggajianController::class, 'showGajiBulanan'])->name('penggajian.gaji_bulanan');
@@ -105,10 +104,13 @@ Route::post('/lembur/setujui/{id}', [LemburController::class, 'setujuiLembur'])-
         Route::post('generate-gaji-mingguan', [PenggajianController::class, 'generateGajiMingguan'])->name('penggajian.generate_gaji_mingguan');
         Route::resource('gaji_borongan', GajiBoronganController::class);
 
-        Route::prefix('penggajian')->group(function () {
             Route::get('gaji_borongan/create', [GajiBoronganController::class, 'create'])->name('gajiBorongan.create');
             Route::post('gaji_borongan/store', [GajiBoronganController::class, 'store'])->name('gajiBorongan.store');
-        });
+            Route::get('gaji_borongan/{id}/edit', [GajiBoronganController::class, 'edit'])->name('gaji_borongan.edit');
+
+            Route::delete('/gaji_borongan/{id}/delete', [GajiBoronganController::class, 'destroy'])->name('gaji_borongan.destroy');
+            Route::get('gaji_borongan/{id}/ambil_gaji', [GajiBoronganController::class, 'ambilGaji'])->name('gaji_borongan.ambil_gaji');
+            Route::get('gaji_borongan/{id}/cetak_slip', [GajiBoronganController::class, 'cetakSlipGaji'])->name('gaji_borongan.cetak_slip');
         Route::get('/gaji_harian', [GajiHarianController::class, 'index'])->name('gaji_harian.index');
 Route::get('/gaji_harian/create', [GajiHarianController::class, 'create'])->name('gaji_harian.create');
 Route::get('/gaji_harian/{id}/edit', [GajiHarianController::class, 'edit'])->name('gaji_harian.edit');

@@ -8,7 +8,6 @@
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
-
     <table class="table">
         <thead>
             <tr>
@@ -26,7 +25,7 @@
         <tbody>
             @foreach($gajiBorongan as $gaji)
                 <tr>
-                    <td>{{ $loop->iteration }}</td> <!-- Menggunakan $loop->iteration untuk nomor urut -->
+                    <td>{{ $gaji->id_gaji_borongan }}</td> <!-- Menggunakan $loop->iteration untuk nomor urut -->
                     <td>{{ $gaji->karyawan->nama }}</td>
                     <td>{{ \Carbon\Carbon::parse($gaji->minggu_mulai)->format('d-m-Y') }}</td> <!-- Format tanggal -->
                     <td>{{ \Carbon\Carbon::parse($gaji->minggu_selesai)->format('d-m-Y') }}</td> <!-- Format tanggal -->
@@ -35,14 +34,16 @@
                     <td>{{ number_format($gaji->total_gaji_borongan, 2, ',', '.') }}</td> <!-- Format angka -->
                     <td>{{ $gaji->status_pengambilan }}</td>
                     <td>
-                        <a href="{{ route('gaji_borongan.edit', $gaji->id_gaji_borongan) }}" class="btn btn-warning">Edit</a>
+                        <a href="{{ route('gaji_borongan.edit', [$gaji->id_gaji_borongan]) }}" class="btn btn-primary">Edit</a>
+
+
                         <form action="{{ route('gaji_borongan.destroy', $gaji->id_gaji_borongan) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">Hapus</button>
                         </form>
                         @if(!$gaji->status_pengambilan)
-                            <a href="{{ route('gaji_borongan.ambil_gaji', $gaji->id_gaji_borongan) }}" class="btn btn-success">Ambil Gaji</a>
+                        <a href="{{ route('gaji_borongan.ambil_gaji', $gaji->id_gaji_borongan) }}" class="btn btn-success">Ambil Gaji</a>
                         @endif
                         <a href="{{ route('gaji_borongan.cetak_slip', $gaji->id_gaji_borongan) }}" class="btn btn-info">Cetak Slip</a>
                         </form>
