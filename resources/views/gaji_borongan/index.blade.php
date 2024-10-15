@@ -26,7 +26,7 @@
             @foreach($gajiBorongan as $gaji)
                 <tr>
                     <td>{{ $gaji->id_gaji_borongan }}</td> <!-- Menggunakan $loop->iteration untuk nomor urut -->
-                    <td>{{ $gaji->karyawan->nama }}</td>
+                    <td>{{ $gaji->karyawan->nama_karyawan }}</td>
                     <td>{{ \Carbon\Carbon::parse($gaji->minggu_mulai)->format('d-m-Y') }}</td> <!-- Format tanggal -->
                     <td>{{ \Carbon\Carbon::parse($gaji->minggu_selesai)->format('d-m-Y') }}</td> <!-- Format tanggal -->
                     <td>{{ $gaji->bulan }}</td>
