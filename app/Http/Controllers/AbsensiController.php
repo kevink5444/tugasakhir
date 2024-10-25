@@ -12,10 +12,22 @@ use Illuminate\Support\Facades\Log;
 
 class AbsensiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $absensi = Absensi::with('karyawan')->get(); // Menampilkan semua absensi
-        return view('absensi.index', compact('absensi'));
+        // Ambil input dari form filter, jika tidak ada input maka gunakan bulan dan tahun saat ini
+        $bulanTahun = $request->query('bulan_tahun', Carbon::now()->format('m/Y'));
+
+        // Pisahkan input bulan_tahun menjadi bulan dan tahun (format: mm/yyyy)
+        list($bulan, $tahun) = explode('/', $bulanTahun);
+
+        // Query untuk mengambil data absensi sesuai bulan dan tahun yang dipilih
+        $absensi = Absensi::with('karyawan')
+            ->whereMonth('waktu_masuk', $bulan)   // Filter berdasarkan bulan
+            ->whereYear('waktu_masuk', $tahun)    // Filter berdasarkan tahun
+            ->get();
+
+        // Kirim data absensi dan variabel bulanTahun ke view
+        return view('absensi.index', compact('absensi', 'bulanTahun'));
     }
 
     public function create()
@@ -74,50 +86,73 @@ class AbsensiController extends Controller
 
         return redirect()->route('absensi.index')->with('success', 'Absensi berhasil dicatat.');
     }
+    
+
+    public function filter(Request $request) {
+        $request->validate([
+            'bulan' => 'required|date_format:m',  // Pastikan bulan adalah format "m"
+            'tahun' => 'required|date_format:Y',  // Pastikan tahun adalah format "Y"
+        ]);
+    
+        // Cek apakah data bulan dan tahun benar
+        $bulan = $request->input('bulan');
+        $tahun = $request->input('tahun');
+    
+        if (!$bulan || !$tahun) {
+            return response()->json(['error' => 'Bulan dan tahun tidak valid']);
+        }
+    
+        // Lakukan query untuk mendapatkan data absensi berdasarkan bulan dan tahun
+        $absensi = Absensi::whereMonth('waktu_masuk', $bulan)
+                          ->whereYear('waktu_masuk', $tahun)
+                          ->get();
+    
+        return response()->json(['absensi' => $absensi]);
+    }
+    
+    
 
     private function updateGaji(Absensi $absensi)
     {
         $karyawan = $absensi->karyawan;
-        $bulan = Carbon::now()->format('Y-m');
-    
-        switch ($karyawan->tipe_gaji) {
+        $bulan = Carbon::now()->format('Y-m'); // Format bulan untuk memfilter data gaji
+
+        // Menggunakan jenis_karyawan untuk memutuskan tipe gaji yang akan diperbarui
+        switch ($karyawan->jenis_karyawan) {
             case 'bulanan':
                 $gaji = GajiBulanan::firstOrCreate(
                     ['id_karyawan' => $karyawan->id_karyawan, 'bulan' => $bulan],
                     ['total_gaji' => 0, 'bonus' => 0, 'denda' => 0]
                 );
                 break;
-    
+
             case 'harian':
-                $tanggal = Carbon::now()->format('Y-m-d');
+                $tanggal = Carbon::now()->format('Y-m-d'); // Format tanggal untuk gaji harian
                 $gaji = GajiHarian::firstOrCreate(
                     ['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => $tanggal],
                     ['total_gaji' => 0, 'bonus' => 0, 'denda' => 0]
                 );
                 break;
-    
+
             case 'borongan':
                 $gaji = GajiBorongan::firstOrCreate(
                     ['id_karyawan' => $karyawan->id_karyawan, 'bulan' => $bulan],
                     ['total_gaji' => 0, 'bonus' => 0, 'denda' => 0]
                 );
                 break;
-    
-            // Tambahkan default case untuk menangani tipe_gaji yang tidak dikenali
+
             default:
-                return back()->with('error', 'Tipe gaji karyawan tidak valid.');
+                Log::error('Tipe gaji karyawan tidak valid untuk karyawan: ' . $karyawan->id_karyawan);
+                return;
         }
-    
-        // Pastikan variabel $gaji sudah didefinisikan dan tidak null
+
         if (isset($gaji)) {
-            // Update bonus dan denda jika gaji ditemukan atau berhasil dibuat
+            // Update bonus dan denda untuk absensi karyawan
             $gaji->bonus += $absensi->bonus;
             $gaji->denda += $absensi->denda;
             $gaji->save();
         } else {
-            // Logging atau handling error
             Log::error('Gagal memperbarui gaji: Objek gaji tidak ditemukan atau tidak bisa dibuat.');
         }
-    
     }
 }

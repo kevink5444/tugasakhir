@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Capaian;
 use App\Models\Karyawan;
 use App\Models\Pekerjaan; // Pastikan Anda memiliki model Pekerjaan
+use App\Models\Capaian; // Pastikan Anda memiliki model Capaian
 
 class CapaianController extends Controller
 {

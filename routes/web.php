@@ -67,11 +67,13 @@ Route::prefix('absensi')->group(function () {
 });
 Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
 
+
 // Route untuk menampilkan form input absensi
 Route::get('/absensi/create', [AbsensiController::class, 'create'])->name('absensi.create');
 
 // Route untuk menyimpan data absensi
 Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store');
+Route::get('/absensi/filter', [AbsensiController::class, 'filter'])->name('absensi.filter');
 
 // Route untuk menampilkan detail absensi (tambahkan route ini jika Anda ingin detail)
 Route::get('/absensi/{id}', [AbsensiController::class, 'show'])->name('absensi.show');
@@ -107,6 +109,7 @@ Route::post('/lembur/setujui/{id}', [LemburController::class, 'setujuiLembur'])-
             Route::get('gaji_borongan/create', [GajiBoronganController::class, 'create'])->name('gajiBorongan.create');
             Route::post('gaji_borongan/store', [GajiBoronganController::class, 'store'])->name('gajiBorongan.store');
             Route::get('gaji_borongan/{id}/edit', [GajiBoronganController::class, 'edit'])->name('gaji_borongan.edit');
+            Route::get('/gaji_borongan/filter', [GajiBoronganController::class, 'filter'])->name('gaji_borongan.filter');
 
             Route::delete('/gaji_borongan/{id}/delete', [GajiBoronganController::class, 'destroy'])->name('gaji_borongan.destroy');
             Route::get('gaji_borongan/{id}/ambil_gaji', [GajiBoronganController::class, 'ambilGaji'])->name('gaji_borongan.ambil_gaji');

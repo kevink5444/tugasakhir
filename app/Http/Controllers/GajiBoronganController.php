@@ -7,20 +7,38 @@ use App\Models\GajiBorongan;
 use App\Models\Karyawan;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+
 class GajiBoronganController extends Controller
 {
     // Menampilkan daftar gaji borongan
-    public function index()
+    public function index(Request $request)
     {
-        // Mengambil data dengan relasi karyawan dan dikelompokkan berdasarkan tahun dan bulan
-        $gajiBorongan = GajiBorongan::with('karyawan')->get();
+        $month = $request->input('month');
+        $year = $request->input('year');
+
+        // Query untuk mengambil data gaji borongan
+        $query = GajiBorongan::with('karyawan');
+
+        if ($month) {
+            $query->whereMonth('created_at', $month);
+        }
+
+        if ($year) {
+            $query->whereYear('created_at', $year);
+        }
+
+        $gajiBorongan = $query->orderBy('created_at', 'desc')->get()->groupBy(function ($item) {
+            return Carbon::parse($item->created_at)->format('Y-m');
+        });
+
         return view('gaji_borongan.index', compact('gajiBorongan'));
     }
 
     // Menampilkan form pembuatan gaji borongan baru
     public function create()
     {
-        $karyawan = Karyawan::all(); // Mengambil semua data karyawan
+        $karyawan = Karyawan::all();
         return view('gaji_borongan.create', compact('karyawan'));
     }
 
@@ -43,16 +61,15 @@ class GajiBoronganController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // Menghitung total gaji borongan secara otomatis
+        // Menghitung total gaji borongan
         $total_gaji_borongan = ($request->capaian_harian + $request->total_lembur + $request->bonus_lembur) + $request->total_bonus - $request->total_denda;
 
-        // Menyimpan data gaji borongan baru
         GajiBorongan::create([
             'id_karyawan' => $request->id_karyawan,
             'minggu_mulai' => $request->minggu_mulai,
             'minggu_selesai' => $request->minggu_selesai,
-            'bulan' => date('n', strtotime($request->minggu_mulai)), // Mengambil bulan dari tanggal mulai
-            'tahun' => date('Y', strtotime($request->minggu_mulai)), // Mengambil tahun dari tanggal mulai
+            'bulan' => date('n', strtotime($request->minggu_mulai)),
+            'tahun' => date('Y', strtotime($request->minggu_mulai)),
             'total_gaji_borongan' => $total_gaji_borongan,
             'total_bonus' => $request->total_bonus,
             'total_denda' => $request->total_denda,
@@ -69,15 +86,15 @@ class GajiBoronganController extends Controller
     public function edit($id)
     {
         $gajiBorongan = GajiBorongan::findOrFail($id);
-        $karyawan = Karyawan::all(); // Mengambil semua data karyawan
+        $karyawan = Karyawan::all();
         return view('gaji_borongan.edit', compact('gajiBorongan', 'karyawan'));
     }
 
-    // Memperbarui gaji borongan yang ada
+    // Memperbarui gaji borongan
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'id_karyawan' => 'required|exists:karyawan,id',
+            'id_karyawan' => 'required|exists:karyawan,id_karyawan',
             'minggu_mulai' => 'required|date',
             'minggu_selesai' => 'required|date|after:minggu_mulai',
             'total_bonus' => 'required|numeric',
@@ -94,16 +111,15 @@ class GajiBoronganController extends Controller
 
         $gajiBorongan = GajiBorongan::findOrFail($id);
         
-        // Menghitung total gaji borongan secara otomatis
+        // Menghitung total gaji borongan
         $total_gaji_borongan = ($request->capaian_harian + $request->total_lembur + $request->bonus_lembur) + $request->total_bonus - $request->total_denda;
 
-        // Memperbarui data gaji borongan
         $gajiBorongan->update([
             'id_karyawan' => $request->id_karyawan,
             'minggu_mulai' => $request->minggu_mulai,
             'minggu_selesai' => $request->minggu_selesai,
-            'bulan' => date('n', strtotime($request->minggu_mulai)), // Mengupdate bulan
-            'tahun' => date('Y', strtotime($request->minggu_mulai)), // Mengupdate tahun
+            'bulan' => date('n', strtotime($request->minggu_mulai)),
+            'tahun' => date('Y', strtotime($request->minggu_mulai)),
             'total_gaji_borongan' => $total_gaji_borongan,
             'total_bonus' => $request->total_bonus,
             'total_denda' => $request->total_denda,
@@ -115,49 +131,59 @@ class GajiBoronganController extends Controller
 
         return redirect()->route('gaji_borongan.index')->with('success', 'Gaji borongan berhasil diperbarui.');
     }
-    public function ambilGaji($id)
-{
-    $gaji_borongan = GajiBorongan::findOrFail($id);
 
-    if ($gaji_borongan->status_pengambilan) {
-        return redirect()->back()->with('error', 'Gaji borongan sudah diambil.');
+    // Fungsi untuk mengambil gaji
+    public function ambilGaji($id)
+    {
+        $gaji_borongan = GajiBorongan::findOrFail($id);
+
+        if ($gaji_borongan->status_pengambilan) {
+            return redirect()->back()->with('error', 'Gaji borongan sudah diambil.');
+        }
+
+        $gaji_borongan->status_pengambilan = 1;
+        $gaji_borongan->save();
+
+        return redirect()->route('gaji_borongan.index')->with('success', 'Gaji borongan berhasil diambil.');
     }
 
-    // Tandai gaji sudah diambil
-    $gaji_borongan->status_pengambilan = 1;
-    $gaji_borongan->save();
+    // Fungsi untuk mencetak slip gaji
+    public function cetakSlipGaji($id)
+    {
+        $gaji_borongan = GajiBorongan::findOrFail($id);
 
-    return redirect()->route('gaji_borongan.index')->with('success', 'Gaji borongan berhasil diambil.');
-}
-public function cetakSlipGaji($id)
+        $pdf = Pdf::loadView('gaji_borongan.slip_gaji', compact('gaji_borongan'));
+
+        return $pdf->download('slip_gaji_borongan_' . $gaji_borongan->id . '.pdf');
+    }
+
+    // Menghapus data gaji borongan
+    public function destroy($id)
+    {
+        $gaji_borongan = GajiBorongan::findOrFail($id);
+        $gaji_borongan->delete();
+
+        return redirect()->route('gaji_borongan.index')->with('success', 'Gaji borongan berhasil dihapus.');
+    }
+    public function filter(Request $request)
 {
-    $gaji_borongan = GajiBorongan::findOrFail($id);
+    $bulan = $request->input('bulan');
+    $tahun = $request->input('tahun');
 
-    // Menghitung total gaji borongan dalam periode
-    $totalGajiPeriode = $gaji_borongan->total_gaji_borongan; // Total sudah disimpan dalam database
+    // Validasi input
+    if (!$bulan || !$tahun) {
+        return response()->json(['error' => 'Bulan dan tahun diperlukan'], 400);
+    }
 
-    return view('gaji_borongan.slip_gaji', compact('gaji_borongan', 'totalGajiPeriode'));
+    // Query untuk mengambil data gaji borongan berdasarkan bulan dan tahun
+    $gajiBorongan = GajiBorongan::with('karyawan')
+        ->whereMonth('minggu_mulai', $bulan)
+        ->whereYear('minggu_mulai', $tahun)
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-    // Membuat PDF slip gaji
-    $pdf = Pdf::loadView('gaji_borongan.slip_gaji', compact('gaji_borongan', 'totalGajiPeriode'));
-
-    return $pdf->download('slip_gaji_borongan_' . $gaji_borongan->id . '.pdf');
-}
-public function downloadPdf($id)
-{
-    $gaji_borongan = GajiBorongan::findOrFail($id);
-
-    // Membuat PDF slip gaji
-    $pdf = Pdf::loadView('gaji_borongan.slip_gaji', compact('gaji_borongan'));
-
-    return $pdf->download('slip_gaji_borongan_' . $gaji_borongan->id . '.pdf');
-}
-public function destroy($id)
-{
-    $gaji_borongan = GajiBorongan::findOrFail($id);
-    $gaji_borongan->delete();
-
-    return redirect()->route('gaji_borongan.index')->with('success', 'Gaji borongan berhasil dihapus.');
+    // Return data dalam format JSON
+    return response()->json(['gajiBorongan' => $gajiBorongan]);
 }
 
 }

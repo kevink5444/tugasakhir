@@ -3,13 +3,13 @@
 @section('content')
 <div class="container mt-5">
     <!-- Judul Dashboard -->
-    <h1 class="text-center mb-4">Dashboard UMKM CV YP Sukses Makmur</h1>
+    <h1 class="text-center mb-4" style="font-size: 28px; font-weight: bold;">Dashboard UMKM CV YP Sukses Makmur</h1>
 
     <!-- Row Pertama: Notifikasi dan Pengumuman -->
     <div class="row">
         <!-- Kotak 1: Notifikasi Penting -->
         <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card h-100">
+            <div class="card h-100" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                 <div class="card-header">Notifikasi Penting</div>
                 <div class="card-body">
                     <ul>
@@ -23,7 +23,7 @@
 
         <!-- Kotak 2: Pengumuman Perusahaan -->
         <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card h-100">
+            <div class="card h-100" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                 <div class="card-header">Pengumuman Perusahaan</div>
                 <div class="card-body">
                     <ul>
@@ -37,7 +37,7 @@
 
         <!-- Kotak 3: Statistik Karyawan -->
         <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card h-100">
+            <div class="card h-100" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                 <div class="card-header">Statistik Karyawan</div>
                 <div class="card-body">
                     <ul>
@@ -56,15 +56,13 @@
 
         <!-- Kotak 4: Link Cepat -->
         <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card h-100">
+            <div class="card h-100" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                 <div class="card-header">Link Cepat</div>
                 <div class="card-body">
                     <ul>
                         <li><a href="{{ route('gaji_borongan.index') }}">Data Penggajian Borongan</a></li>
                         <li><a href="{{ route('gaji_harian.index') }}">Data Penggajian Harian</a></li>
                         <li><a href="{{ route('gaji_bulanan.index') }}">Data Penggajian Bulanan</a></li>
-                        <li><a href="{{ route('karyawan.index') }}">Data Karyawan</a></li>
-                        <li><a href="{{ route('absensi.index') }}">Data Absensi</a></li>
                     </ul>
                 </div>
             </div>

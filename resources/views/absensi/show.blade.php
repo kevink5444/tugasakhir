@@ -8,7 +8,7 @@
         <dd class="col-sm-9">{{ $absensi->id_absensi }}</dd>
 
         <dt class="col-sm-3">Karyawan</dt>
-        <dd class="col-sm-9">{{ $absensi->karyawan->nama_karyawan }} ({{ $absensi->karyawan->tipe_gaji }})</dd>
+        <dd class="col-sm-9">{{ $absensi->karyawan->nama_karyawan }} ({{ $absensi->karyawan->jenis_karyawan }})</dd>
 
         <dt class="col-sm-3">Status</dt>
         <dd class="col-sm-9">{{ $absensi->status }}</dd>

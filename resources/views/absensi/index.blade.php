@@ -1,42 +1,114 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h2>Daftar Absensi</h2>
-    <a href="{{ route('absensi.create') }}" class="btn btn-primary mb-3">Tambah Absensi</a>
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
+<div class="container mt-4">
+    <h2>Data Absensi</h2>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="bulan">Pilih Bulan</label>
+                <select id="bulan" class="form-control">
+                    <option value="">-- Pilih Bulan --</option>
+                    @foreach ([
+                        '01' => 'Januari',
+                        '02' => 'Februari',
+                        '03' => 'Maret',
+                        '04' => 'April',
+                        '05' => 'Mei',
+                        '06' => 'Juni',
+                        '07' => 'Juli',
+                        '08' => 'Agustus',
+                        '09' => 'September',
+                        '10' => 'Oktober',
+                        '11' => 'November',
+                        '12' => 'Desember'
+                    ] as $value => $nama)
+                        <option value="{{ $value }}">{{ $nama }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
-    @endif
-    <table class="table table-striped">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="tahun">Pilih Tahun</label>
+                <select id="tahun" class="form-control">
+                    <option value="">-- Pilih Tahun --</option>
+                    @for ($tahun = date('Y'); $tahun >= 2000; $tahun--)
+                        <option value="{{ $tahun }}">{{ $tahun }}</option>
+                    @endfor
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary mt-4" id="filterBtn">Filter</button>
+        </div>
+    </div>
+
+    <table class="table table-bordered">
         <thead>
             <tr>
-                <th>ID_Absensi</th>
-                <th>ID_Karyawan</th>
-                <th>Status</th>
+                <th>ID</th>
+                <th>Nama Karyawan</th>
                 <th>Waktu Masuk</th>
                 <th>Waktu Pulang</th>
-                <th>Bonus</th>
-                <th>Denda</th>
             </tr>
         </thead>
-        <tbody>
-            @foreach ($absensi as $item)
-                <tr>
-                    <td>{{ $item->id_absensi }}</td>
-                    <td>{{ $item->karyawan->nama_karyawan }}</td>
-                    <td>{{ $item->status }}</td>
-                    <td>{{ $item->waktu_masuk }}</td>
-                    <td>{{ $item->waktu_pulang }}</td>
-                    <td>Rp {{ number_format($item->bonus, 2, ',', '.') }}</td>
-                    <td>Rp {{ number_format($item->denda, 2, ',', '.') }}</td>
-                    <td>
-                        
-                    </td>
-                </tr>
+        <tbody id="absensiTableBody">
+            @foreach($absensi as $data)
+            <tr>
+                <td>{{ $data->id_absensi }}</td>
+                <td>{{ $data->karyawan->nama_karyawan }}</td>
+                <td>{{ $data->waktu_masuk }}</td>
+                <td>{{ $data->waktu_pulang }}</td>
+            </tr>
             @endforeach
         </tbody>
     </table>
 </div>
+@endsection
+
+@section('styles')
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+@endsection
+
+@section('scripts')
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    success: function(data) {
+        console.log('Data diterima:', data); 
+        $('#filterBtn').click(function() {
+    var selectedBulan = $('#bulan').val();  // Ambil nilai bulan
+    var selectedTahun = $('#tahun').val();  // Ambil nilai tahun
+
+    // Validasi apakah bulan dan tahun sudah dipilih
+    if (selectedBulan && selectedTahun) {
+        console.log('Bulan:', selectedBulan, 'Tahun:', selectedTahun);  // Tambahkan ini untuk memeriksa nilai yang dikirim
+        // Jalankan AJAX ke rute Laravel yang sesuai
+        $.ajax({
+            url: "{{ route('absensi.filter') }}",  // Rute Laravel
+            method: "GET",
+            data: {
+                bulan: selectedBulan,
+                tahun: selectedTahun
+            },
+            success: function(data) {
+                console.log('Data diterima:', data);
+            },
+            error: function(xhr, status, error) {
+                console.log('Terjadi kesalahan:', error);
+            }
+        });
+    } else {
+        alert('Silakan pilih bulan dan tahun!');
+    }
+    });
+});
+</script>
 @endsection
