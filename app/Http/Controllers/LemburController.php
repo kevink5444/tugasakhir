@@ -8,6 +8,7 @@ use App\Models\GajiBorongan;
 use App\Models\GajiHarian;
 use App\Models\GajiBulanan;
 use App\Models\Karyawan;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class LemburController extends Controller
 {
@@ -29,19 +30,16 @@ class LemburController extends Controller
             'id_karyawan' => 'required|exists:karyawan,id_karyawan',
             'tanggal_lembur' => 'required|date',
             'jam_lembur' => 'required|integer|min:1',
-            'status_lembur' => 'required|string|in:Pending,Disetujui,Ditolak',
-            'bonus_lembur' => 'nullable|numeric|min:0',
         ]);
-    
+
         Lembur::create([
             'id_karyawan' => $request->id_karyawan,
             'tanggal_lembur' => $request->tanggal_lembur,
             'jam_lembur' => $request->jam_lembur,
-            'status_lembur' => $request->status_lembur,
-            'bonus_lembur' => $request->bonus_lembur ?? 0,
+            'status_lembur' => 'Pending',
         ]);
-    
-        return redirect()->route('lembur.index')->with('status', 'Pengajuan lembur berhasil, menunggu persetujuan.');
+
+        return redirect()->route('lembur.index')->with('status', 'Pengajuan lembur berhasil diajukan, menunggu persetujuan.');
     }
 
     public function show($id)
@@ -62,26 +60,17 @@ class LemburController extends Controller
         $request->validate([
             'status_lembur' => 'required|in:Disetujui,Ditolak',
         ]);
-    
+
         $lembur->status_lembur = $request->status_lembur;
         if ($request->status_lembur === 'Disetujui') {
-            $lembur->jam_lembur = now()->format('H:i:s');
             $karyawan = Karyawan::find($lembur->id_karyawan);
             $gaji_per_hari = $this->getGajiPerHari($karyawan);
-            $lembur->bonus_lembur = $lembur->hitungBonusLembur($lembur->jam_lembur, $gaji_per_hari);
-            $lembur->save();
+            $lembur->bonus_lembur = $this->hitungBonusLembur($lembur->jam_lembur, $gaji_per_hari);
             $this->updateGaji($karyawan, $lembur);
         }
         $lembur->save();
-    
-        return redirect()->route('lembur.index')->with('status', 'Pengajuan lembur berhasil diperbarui.');
-    }
-    public function destroy($id)
-    {
-        $lembur = Lembur::findOrFail($id);
-        $lembur->delete();
 
-        return redirect()->route('lembur.index')->with('status', 'Pengajuan lembur berhasil dihapus.');
+        return redirect()->route('lembur.index')->with('status', 'Pengajuan lembur berhasil diperbarui.');
     }
 
     private function getGajiPerHari($karyawan)
@@ -103,7 +92,6 @@ class LemburController extends Controller
                 return 0;
         }
     }
-
     private function updateGaji($karyawan, $lembur)
     {
         switch ($karyawan->jenis_karyawan) {
@@ -133,5 +121,41 @@ class LemburController extends Controller
                 }
                 break;
         }
+    }
+
+    public function approvalPage()
+    {
+        $lemburPending = Lembur::with('karyawan')->where('status_lembur', 'Pending')->paginate(10);
+        return view('lembur.approval', compact('lemburPending'));
+    }
+
+    public function approve(Request $request, $id)
+    {
+        $lembur = Lembur::findOrFail($id);
+        $request->validate([
+            'status_lembur' => 'required|in:Disetujui,Ditolak',
+        ]);
+
+        $lembur->status_lembur = $request->status_lembur;
+        
+        if ($request->status_lembur === 'Disetujui') {
+            $karyawan = Karyawan::find($lembur->id_karyawan);
+            $gaji_per_hari = $this->getGajiPerHari($karyawan);
+            $lembur->bonus_lembur = $this->hitungBonusLembur($lembur->jam_lembur, $gaji_per_hari);
+            $this->updateGaji($karyawan, $lembur);
+        }
+
+        $lembur->save();
+
+        return redirect()->route('lembur.approvalPage')->with('status', 'Status lembur berhasil diperbarui.');
+    }
+
+    public function reject($id)
+    {
+        $lembur = Lembur::findOrFail($id);
+        $lembur->status_lembur = 'Ditolak';
+        $lembur->save();
+
+        return redirect()->route('lembur.approvalPage')->with('status', 'Pengajuan lembur ditolak.');
     }
 }

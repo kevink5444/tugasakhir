@@ -14,19 +14,16 @@ class AbsensiController extends Controller
 {
     public function index(Request $request)
     {
-        // Ambil input dari form filter, jika tidak ada input maka gunakan bulan dan tahun saat ini
+        // Ambil bulan dan tahun saat ini jika tidak ada filter
         $bulanTahun = $request->query('bulan_tahun', Carbon::now()->format('m/Y'));
-
-        // Pisahkan input bulan_tahun menjadi bulan dan tahun (format: mm/yyyy)
         list($bulan, $tahun) = explode('/', $bulanTahun);
 
-        // Query untuk mengambil data absensi sesuai bulan dan tahun yang dipilih
+        // Query absensi berdasarkan bulan dan tahun yang dipilih
         $absensi = Absensi::with('karyawan')
-            ->whereMonth('waktu_masuk', $bulan)   // Filter berdasarkan bulan
-            ->whereYear('waktu_masuk', $tahun)    // Filter berdasarkan tahun
+            ->whereMonth('waktu_masuk', $bulan)
+            ->whereYear('waktu_masuk', $tahun)
             ->get();
 
-        // Kirim data absensi dan variabel bulanTahun ke view
         return view('absensi.index', compact('absensi', 'bulanTahun'));
     }
 
@@ -39,7 +36,7 @@ class AbsensiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_karyawan' => 'required|exists:karyawan,id_karyawan',
+            'id_karyawan' => 'required|exists:karyawans,id_karyawan',
             'status' => 'required|in:masuk,izin,sakit,alpha',
             'waktu_masuk' => 'nullable|date_format:Y-m-d\TH:i',
             'waktu_pulang' => 'nullable|date_format:Y-m-d\TH:i',
@@ -87,31 +84,27 @@ class AbsensiController extends Controller
         return redirect()->route('absensi.index')->with('success', 'Absensi berhasil dicatat.');
     }
     
-
-    public function filter(Request $request) {
+    public function filter(Request $request)
+    {
+        Log::info('Filter function accessed');
         $request->validate([
-            'bulan' => 'required|date_format:m',  // Pastikan bulan adalah format "m"
-            'tahun' => 'required|date_format:Y',  // Pastikan tahun adalah format "Y"
+            'bulan' => 'required|date_format:m',
+            'tahun' => 'required|date_format:Y',
         ]);
     
-        // Cek apakah data bulan dan tahun benar
         $bulan = $request->input('bulan');
         $tahun = $request->input('tahun');
     
-        if (!$bulan || !$tahun) {
-            return response()->json(['error' => 'Bulan dan tahun tidak valid']);
-        }
+        Log::info("Filter parameters: Bulan - $bulan, Tahun - $tahun");
     
-        // Lakukan query untuk mendapatkan data absensi berdasarkan bulan dan tahun
-        $absensi = Absensi::whereMonth('waktu_masuk', $bulan)
-                          ->whereYear('waktu_masuk', $tahun)
-                          ->get();
+        $absensi = Absensi::with('karyawan')
+            ->whereMonth('waktu_masuk', $bulan)
+            ->whereYear('waktu_masuk', $tahun)
+            ->get();
     
         return response()->json(['absensi' => $absensi]);
     }
     
-    
-
     private function updateGaji(Absensi $absensi)
     {
         $karyawan = $absensi->karyawan;

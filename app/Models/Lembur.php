@@ -22,4 +22,3 @@ class Lembur extends Model
         return $jam_lembur * $rate_per_jam; 
     }
 }
-

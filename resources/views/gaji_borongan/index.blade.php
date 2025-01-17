@@ -82,7 +82,7 @@
                             @if (!$gaji->status_pengambilan)
                                 <a href="{{ route('gaji_borongan.ambil_gaji', $gaji->id_gaji_borongan) }}" class="btn btn-success">Ambil Gaji</a>
                             @endif
-                            <a href="{{ route('gaji_borongan.cetak_slip', $gaji->id_gaji_borongan) }}" class="btn btn-info">Cetak Slip</a>
+                            <a href="{{ route('gaji_borongan.cetak_slip', $gaji->id_gaji_borongan) }}" class="btn btn-info">Slip Gaji</a>
                         </td>
                     </tr>
                 @endforeach

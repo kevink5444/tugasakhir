@@ -23,7 +23,6 @@ use App\Http\Controllers\GajiHarianController;
 | Here is where you can register web routes for your application.
 |
 */
-
 // Rute yang bisa diakses oleh semua role
 Route::get('/', function () {
     return view('welcome');
@@ -87,6 +86,16 @@ Route::delete('/karyawan/{id}', [\App\Http\Controllers\KaryawanController::class
 
 
 // Route untuk menampilkan form pengajuan lembur
+Route::get('/lembur/approval', [LemburController::class, 'approvalPage'])->name('lembur.approvalPage');
+Route::patch('/lembur/approve/{id}', [LemburController::class, 'approve'])->name('lembur.approve');
+Route::patch('/lembur/reject/{id}', [LemburController::class, 'reject'])->name('lembur.reject');
+
+
+
+Route::post('/lembur/store', [LemburController::class, 'store'])->name('lembur.store');
+Route::delete('/lembur/{id}', [LemburController::class, 'destroy'])->name('lembur.destroy');
+Route::get('/lembur/pdf', [LemburController::class, 'downloadPDF'])->name('lembur.pdf');
+
 Route::get('/lembur', [LemburController::class, 'index'])->name('lembur.index');
 Route::get('/lembur/ajukan', [LemburController::class, 'create'])->name('lembur.create');
 Route::post('/lembur', [LemburController::class, 'store'])->name('lembur.store');
@@ -105,11 +114,16 @@ Route::post('/lembur/setujui/{id}', [LemburController::class, 'setujuiLembur'])-
         Route::post('generate-gaji-bulanan', [PenggajianController::class, 'generateGajiBulanan'])->name('penggajian.generate_gaji_bulanan');
         Route::post('generate-gaji-mingguan', [PenggajianController::class, 'generateGajiMingguan'])->name('penggajian.generate_gaji_mingguan');
         Route::resource('gaji_borongan', GajiBoronganController::class);
-
+        Route::get('/gaji-borongan/create', [GajiBoronganController::class, 'create'])->name('gajiBorongan.create');
+        Route::post('/gaji-borongan', [GajiBoronganController::class, 'store'])->name('gajiBorongan.store');
+        Route::get('/get-capaian/{id_karyawan}', [GajiBoronganController::class, 'getCapaian']);
+        Route::get('/get-absensi-bonus/{id_karyawan}', [GajiBoronganController::class, 'getAbsensiBonus']);
+        Route::get('/get-absensi-denda/{id_karyawan}', [GajiBoronganController::class, 'getAbsensiDenda']);
             Route::get('gaji_borongan/create', [GajiBoronganController::class, 'create'])->name('gajiBorongan.create');
             Route::post('gaji_borongan/store', [GajiBoronganController::class, 'store'])->name('gajiBorongan.store');
             Route::get('gaji_borongan/{id}/edit', [GajiBoronganController::class, 'edit'])->name('gaji_borongan.edit');
             Route::get('/gaji_borongan/filter', [GajiBoronganController::class, 'filter'])->name('gaji_borongan.filter');
+            Route::get('gaji_borongan/{id}/downloadPdf', [GajiBoronganController::class, 'downloadPdf'])->name('gaji-borongan.downloadPdf');
 
             Route::delete('/gaji_borongan/{id}/delete', [GajiBoronganController::class, 'destroy'])->name('gaji_borongan.destroy');
             Route::get('gaji_borongan/{id}/ambil_gaji', [GajiBoronganController::class, 'ambilGaji'])->name('gaji_borongan.ambil_gaji');

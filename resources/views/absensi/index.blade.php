@@ -80,34 +80,47 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
-$(document).ready(function() {
-    success: function(data) {
-        console.log('Data diterima:', data); 
-        $('#filterBtn').click(function() {
-    var selectedBulan = $('#bulan').val();  // Ambil nilai bulan
-    var selectedTahun = $('#tahun').val();  // Ambil nilai tahun
+   $(document).ready(function() {
+    // Setup CSRF Token for AJAX
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
-    // Validasi apakah bulan dan tahun sudah dipilih
-    if (selectedBulan && selectedTahun) {
-        console.log('Bulan:', selectedBulan, 'Tahun:', selectedTahun);  // Tambahkan ini untuk memeriksa nilai yang dikirim
-        // Jalankan AJAX ke rute Laravel yang sesuai
-        $.ajax({
-            url: "{{ route('absensi.filter') }}",  // Rute Laravel
-            method: "GET",
-            data: {
-                bulan: selectedBulan,
-                tahun: selectedTahun
-            },
-            success: function(data) {
-                console.log('Data diterima:', data);
-            },
-            error: function(xhr, status, error) {
-                console.log('Terjadi kesalahan:', error);
-            }
-        });
-    } else {
-        alert('Silakan pilih bulan dan tahun!');
-    }
+    $('#filterBtn').on('click', function() {
+        var selectedBulan = $('#bulan').val();
+        var selectedTahun = $('#tahun').val();
+
+        if (selectedBulan && selectedTahun) {
+            $.ajax({
+                url: '{{ route('absensi.filter') }}',
+                method: 'GET',
+                data: {
+                    bulan: selectedBulan,
+                    tahun: selectedTahun
+                },
+                success: function(data) {
+                    var tableBody = $('#absensiTableBody');
+                    tableBody.empty();
+
+                    data.absensi.forEach(function(item) {
+                        var row = '<tr>' +
+                            '<td>' + item.id_absensi + '</td>' +
+                            '<td>' + item.karyawan.nama_karyawan + '</td>' +
+                            '<td>' + item.waktu_masuk + '</td>' +
+                            '<td>' + item.waktu_pulang + '</td>' +
+                            '</tr>';
+                        tableBody.append(row);
+                    });
+                },
+                error: function(error) {
+                    console.log('Terjadi kesalahan:', error);
+                }
+            });
+        } else {
+            alert('Silakan pilih bulan dan tahun!');
+        }
     });
 });
 </script>

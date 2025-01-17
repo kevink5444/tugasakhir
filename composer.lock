@@ -22,7 +22,7 @@
             },
             "require": {
                 "php": "^7.3|^8.0",
-                "symfony/http-foundation": "^5.3|^6|^7",
+                "symfony/http-foundation": "5.4.46",
                 "symfony/http-kernel": "^5.3|^6|^7"
             },
             "require-dev": {
@@ -1244,10 +1244,10 @@
                 "ext-mbstring": "*",
                 "ext-openssl": "*",
                 "laravel/serializable-closure": "^1.0",
-                "league/commonmark": "^1.3|^2.0.2",
+                "league/commonmark": "^1.3|^2.6.0",
                 "league/flysystem": "^1.1",
                 "monolog/monolog": "^2.0",
-                "nesbot/carbon": "^2.53.1",
+                "nesbot/carbon": "2.72.6",
                 "opis/closure": "^3.6",
                 "php": "^7.3|^8.0",
                 "psr/container": "^1.0",
@@ -6580,7 +6580,7 @@
                 "brianium/paratest": "^6.1",
                 "fideloper/proxy": "^4.4.1",
                 "fruitcake/laravel-cors": "^2.0.3",
-                "laravel/framework": "8.x-dev",
+                "laravel/framework": "8.83.28",
                 "nunomaduro/larastan": "^0.6.2",
                 "nunomaduro/mock-final-classes": "^1.0",
                 "orchestra/testbench": "^6.0",
@@ -7500,7 +7500,7 @@
             },
             "require-dev": {
                 "phpunit/phpunit": "^9.3",
-                "symfony/process": "^4.2 || ^5"
+                "symfony/process": "5.4.46"
             },
             "type": "library",
             "extra": {

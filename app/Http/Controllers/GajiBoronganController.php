@@ -13,34 +13,34 @@ class GajiBoronganController extends Controller
 {
     // Menampilkan daftar gaji borongan
     public function index(Request $request)
-    {
-        $month = $request->input('month');
-        $year = $request->input('year');
+{
+    $month = $request->input('month');
+    $year = $request->input('year');
 
-        // Query untuk mengambil data gaji borongan
-        $query = GajiBorongan::with('karyawan');
+    // Query untuk mengambil data gaji borongan
+    $query = GajiBorongan::with('karyawan');
 
-        if ($month) {
-            $query->whereMonth('created_at', $month);
-        }
-
-        if ($year) {
-            $query->whereYear('created_at', $year);
-        }
-
-        $gajiBorongan = $query->orderBy('created_at', 'desc')->get()->groupBy(function ($item) {
-            return Carbon::parse($item->created_at)->format('Y-m');
-        });
-
-        return view('gaji_borongan.index', compact('gajiBorongan'));
+    if ($month) {
+        $query->whereMonth('created_at', $month);
     }
+
+    if ($year) {
+        $query->whereYear('created_at', $year);
+    }
+
+    $gajiBorongan = $query->orderBy('created_at', 'desc')->get()->groupBy(function ($item) {
+        return Carbon::parse($item->created_at)->format('Y-m');
+    });
+
+    return view('gaji_borongan.index', compact('gajiBorongan'));
+}
 
     // Menampilkan form pembuatan gaji borongan baru
     public function create()
-    {
-        $karyawan = Karyawan::all();
-        return view('gaji_borongan.create', compact('karyawan'));
-    }
+{
+    $karyawan = Karyawan::all();
+    return view('gaji_borongan.create', compact('karyawan'));
+}
 
     // Menyimpan gaji borongan baru
     public function store(Request $request)
@@ -49,21 +49,21 @@ class GajiBoronganController extends Controller
             'id_karyawan' => 'required|exists:karyawan,id_karyawan',
             'minggu_mulai' => 'required|date',
             'minggu_selesai' => 'required|date|after:minggu_mulai',
-            'total_bonus' => 'required|numeric',
-            'total_denda' => 'required|numeric',
-            'capaian_harian' => 'required|numeric',
-            'total_lembur' => 'required|numeric',
-            'bonus_lembur' => 'required|numeric',
+            'total_bonus' => 'required|numeric|min:0',
+            'total_denda' => 'required|numeric|min:0',
+            'capaian_harian' => 'required|numeric|min:0',
+            'total_lembur' => 'required|numeric|min:0',
+            'bonus_lembur' => 'required|numeric|min:0',
             'status_pengambilan' => 'required|string',
         ]);
-
+    
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-
+    
         // Menghitung total gaji borongan
         $total_gaji_borongan = ($request->capaian_harian + $request->total_lembur + $request->bonus_lembur) + $request->total_bonus - $request->total_denda;
-
+    
         GajiBorongan::create([
             'id_karyawan' => $request->id_karyawan,
             'minggu_mulai' => $request->minggu_mulai,
@@ -78,7 +78,7 @@ class GajiBoronganController extends Controller
             'bonus_lembur' => $request->bonus_lembur,
             'status_pengambilan' => $request->status_pengambilan,
         ]);
-
+    
         return redirect()->route('gaji_borongan.index')->with('success', 'Gaji borongan berhasil ditambahkan.');
     }
 
@@ -89,48 +89,46 @@ class GajiBoronganController extends Controller
         $karyawan = Karyawan::all();
         return view('gaji_borongan.edit', compact('gajiBorongan', 'karyawan'));
     }
-
     // Memperbarui gaji borongan
     public function update(Request $request, $id)
-    {
-        $validator = Validator::make($request->all(), [
-            'id_karyawan' => 'required|exists:karyawan,id_karyawan',
-            'minggu_mulai' => 'required|date',
-            'minggu_selesai' => 'required|date|after:minggu_mulai',
-            'total_bonus' => 'required|numeric',
-            'total_denda' => 'required|numeric',
-            'capaian_harian' => 'required|numeric',
-            'total_lembur' => 'required|numeric',
-            'bonus_lembur' => 'required|numeric',
-            'status_pengambilan' => 'required|string',
-        ]);
+{
+    $validator = Validator::make($request->all(), [
+        'id_karyawan' => 'required|exists:karyawan,id_karyawan',
+        'minggu_mulai' => 'required|date',
+        'minggu_selesai' => 'required|date|after:minggu_mulai',
+        'total_bonus' => 'required|numeric|min:0',
+        'total_denda' => 'required|numeric|min:0',
+        'capaian_harian' => 'required|numeric|min:0',
+        'total_lembur' => 'required|numeric|min:0',
+        'bonus_lembur' => 'required|numeric|min:0',
+        'status_pengambilan' => 'required|string',
+    ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $gajiBorongan = GajiBorongan::findOrFail($id);
-        
-        // Menghitung total gaji borongan
-        $total_gaji_borongan = ($request->capaian_harian + $request->total_lembur + $request->bonus_lembur) + $request->total_bonus - $request->total_denda;
-
-        $gajiBorongan->update([
-            'id_karyawan' => $request->id_karyawan,
-            'minggu_mulai' => $request->minggu_mulai,
-            'minggu_selesai' => $request->minggu_selesai,
-            'bulan' => date('n', strtotime($request->minggu_mulai)),
-            'tahun' => date('Y', strtotime($request->minggu_mulai)),
-            'total_gaji_borongan' => $total_gaji_borongan,
-            'total_bonus' => $request->total_bonus,
-            'total_denda' => $request->total_denda,
-            'capaian_harian' => $request->capaian_harian,
-            'total_lembur' => $request->total_lembur,
-            'bonus_lembur' => $request->bonus_lembur,
-            'status_pengambilan' => $request->status_pengambilan,
-        ]);
-
-        return redirect()->route('gaji_borongan.index')->with('success', 'Gaji borongan berhasil diperbarui.');
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
     }
+
+    $gajiBorongan = GajiBorongan::findOrFail($id);
+    
+    $total_gaji_borongan = ($request->capaian_harian + $request->total_lembur + $request->bonus_lembur) + $request->total_bonus - $request->total_denda;
+
+    $gajiBorongan->update([
+        'id_karyawan' => $request->id_karyawan,
+        'minggu_mulai' => $request->minggu_mulai,
+        'minggu_selesai' => $request->minggu_selesai,
+        'bulan' => date('n', strtotime($request->minggu_mulai)),
+        'tahun' => date('Y', strtotime($request->minggu_mulai)),
+        'total_gaji_borongan' => $total_gaji_borongan,
+        'total_bonus' => $request->total_bonus,
+        'total_denda' => $request->total_denda,
+        'capaian_harian' => $request->capaian_harian,
+        'total_lembur' => $request->total_lembur,
+        'bonus_lembur' => $request->bonus_lembur,
+        'status_pengambilan' => $request->status_pengambilan,
+    ]);
+
+    return redirect()->route('gaji_borongan.index')->with('success', 'Gaji borongan berhasil diperbarui.');
+}
 
     // Fungsi untuk mengambil gaji
     public function ambilGaji($id)
@@ -167,23 +165,61 @@ class GajiBoronganController extends Controller
     }
     public function filter(Request $request)
 {
-    $bulan = $request->input('bulan');
-    $tahun = $request->input('tahun');
+    // Ambil parameter filter dari permintaan
+    $month = $request->input('month');
+    $year = $request->input('year');
+    $nama_karyawan = $request->input('nama_karyawan'); // Parameter baru untuk nama karyawan
 
-    // Validasi input
-    if (!$bulan || !$tahun) {
-        return response()->json(['error' => 'Bulan dan tahun diperlukan'], 400);
+    // Mulai query dengan relasi karyawan
+    $query = GajiBorongan::with('karyawan');
+
+    // Filter berdasarkan bulan, jika bulan dipilih
+    if ($month) {
+        $query->whereMonth('created_at', $month);
     }
 
-    // Query untuk mengambil data gaji borongan berdasarkan bulan dan tahun
-    $gajiBorongan = GajiBorongan::with('karyawan')
-        ->whereMonth('minggu_mulai', $bulan)
-        ->whereYear('minggu_mulai', $tahun)
-        ->orderBy('created_at', 'desc')
-        ->get();
+    // Filter berdasarkan tahun, jika tahun dipilih
+    if ($year) {
+        $query->whereYear('created_at', $year);
+    }
 
-    // Return data dalam format JSON
-    return response()->json(['gajiBorongan' => $gajiBorongan]);
+    // Filter berdasarkan nama karyawan, jika ada nama yang diinputkan
+    if ($nama_karyawan) {
+        $query->whereHas('karyawan', function ($q) use ($nama_karyawan) {
+            $q->where('nama', 'like', '%' . $nama_karyawan . '%');
+        });
+    }
+
+    // Eksekusi query dan kelompokkan data berdasarkan bulan dan tahun
+    $gajiBorongan = $query->orderBy('created_at', 'desc')->get()->groupBy(function ($item) {
+        return Carbon::parse($item->created_at)->format('Y-m');
+    });
+
+    // Kirimkan hasil ke view dengan hasil filter yang sudah diproses
+    return view('gaji_borongan.index', compact('gajiBorongan'));
 }
+public function getCapaian($id_karyawan)
+    {
+        $karyawan = Karyawan::find($id_karyawan);
+        return response()->json(['capaian_harian' => $karyawan->capaian_harian]);
+    }
+
+    public function getAbsensiBonus($id_karyawan)
+    {
+        $total_bonus = Absensi::where('id_karyawan', $id_karyawan)
+            ->where('status_kehadiran', 'tepat_waktu')
+            ->count() * 25000;
+
+        return response()->json(['total_bonus' => $total_bonus]);
+    }
+
+    public function getAbsensiDenda($id_karyawan)
+    {
+        $total_denda = Absensi::where('id_karyawan', $id_karyawan)
+            ->where('status_kehadiran', 'terlambat')
+            ->count() * 10000;
+
+        return response()->json(['total_denda' => $total_denda]);
+    }
 
 }

@@ -73,40 +73,40 @@
         <table>
             <tr>
                 <th>ID Gaji Borongan</th>
-                <td>{{ $gaji->id_gaji_borongan }}</td>
+                <td>{{ $gaji_borongan->id_gaji_borongan }}</td>
             </tr>
             <tr>
                 <th>Nama Karyawan</th>
-                <td>{{ $gaji->karyawan->nama_karyawan }}</td>
+                <td>{{ $gaji_borongan->karyawan->nama_karyawan }}</td>
             </tr>
             <tr>
                 <th>Minggu Mulai</th>
-                <td>{{ $gaji->minggu_mulai }}</td>
+                <td>{{ $gaji_borongan->minggu_mulai }}</td>
             </tr>
             <tr>
                 <th>Minggu Selesai</th>
-                <td>{{ $gaji->minggu_selesai }}</td>
+                <td>{{ $gaji_borongan->minggu_selesai }}</td>
             </tr>
             <tr>
                 <th>Total Gaji Borongan</th>
-                <td>Rp {{ number_format($gaji->total_gaji_borongan, 0, ',', '.') }}</td>
+                <td>Rp {{ number_format($gaji_borongan->total_gaji_borongan, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <th>Total Bonus</th>
-                <td>Rp {{ number_format($gaji->total_bonus, 0, ',', '.') }}</td>
+                <td>Rp {{ number_format($gaji_borongan->total_bonus, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <th>Total Denda</th>
-                <td>Rp {{ number_format($gaji->total_denda, 0, ',', '.') }}</td>
+                <td>Rp {{ number_format($gaji_borongan->total_denda, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <th>Status Pengambilan</th>
-                <td>{{ $gaji->status_pengambilan ? 'Sudah Diambil' : 'Belum Diambil' }}</td>
+                <td>{{ $gaji_borongan->status_pengambilan ? 'Sudah Diambil' : 'Belum Diambil' }}</td>
             </tr>
         </table>
 
         <div class="download-pdf">
-            <form action="{{ route('gaji-borongan.downloadPdf', $gaji->id_gaji_borongan) }}" method="GET" id="download-form">
+            <form action="{{ route('gaji-borongan.downloadPdf', $gaji_borongan->id_gaji_borongan) }}" method="GET" id="download-form">
                 <button type="submit">Unduh PDF</button>
             </form>
         </div>
