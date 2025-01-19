@@ -14,6 +14,13 @@ class Absensi extends Model
         'bonus',
         'denda',
     ];
+    protected $casts = [
+        'bonus' => 'integer',
+        'denda' => 'integer',
+        'waktu_masuk' => 'datetime',
+        'waktu_pulang' => 'datetime',
+    ];
+
 
     protected $dates = ['waktu_masuk', 'waktu_pulang'];
 

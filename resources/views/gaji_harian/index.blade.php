@@ -2,64 +2,61 @@
 
 @section('content')
 <div class="container">
-    <h2>Daftar Gaji Harian</h2>
-    <a href="{{ route('gaji_harian.create') }}" class="btn btn-primary">Tambah Gaji Harian</a>
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+    <h1>Daftar Gaji Harian</h1>
 
-    <table class="table">
+    <!-- Form Filter -->
+    <form action="{{ route('gaji-harian.filter') }}" method="GET" class="mb-3">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="bulan">Pilih Bulan</label>
+                <select name="bulan" id="bulan" class="form-control">
+                    <option value="">-- Pilih Bulan --</option>
+                    @foreach(range(1, 12) as $i)
+                        <option value="{{ $i }}" {{ (isset($bulan) && $bulan == $i) ? 'selected' : '' }}>
+                            {{ DateTime::createFromFormat('!m', $i)->format('F') }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="tahun">Pilih Tahun</label>
+                <select name="tahun" id="tahun" class="form-control">
+                    <option value="">-- Pilih Tahun --</option>
+                    @foreach(range(date('Y'), 2000) as $year)
+                        <option value="{{ $year }}" {{ (isset($tahun) && $tahun == $year) ? 'selected' : '' }}>
+                            {{ $year }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary mt-4" id="filterBtn">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Tabel Data -->
+    <table class="table table-bordered">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>No</th>
                 <th>Nama Karyawan</th>
-                <th>Nama Pekerjaan</th>
-                <th>Tanggal Awal</th>
-                <th>Tanggal Akhir</th>
-                <th>Target Harian</th>
-                <th>Capaian Harian</th>
-                <th>Gaji Harian</th>
-                <th>Total Gaji Mingguan</th>
-                <th>Bonus Harian</th>
-                <th>Denda Harian</th>
-                <th>Status Pengambilan</th>
-                <th>Aksi</th> <!-- Tambahkan kolom aksi -->
+                <th>Tanggal</th>
+                <th>Jumlah Gaji</th>
             </tr>
         </thead>
         <tbody>
-            @forelse($gajiHarian as $gaji)
-            <tr>
-                <td>{{ $gaji->id_gaji_harian }}</td>
-                <td>{{ $gaji->karyawan->nama_karyawan }}</td> <!-- Asumsi Anda memiliki relasi dengan model Karyawan -->
-                <td>{{ $gaji->pekerjaan->nama_pekerjaan }}</td> <!-- Asumsi Anda memiliki relasi dengan model Pekerjaan -->
-                <td>{{ $gaji->tanggal_awal }}</td>
-                <td>{{ $gaji->tanggal_akhir }}</td>
-                <td>{{ $gaji->target_harian }}</td>
-                <td>{{ $gaji->capaian_harian }}</td>
-                <td>{{ $gaji->gaji_harian }}</td>
-                <td>{{ $gaji->gaji_harian * 6 }}</td> <!-- Total gaji seminggu -->
-                <td>{{ $gaji->bonus_harian }}</td>
-                <td>{{ $gaji->denda_harian }}</td>
-                <td>{{ $gaji->status_pengambilan == 0 ? 'Belum Diambil' : 'Sudah Diambil' }}</td>
-                <td>
-                    @if(!$gaji->status_pengambilan)
-                        <a href="{{ route('gaji_harian.ambil_gaji', $gaji->id_gaji_harian) }}" class="btn btn-success btn-sm">Ambil Gaji</a>
-                    @endif
-                    <a href="{{ route('gaji_harian.edit', $gaji->id_gaji_harian) }}" class="btn btn-warning btn-sm">Edit</a>
-                    <form action="{{ route('gaji_harian.destroy', $gaji->id_gaji_harian) }}" method="POST" class="d-inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</button>
-                    </form>
-                    <a href="{{ route('gaji_harian.cetak_slip', $gaji->id_gaji_harian) }}" class="btn btn-info btn-sm">Slip Gaji</a>
-                </td>
-            </tr>
+            @forelse($gajiHarian as $key => $data)
+                <tr>
+                    <td>{{ $key + 1 }}</td>
+                    <td>{{ $data->karyawan->nama }}</td> <!-- Sesuaikan relasi jika ada -->
+                    <td>{{ $data->tanggal }}</td>
+                    <td>{{ number_format($data->jumlah_gaji, 0, ',', '.') }}</td>
+                </tr>
             @empty
-            <tr>
-                <td colspan="13" class="text-center">Tidak ada data</td>
-            </tr>
+                <tr>
+                    <td colspan="4" class="text-center">Data tidak ditemukan</td>
+                </tr>
             @endforelse
         </tbody>
     </table>

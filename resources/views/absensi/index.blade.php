@@ -49,7 +49,7 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Nama Karyawan</th>
+                <th>ID Karyawan</th>
                 <th>Waktu Masuk</th>
                 <th>Waktu Pulang</th>
             </tr>
@@ -58,7 +58,7 @@
             @foreach($absensi as $data)
             <tr>
                 <td>{{ $data->id_absensi }}</td>
-                <td>{{ $data->karyawan->nama_karyawan }}</td>
+                <td>{{ $data->karyawan->id_karyawan }}</td>
                 <td>{{ $data->waktu_masuk }}</td>
                 <td>{{ $data->waktu_pulang }}</td>
             </tr>
@@ -107,7 +107,7 @@
                     data.absensi.forEach(function(item) {
                         var row = '<tr>' +
                             '<td>' + item.id_absensi + '</td>' +
-                            '<td>' + item.karyawan.nama_karyawan + '</td>' +
+                            '<td>' + item.karyawan.id_karyawan + '</td>' +
                             '<td>' + item.waktu_masuk + '</td>' +
                             '<td>' + item.waktu_pulang + '</td>' +
                             '</tr>';

@@ -135,6 +135,7 @@ Route::get('/gaji_harian{id}/cetak_slip', [GajiHarianController::class, 'cetakSl
 Route::get('gaji_harian/{id}/ambil_gaji', [GajiHarianController::class, 'ambilGaji'])->name('gaji_harian.ambil_gaji');
         Route::post('/gaji_harian', [GajiHarianController::class, 'store'])->name('gaji_harian.store');
         Route::delete('/gaji_harian/{id}', [GajiHarianController::class, 'destroy'])->name('gaji_harian.destroy');
+        Route::get('/gaji-harian/filter', [GajiHarianController::class, 'filter'])->name('gaji-harian.filter');
 // Rute untuk memperbarui data gaji harian
 Route::put('/gaji_harian/{id}', [GajiHarianController::class, 'update'])->name('gaji_harian.update');
 Route::get('/gaji_harian/{id}/download-pdf', [GajiHarianController::class, 'downloadPdf'])->name('gaji_harian.downloadPdf');
@@ -145,6 +146,7 @@ Route::resource('gaji_borongan', GajiBoronganController::class);
 Route::put('gaji_borongan/{id}', [GajiBoronganController::class, 'update'])->name('gaji_borongan.update');
 
 Route::resource('gaji_bulanan', GajiBulananController::class);
+Route::get('gaji_bulanan/filter', [GajiBulananController::class, 'filter'])->name('gaji_bulanan.filter');
 Route::get('gaji_bulanan/{gaji_bulanan}/ambil_gaji', [GajiBulananController::class, 'ambilGaji'])->name('gaji_bulanan.ambil_gaji');
 Route::get('gaji_bulanan/{gaji_bulanan}/slip_gaji', [GajiBulananController::class, 'slipGaji'])->name('gaji_bulanan.slip_gaji');
 Route::get('gaji_bulanan/cetak_slip/{id}', [GajiBulananController::class, 'cetakSlipGaji'])->name('gaji_bulanan.cetak_slip');

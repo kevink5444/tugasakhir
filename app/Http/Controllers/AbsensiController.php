@@ -36,10 +36,10 @@ class AbsensiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_karyawan' => 'required|exists:karyawans,id_karyawan',
+            'id_karyawan' => 'required|exists:karyawan,id_karyawan',
             'status' => 'required|in:masuk,izin,sakit,alpha',
             'waktu_masuk' => 'nullable|date_format:Y-m-d\TH:i',
-            'waktu_pulang' => 'nullable|date_format:Y-m-d\TH:i',
+            'waktu_pulang' => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:waktu_masuk',
         ]);
 
         $absensi = new Absensi();

@@ -202,4 +202,22 @@ class GajiHarianController extends Controller
         $gaji_harian->delete();
         return redirect()->route('gaji_harian.index')->with('success', 'Gaji harian berhasil dihapus.');
     }
+    public function filter(Request $request)
+    {
+        $bulan = $request->input('bulan');
+        $tahun = $request->input('tahun');
+
+        // Validasi input
+        $request->validate([
+            'bulan' => 'required|numeric|min:1|max:12',
+            'tahun' => 'required|numeric|min:1900|max:' . date('Y'),
+        ]);
+
+        // Query untuk memfilter berdasarkan bulan dan tahun
+        $gajiHarian = GajiHarian::whereYear('tanggal', $tahun) // Kolom "tanggal" harus sesuai dengan tabel
+            ->whereMonth('tanggal', $bulan)
+            ->get();
+
+        return view('gaji-harian.index', compact('gajiHarian', 'bulan', 'tahun'));
+    }
 }

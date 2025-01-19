@@ -115,7 +115,23 @@ class GajiBulananController extends Controller
         $gajiBulanan->update(['status_pengambilan' => true]);
         return redirect()->back()->with('success', 'Gaji berhasil diambil.');
     }
+    public function filter(Request $request)
+{
+    $bulan = $request->input('bulan');
+    $tahun = $request->input('tahun');
 
+    // Ambil data gaji bulanan berdasarkan filter bulan dan tahun
+    $gajiBulanan = GajiBulanan::with('karyawan')
+        ->when($bulan, function ($query, $bulan) {
+            $query->whereMonth('bulan', $bulan);
+        })
+        ->when($tahun, function ($query, $tahun) {
+            $query->whereYear('bulan', $tahun);
+        })
+        ->get();
+
+    return view('gaji_bulanan.index', compact('gajiBulanan', 'bulan', 'tahun'));
+}
     // Mencetak slip gaji bulanan dalam bentuk PDF
     public function slipGaji(GajiBulanan $gajiBulanan)
     {
