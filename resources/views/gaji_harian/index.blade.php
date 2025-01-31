@@ -49,9 +49,9 @@
             @forelse($gajiHarian as $key => $data)
                 <tr>
                     <td>{{ $key + 1 }}</td>
-                    <td>{{ $data->karyawan->nama }}</td> <!-- Sesuaikan relasi jika ada -->
-                    <td>{{ $data->tanggal }}</td>
-                    <td>{{ number_format($data->jumlah_gaji, 0, ',', '.') }}</td>
+                    <td>{{ $data->karyawan->nama_karyawan }}</td> <!-- Sesuaikan relasi jika ada -->
+                    <td>{{ $data->tanggal_akhir }}</td>
+                    <td>{{ number_format($data->total_gaji, 0, ',', '.') }}</td>
                 </tr>
             @empty
                 <tr>

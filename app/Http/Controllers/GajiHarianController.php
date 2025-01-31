@@ -203,21 +203,27 @@ class GajiHarianController extends Controller
         return redirect()->route('gaji_harian.index')->with('success', 'Gaji harian berhasil dihapus.');
     }
     public function filter(Request $request)
-    {
-        $bulan = $request->input('bulan');
-        $tahun = $request->input('tahun');
+{
+    $bulan = $request->input('bulan');
+    $tahun = $request->input('tahun');
 
-        // Validasi input
-        $request->validate([
-            'bulan' => 'required|numeric|min:1|max:12',
-            'tahun' => 'required|numeric|min:1900|max:' . date('Y'),
-        ]);
+    // Validasi input bulan dan tahun
+    $request->validate([
+        'bulan' => 'nullable|integer|between:1,12',
+        'tahun' => 'nullable|integer|min:2000|max:' . date('Y'),
+    ]);
 
-        // Query untuk memfilter berdasarkan bulan dan tahun
-        $gajiHarian = GajiHarian::whereYear('tanggal', $tahun) // Kolom "tanggal" harus sesuai dengan tabel
-            ->whereMonth('tanggal', $bulan)
-            ->get();
+    // Query data gaji harian dengan filter bulan dan tahun
+    $gajiHarian = GajiHarian::with('karyawan', 'pekerjaan')
+        ->when($bulan, function ($query, $bulan) {
+            return $query->whereMonth('tanggal_awal', $bulan);
+        })
+        ->when($tahun, function ($query, $tahun) {
+            return $query->whereYear('tanggal_awal', $tahun);
+        })
+        ->get();
 
-        return view('gaji-harian.index', compact('gajiHarian', 'bulan', 'tahun'));
-    }
+    // Passing data filter ke view
+    return view('gaji_harian.index', compact('gajiHarian', 'bulan', 'tahun'));
+}
 }

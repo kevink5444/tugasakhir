@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\GajiBorongan;
 use App\Models\Karyawan;
+use App\Models\Absensi;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -44,43 +45,54 @@ class GajiBoronganController extends Controller
 
     // Menyimpan gaji borongan baru
     public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'id_karyawan' => 'required|exists:karyawan,id_karyawan',
-            'minggu_mulai' => 'required|date',
-            'minggu_selesai' => 'required|date|after:minggu_mulai',
-            'total_bonus' => 'required|numeric|min:0',
-            'total_denda' => 'required|numeric|min:0',
-            'capaian_harian' => 'required|numeric|min:0',
-            'total_lembur' => 'required|numeric|min:0',
-            'bonus_lembur' => 'required|numeric|min:0',
-            'status_pengambilan' => 'required|string',
-        ]);
-    
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-    
-        // Menghitung total gaji borongan
-        $total_gaji_borongan = ($request->capaian_harian + $request->total_lembur + $request->bonus_lembur) + $request->total_bonus - $request->total_denda;
-    
-        GajiBorongan::create([
-            'id_karyawan' => $request->id_karyawan,
-            'minggu_mulai' => $request->minggu_mulai,
-            'minggu_selesai' => $request->minggu_selesai,
-            'bulan' => date('n', strtotime($request->minggu_mulai)),
-            'tahun' => date('Y', strtotime($request->minggu_mulai)),
-            'total_gaji_borongan' => $total_gaji_borongan,
-            'total_bonus' => $request->total_bonus,
-            'total_denda' => $request->total_denda,
-            'capaian_harian' => $request->capaian_harian,
-            'total_lembur' => $request->total_lembur,
-            'bonus_lembur' => $request->bonus_lembur,
-            'status_pengambilan' => $request->status_pengambilan,
-        ]);
-    
-        return redirect()->route('gaji_borongan.index')->with('success', 'Gaji borongan berhasil ditambahkan.');
-    }
+{
+    // Validasi input
+    $request->validate([
+        'id_karyawan' => 'required|exists:karyawan,id',
+        'tanggal' => 'required|date',
+        'waktu_masuk' => 'required|date_format:H:i:s',
+        'waktu_pulang' => 'required|date_format:H:i:s',
+        'jam_lembur' => 'nullable|numeric|min:0',
+        'gaji_per_hari' => 'required|numeric|min:0',
+    ]);
+
+    // Data yang dibutuhkan
+    $waktuMasuk = $request->waktu_masuk;
+    $waktuPulang = $request->waktu_pulang;
+    $jamLembur = $request->jam_lembur ?? 0;
+    $gajiPerHari = $request->gaji_per_hari;
+
+    // Hitung bonus jika hadir tepat waktu (<= 08:00:00)
+    $jamMasukTepat = '08:00:00'; // Jam masuk ideal
+    $bonus = (strtotime($waktuMasuk) <= strtotime($jamMasukTepat)) ? 25000 : 0;
+
+    // Hitung denda jika terlambat (> 08:00:00)
+    $denda = (strtotime($waktuMasuk) > strtotime($jamMasukTepat)) ? 10000 : 0;
+
+    // Hitung lembur (gaji per hari dibagi 8 jam)
+    $gajiPerJam = $gajiPerHari / 8;
+    $lembur = $gajiPerJam * $jamLembur;
+
+    // Hitung total gaji
+    $totalGaji = $gajiPerHari + $bonus - $denda + $lembur;
+
+    // Simpan ke database
+    GajiBorongan::create([
+        'id_karyawan' => $request->id_karyawan,
+        'tanggal' => $request->tanggal,
+        'waktu_masuk' => $waktuMasuk,
+        'waktu_pulang' => $waktuPulang,
+        'jam_lembur' => $jamLembur,
+        'gaji_per_hari' => $gajiPerHari,
+        'bonus' => $bonus,
+        'denda' => $denda,
+        'lembur' => $lembur,
+        'total_gaji' => $totalGaji,
+    ]);
+
+    return redirect()->back()->with('success', 'Gaji berhasil dihitung dan disimpan.');
+}
+
 
     // Menampilkan form edit gaji borongan
     public function edit($id)

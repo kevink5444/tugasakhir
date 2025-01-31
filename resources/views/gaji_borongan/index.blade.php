@@ -104,6 +104,28 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
+    document.getElementById('waktu_masuk').addEventListener('change', function () {
+    const waktuMasuk = this.value;
+    const jamMasukTepat = "08:00:00";
+    let bonus = 0, denda = 0;
+
+    if (waktuMasuk <= jamMasukTepat) {
+        bonus = 25000; // Hadir tepat waktu
+    } else {
+        denda = 10000; // Terlambat
+    }
+
+    const gajiPerHari = parseFloat(document.getElementById('gaji_per_hari').value) || 0;
+    const jamLembur = parseFloat(document.getElementById('jam_lembur').value) || 0;
+    const gajiPerJam = gajiPerHari / 8;
+    const lembur = gajiPerJam * jamLembur;
+
+    const totalGaji = gajiPerHari + bonus - denda + lembur;
+
+    document.getElementById('bonus').value = bonus;
+    document.getElementById('denda').value = denda;
+    document.getElementById('total_gaji').value = totalGaji;
+});
     $(document).ready(function() {
         $('#filterBtn').click(function() {
             var selectedBulan = $('#bulan').val();
