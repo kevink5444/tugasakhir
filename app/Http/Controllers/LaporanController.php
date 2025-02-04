@@ -30,7 +30,7 @@ class LaporanController extends Controller
     // Laporan Gaji Harian
     public function gajiHarian()
     {
-        $laporan = GajiHarian::selectRaw('id_karyawan, SUM(total_gaji_harian) AS total_gaji, MONTH(tanggal) AS bulan, YEAR(tanggal) AS tahun')
+        $laporan = GajiHarian::selectRaw('id_karyawan, SUM(total_gaji_harian) AS total_gaji, MONTH(tanggal_awal) AS bulan, YEAR(tanggal_akhir) AS tahun')
             ->groupBy('id_karyawan', 'bulan', 'tahun')
             ->get();
 
