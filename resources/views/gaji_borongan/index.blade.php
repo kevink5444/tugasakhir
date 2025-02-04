@@ -39,8 +39,9 @@
                 </select>
             </div>
         </div>
-        <div class="col-md-2">
-            <button class="btn btn-primary mt-4" id="filterBtn">Filter</button>
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a href="{{ route('gaji_borongan.create') }}" class="btn btn-success ms-2">Tambah Gaji Borongan</a>
         </div>
     </div>
 
@@ -71,7 +72,7 @@
                         <td>{{ number_format($gaji->total_gaji_borongan, 2, ',', '.') }}</td>
                         <td>{{ $gaji->status_pengambilan }}</td>
                         <td>
-                            <a href="{{ route('gaji_borongan.create') }}" class="btn btn-primary">Tambah Gaji</a>
+                            
 
                             <a href="{{ route('gaji_borongan.edit', [$gaji->id_gaji_borongan]) }}" class="btn btn-primary">Edit</a>
                             <form action="{{ route('gaji_borongan.destroy', $gaji->id_gaji_borongan) }}" method="POST" style="display:inline;">

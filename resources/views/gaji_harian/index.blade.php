@@ -29,9 +29,9 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary mt-4" id="filterBtn">Filter</button>
-            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2" id="filterBtn">Filter</button>
+                <a href="{{ route('gaji_harian.create') }}" class="btn btn-success">Tambah Gaji Harian</a>
         </div>
     </form>
 

@@ -34,7 +34,7 @@
             </div>
             <div class="col-md-4 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary">Filter</button>
-                <a href="{{ route('gaji_bulanan.index') }}" class="btn btn-secondary ms-2">Reset</a>
+                <a href="{{ route('gaji_bulanan.create') }}" class="btn btn-success ms-2">Tambah Gaji Bulanan</a>
             </div>
         </div>
     </form>
