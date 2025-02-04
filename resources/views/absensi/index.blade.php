@@ -40,11 +40,10 @@
                 </select>
             </div>
         </div>
-        <div class="col-md-2">
-            <button class="btn btn-primary mt-4" id="filterBtn">Filter</button>
-            <div class="mb-3">
-                <a href="{{ route('absensi.create') }}" class="btn btn-success">Tambah Absensi</a>
-            </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-primary me-2" id="filterBtn">Filter</button>
+            <a href="{{ route('absensi.create') }}" class="btn btn-success">Tambah Absensi</a>
+        </div>
         </div>
     </div>
 
