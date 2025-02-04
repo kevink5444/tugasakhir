@@ -5,7 +5,7 @@
     <h1 class="mb-4">Daftar Gaji Bulanan</h1>
 
     <!-- Form Filter -->
-    <form action="{{ route('gaji_bulanan.index') }}" method="GET" class="mb-3">
+    <form action="{{ route('gaji_bulanan.filter') }}" method="GET" class="mb-3">
         <div class="row">
             <div class="col-md-4">
                 <label for="bulan" class="form-label">Bulan</label>

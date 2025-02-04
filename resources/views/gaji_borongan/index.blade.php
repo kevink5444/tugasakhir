@@ -3,6 +3,7 @@
 @section('content')
 <div class="container mt-4">
     <h2>Data Gaji Borongan</h2>
+    <form action="{{ route('gaji_borongan.filter') }}" method="GET" class="mb-3">
     <div class="row mb-3">
         <div class="col-md-4">
             <div class="form-group">
