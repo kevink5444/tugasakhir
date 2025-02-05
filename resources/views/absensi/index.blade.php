@@ -3,6 +3,7 @@
 @section('content')
 <div class="container mt-4">
     <h2>Data Absensi</h2>
+    <form action="{{ route('absensi.filter') }}" method="GET" class="mb-3">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <div class="row mb-3">
         <div class="col-md-4">
@@ -82,30 +83,22 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
-   $(document).ready(function() {
-    // Setup CSRF Token for AJAX
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
+  $(document).ready(function() {
+    function loadAbsensi(bulan = '', tahun = '') {
+        $.ajax({
+            url: '/absensi/filter',
+            type: 'GET',
+            data: { bulan: bulan, tahun: tahun },
+            dataType: 'json',
+            success: function(data) {
+                console.log(data); // Debugging, bisa dihapus nanti
+                
+                var tableBody = $('#absensiTableBody');
+                tableBody.empty();
 
-    $('#filterBtn').on('click', function() {
-        var selectedBulan = $('#bulan').val();
-        var selectedTahun = $('#tahun').val();
-
-        if (selectedBulan && selectedTahun) {
-            $.ajax({
-                url: '{{ route('absensi.filter') }}',
-                method: 'GET',
-                data: {
-                    bulan: selectedBulan,
-                    tahun: selectedTahun
-                },
-                success: function(data) {
-                    var tableBody = $('#absensiTableBody');
-                    tableBody.empty();
-
+                if (data.absensi.length === 0) {
+                    tableBody.append('<tr><td colspan="4">Data tidak ditemukan</td></tr>');
+                } else {
                     data.absensi.forEach(function(item) {
                         var row = '<tr>' +
                             '<td>' + item.id_absensi + '</td>' +
@@ -115,15 +108,24 @@
                             '</tr>';
                         tableBody.append(row);
                     });
-                },
-                error: function(error) {
-                    console.log('Terjadi kesalahan:', error);
                 }
-            });
-        } else {
-            alert('Silakan pilih bulan dan tahun!');
-        }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    // Saat halaman dimuat, tampilkan semua absensi
+    loadAbsensi();
+
+    // Saat tombol filter ditekan
+    $('#filterBtn').click(function() {
+        var bulan = $('#bulan').val();
+        var tahun = $('#tahun').val();
+        loadAbsensi(bulan, tahun);
     });
 });
-</script>
-@endsection
+
+    </script>
+    

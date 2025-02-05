@@ -86,24 +86,32 @@ class AbsensiController extends Controller
     
     public function filter(Request $request)
     {
-        Log::info('Filter function accessed');
-        $request->validate([
-            'bulan' => 'required|date_format:m',
-            'tahun' => 'required|date_format:Y',
-        ]);
-    
         $bulan = $request->input('bulan');
         $tahun = $request->input('tahun');
-    
-        Log::info("Filter parameters: Bulan - $bulan, Tahun - $tahun");
-    
-        $absensi = Absensi::with('karyawan')
-            ->whereMonth('waktu_masuk', $bulan)
-            ->whereYear('waktu_masuk', $tahun)
-            ->get();
-    
-        return response()->json(['absensi' => $absensi]);
+
+    // Validasi input bulan dan tahun
+    $request->validate([
+        'bulan' => 'nullable|integer|between:1,12',
+        'tahun' => 'nullable|integer|min:2000|max:' . date('Y'),
+    ]);
+
+    // Query data gaji harian dengan filter bulan dan tahun
+    $absensi = Absensi::with('karyawan')
+        ->when($bulan, function ($query, $bulan) {
+            return $query->whereMonth('waktu_masuk', $bulan);
+        })
+        ->when($tahun, function ($query, $tahun) {
+            return $query->whereYear('waktu_masuk', $tahun);
+        })
+        ->get();
+
+        // Passing data filter ke view
+        return view('absensi.index', compact('absensi', 'bulan', 'tahun'));
     }
+
+        
+     
+
     
     private function updateGaji(Absensi $absensi)
     {

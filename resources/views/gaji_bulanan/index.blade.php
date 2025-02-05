@@ -44,6 +44,7 @@
         <thead>
             <tr>
                 <th>Nama Karyawan</th>
+                <th>Posisi</th>
                 <th>Bulan</th>
                 <th>Gaji Pokok</th>
                 <th>Uang Transport</th>
@@ -60,6 +61,7 @@
             @forelse($gajiBulanan as $gaji)
             <tr>
                 <td>{{ $gaji->karyawan->nama_karyawan }}</td>
+                <td>{{ $gaji->karyawan->posisi }}</td> 
                 <td>{{ \Carbon\Carbon::parse($gaji->bulan)->translatedFormat('F Y') }}</td>
                 <td>{{ number_format($gaji->gaji_pokok, 0, ',', '.') }}</td>
                 <td>{{ number_format($gaji->uang_transport, 0, ',', '.') }}</td>

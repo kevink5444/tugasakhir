@@ -55,7 +55,9 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 
 // Rute untuk absensi
 Route::prefix('absensi')->group(function () {
+    
     Route::get('/', [AbsensiController::class, 'index'])->name('absensi.index');
+    Route::get('absensi/filter', [AbsensiController::class, 'filter'])->name('absensi.filter');
     Route::post('/check-in', [AbsensiController::class, 'checkIn'])->name('absen-masuk');
     Route::post('/check-out', [AbsensiController::class, 'checkOut'])->name('absen-keluar');
     Route::get('/qr/{id_karyawan}', function ($id_karyawan) {
@@ -72,7 +74,7 @@ Route::get('/absensi/create', [AbsensiController::class, 'create'])->name('absen
 
 // Route untuk menyimpan data absensi
 Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store');
-Route::get('/absensi/filter', [AbsensiController::class, 'filter'])->name('absensi.filter');
+
 
 // Route untuk menampilkan detail absensi (tambahkan route ini jika Anda ingin detail)
 Route::get('/absensi/{id}', [AbsensiController::class, 'show'])->name('absensi.show');
