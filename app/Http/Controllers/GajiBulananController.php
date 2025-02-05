@@ -134,6 +134,22 @@ class GajiBulananController extends Controller
         $gajiBulanan->update($request->all());
         return redirect()->route('gaji_bulanan.index');
     }
+    public function filter(Request $request)
+    {
+        $bulan = $request->input('bulan'); // contoh: 8
+        $tahun = $request->input('tahun'); // contoh: 2024
+
+        // Cek apakah bulan & tahun dikirimkan
+        if (empty($bulan) || empty($tahun)) {
+            return redirect()->route('gaji_bulanan.index')->with('error', 'Bulan dan tahun harus diisi!');
+        }
+
+        // Filter berdasarkan kolom 'bulan' dengan format 'YYYY-MM'
+        $gajiBulanan = GajiBulanan::whereRaw("DATE_FORMAT(bulan, '%Y-%m') = ?", ["$tahun-$bulan"])
+                                  ->get();
+
+        return view('gaji_bulanan.index', compact('gajiBulanan'));
+    }
 
     // Menghapus data gaji bulanan
     public function destroy(GajiBulanan $gajiBulanan)
@@ -141,4 +157,5 @@ class GajiBulananController extends Controller
         $gajiBulanan->delete();
         return redirect()->route('gaji_bulanan.index');
     }
+    
 }

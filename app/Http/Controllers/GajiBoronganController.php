@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\Models\GajiBorongan;
 use App\Models\Karyawan;
@@ -14,27 +13,21 @@ class GajiBoronganController extends Controller
 {
     // Menampilkan daftar gaji borongan
     public function index(Request $request)
-{
-    $month = $request->input('month');
-    $year = $request->input('year');
-
-    // Query untuk mengambil data gaji borongan
-    $query = GajiBorongan::with('karyawan');
-
-    if ($month) {
-        $query->whereMonth('created_at', $month);
+    {
+        $query = GajiBorongan::with('karyawan');
+    
+        if ($request->filled('bulan')) {
+            $query->whereMonth('minggu_mulai', $request->bulan);
+        }
+    
+        if ($request->filled('tahun')) {
+            $query->whereYear('minggu_mulai', $request->tahun);
+        }
+    
+        $gajiBorongan = $query->get();
+    
+        return view('gaji_borongan.index', compact('gajiBorongan'));
     }
-
-    if ($year) {
-        $query->whereYear('created_at', $year);
-    }
-
-    $gajiBorongan = $query->orderBy('created_at', 'desc')->get()->groupBy(function ($item) {
-        return Carbon::parse($item->created_at)->format('Y-m');
-    });
-
-    return view('gaji_borongan.index', compact('gajiBorongan'));
-}
 
     // Menampilkan form pembuatan gaji borongan baru
     public function create()
@@ -61,7 +54,18 @@ class GajiBoronganController extends Controller
     $waktuPulang = $request->waktu_pulang;
     $jamLembur = $request->jam_lembur ?? 0;
     $gajiPerHari = $request->gaji_per_hari;
-
+    $waktuMasukCarbon = Carbon::parse($waktuMasuk);
+    $waktuPulangCarbon = Carbon::parse($waktuPulang);
+    $totalJamKerja = $waktuPulangCarbon->diffInHours($waktuMasukCarbon);
+    
+    if ($totalJamKerja > 8) {
+        $jamLembur = $totalJamKerja - 8;
+    } else {
+        $jamLembur = 0;
+    }
+    
+    $gajiPerJam = $gajiPerHari / 8;
+    $lembur = $gajiPerJam * $jamLembur;
     // Hitung bonus jika hadir tepat waktu (<= 08:00:00)
     $jamMasukTepat = '08:00:00'; // Jam masuk ideal
     $bonus = (strtotime($waktuMasuk) <= strtotime($jamMasukTepat)) ? 25000 : 0;
@@ -89,6 +93,7 @@ class GajiBoronganController extends Controller
         'lembur' => $lembur,
         'total_gaji' => $totalGaji,
     ]);
+    
 
     return redirect()->back()->with('success', 'Gaji berhasil dihitung dan disimpan.');
 }
@@ -177,37 +182,13 @@ class GajiBoronganController extends Controller
     }
     public function filter(Request $request)
 {
-    // Ambil parameter filter dari permintaan
-    $month = $request->input('month');
-    $year = $request->input('year');
-    $nama_karyawan = $request->input('nama_karyawan'); // Parameter baru untuk nama karyawan
+    $bulan = $request->bulan;
+    $tahun = $request->tahun;
 
-    // Mulai query dengan relasi karyawan
-    $query = GajiBorongan::with('karyawan');
-
-    // Filter berdasarkan bulan, jika bulan dipilih
-    if ($month) {
-        $query->whereMonth('created_at', $month);
-    }
-
-    // Filter berdasarkan tahun, jika tahun dipilih
-    if ($year) {
-        $query->whereYear('created_at', $year);
-    }
-
-    // Filter berdasarkan nama karyawan, jika ada nama yang diinputkan
-    if ($nama_karyawan) {
-        $query->whereHas('karyawan', function ($q) use ($nama_karyawan) {
-            $q->where('nama', 'like', '%' . $nama_karyawan . '%');
-        });
-    }
-
-    // Eksekusi query dan kelompokkan data berdasarkan bulan dan tahun
-    $gajiBorongan = $query->orderBy('created_at', 'desc')->get()->groupBy(function ($item) {
-        return Carbon::parse($item->created_at)->format('Y-m');
-    });
-
-    // Kirimkan hasil ke view dengan hasil filter yang sudah diproses
+    $gajiBorongan = GajiBorongan::whereMonth('minggu_mulai', $bulan)
+        ->whereYear('minggu_mulai', $tahun)
+        ->get(); // Ini mengembalikan collection
+    
     return view('gaji_borongan.index', compact('gajiBorongan'));
 }
 public function getCapaian($id_karyawan)

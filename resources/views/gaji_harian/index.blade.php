@@ -51,7 +51,7 @@
                     <td>{{ $key + 1 }}</td>
                     <td>{{ $data->karyawan->nama_karyawan }}</td> <!-- Sesuaikan relasi jika ada -->
                     <td>{{ $data->tanggal_akhir }}</td>
-                    <td>{{ number_format($data->total_gaji, 0, ',', '.') }}</td>
+                    <td>{{ number_format($data->total_gaji_harian, 0, ',', '.') }}</td>
                 </tr>
             @empty
                 <tr>
@@ -61,4 +61,49 @@
         </tbody>
     </table>
 </div>
+@endsection
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const pekerjaanSelect = document.getElementById('id_pekerjaan');
+    const jumlahPekerjaanInput = document.getElementById('jumlah_pekerjaan');
+    const capaianHarianInput = document.getElementById('capaian_harian');
+    const gajiHarianInput = document.getElementById('gaji_harian');
+    const bonusHarianInput = document.getElementById('bonus_harian');
+    const dendaHarianInput = document.getElementById('denda_harian');
+
+    function updateGaji() {
+        const selectedOption = pekerjaanSelect.options[pekerjaanSelect.selectedIndex];
+        const gajiPerPekerjaan = parseFloat(selectedOption.getAttribute('data-gaji'));
+        const targetHarian = parseFloat(selectedOption.getAttribute('data-target'));
+        const jumlahPekerjaan = parseFloat(jumlahPekerjaanInput.value) || 0;
+        const capaianHarian = parseFloat(capaianHarianInput.value) || 0;
+
+        // Hitung gaji harian
+        const gajiHarian = jumlahPekerjaan * gajiPerPekerjaan;
+
+        // Hitung bonus dan denda
+        let bonusHarian = 0;
+        let dendaHarian = 0;
+
+        if (capaianHarian >= targetHarian) {
+            bonusHarian = gajiHarian * 0.2; // 20% dari gaji harian
+        }
+
+        if (jumlahPekerjaan < targetHarian) {
+            dendaHarian = gajiHarian * 0.05; // 5% dari gaji harian
+        }
+
+        // Update input fields
+        gajiHarianInput.value = Rp ${gajiHarian.toFixed(0)};
+        bonusHarianInput.value = Rp ${bonusHarian.toFixed(0)};
+        dendaHarianInput.value = Rp ${dendaHarian.toFixed(0)};
+    }
+
+    pekerjaanSelect.addEventListener('change', updateGaji);
+    jumlahPekerjaanInput.addEventListener('input', updateGaji);
+    capaianHarianInput.addEventListener('input', updateGaji);
+    updateGaji(); // Initial calculation based on default values
+});
+</script>
 @endsection

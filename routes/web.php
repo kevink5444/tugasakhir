@@ -105,7 +105,9 @@ Route::get('/lembur/{id}', [LemburController::class, 'show'])->name('lembur.show
 Route::post('/lembur/ajukan', [LemburController::class, 'ajukanLembur'])->name('lembur.ajukan');
 Route::post('/lembur/setujui/{id}', [LemburController::class, 'setujuiLembur'])->name('lembur.setujui');
     Route::prefix('penggajian')->group(function () {
-      
+        Route::get('gaji_bulanan/filter', [GajiBoronganController::class, 'filter'])->name('gaji_bulanan.filter');
+        Route::get('gaji_borongan/filter', [GajiBoronganController::class, 'filter'])->name('gaji_borongan.filter');
+        
         Route::delete('/gaji_harian/{id}', [GajiHarianController::class, 'destroy'])->name('gaji_harian.destroy');
         Route::get('/', [PenggajianController::class, 'index'])->name('penggajian.index');
         Route::get('gaji-bulanan', [PenggajianController::class, 'showGajiBulanan'])->name('penggajian.gaji_bulanan');
@@ -119,10 +121,11 @@ Route::post('/lembur/setujui/{id}', [LemburController::class, 'setujuiLembur'])-
         Route::get('/get-capaian/{id_karyawan}', [GajiBoronganController::class, 'getCapaian']);
         Route::get('/get-absensi-bonus/{id_karyawan}', [GajiBoronganController::class, 'getAbsensiBonus']);
         Route::get('/get-absensi-denda/{id_karyawan}', [GajiBoronganController::class, 'getAbsensiDenda']);
+        Route::get('gaji_borongan/filter', [GajiBoronganController::class, 'filter'])->name('gaji_borongan.filter');
             Route::get('gaji_borongan/create', [GajiBoronganController::class, 'create'])->name('gajiBorongan.create');
             Route::post('gaji_borongan/store', [GajiBoronganController::class, 'store'])->name('gajiBorongan.store');
             Route::get('gaji_borongan/{id}/edit', [GajiBoronganController::class, 'edit'])->name('gaji_borongan.edit');
-            Route::get('/gaji_borongan/filter', [GajiBoronganController::class, 'filter'])->name('gaji_borongan.filter');
+            
             Route::get('gaji_borongan/{id}/downloadPdf', [GajiBoronganController::class, 'downloadPdf'])->name('gaji-borongan.downloadPdf');
 
             Route::delete('/gaji_borongan/{id}/delete', [GajiBoronganController::class, 'destroy'])->name('gaji_borongan.destroy');
