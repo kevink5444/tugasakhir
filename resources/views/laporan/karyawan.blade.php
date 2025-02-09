@@ -9,8 +9,11 @@
                 <tr>
                     <th>ID Karyawan</th>
                     <th>Nama Karyawan</th>
-                    <th>Email Karyawan</th>
-                    <th>Status Karyawan</th>
+                    <th>Alamat</th>
+                    <th>Jenis Karyawan</th>
+                    <th>Posisi</th>
+                    <th>Tanggal Masuk</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -18,8 +21,11 @@
                     <tr>
                         <td>{{ $item->id_karyawan }}</td>
                         <td>{{ $item->nama_karyawan }}</td>
-                        <td>{{ $item->email_karyawan }}</td>
-                        <td>{{ $item->status_karyawan }}</td>
+                        <td>{{ $item->alamat_karyawan }}</td>
+                        <td>{{ $item->jenis_karyawan }}</td>
+                        <td>{{ $item->posisi }}</td>
+                        <td>{{ date('d-m-Y', strtotime($item->tanggal_masuk)) }}</td>
+                        <td>{{ $item->status }}</td>
                     </tr>
                 @endforeach
             </tbody>

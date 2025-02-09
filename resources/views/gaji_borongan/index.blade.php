@@ -122,53 +122,52 @@
     document.getElementById('total_gaji').value = totalGaji;
 });
 <script>
-    $(document).ready(function() {
-        $('#filterBtn').click(function() {
-            var selectedBulan = $('#bulan').val();
-            var selectedTahun = $('#tahun').val();
-            if (selectedBulan && selectedTahun) {
-                // Mengirim permintaan Ajax untuk mendapatkan data
-                $.ajax({
-                    url: "{{ route('gaji_borongan.filter') }}", // Ganti dengan route yang sesuai
-                    method: "GET",
-                    data: {
-                        bulan: selectedBulan,
-                        tahun: selectedTahun
-                    },
-                    success: function(data) {
-                        // Kosongkan tabel dan tambahkan data baru
-                        $('#gajiTableBody').empty();
-                        $.each(data.gajiBorongan, function(index, item) {
-                            $('#gajiTableBody').append(`
-                                <tr>
-                                    <td>${item.id_gaji_borongan}</td>
-                                    <td>${item.karyawan.nama_karyawan}</td>
-                                    <td>${item.minggu_mulai}</td>
-                                    <td>${item.minggu_selesai}</td>
-                                    <td>${item.bulan}</td>
-                                    <td>${item.tahun}</td>
-                                    <td>${parseFloat(item.total_gaji_borongan).toLocaleString('id-ID', { minimumFractionDigits: 2 })}</td>
-                                    <td>${item.status_pengambilan}</td>
-                                    <td>
-                                        <a href="/gaji_borongan/${item.id_gaji_borongan}/edit" class="btn btn-primary">Edit</a>
-                                        <form action="/gaji_borongan/${item.id_gaji_borongan}" method="POST" style="display:inline;">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                            <input type="hidden" name="_method" value="DELETE">
-                                            <button type="submit" class="btn btn-danger">Hapus</button>
-                                        </form>
-                                        ${item.status_pengambilan ? '' : `
-                                            <a href="/gaji_borongan/${item.id_gaji_borongan}/ambil_gaji" class="btn btn-success">Ambil Gaji</a>
-                                        `}
-                                        <a href="/gaji_borongan/${item.id_gaji_borongan}/cetak_slip" class="btn btn-info">Cetak Slip</a>
-                                    </td>
-                                </tr>
-                            `);
-                        });
-                    }
-                });
-            } else {
-                alert('Silakan pilih bulan dan tahun.');
-            }
-        });
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('id_karyawan').addEventListener('change', async function () {
+        var idKaryawan = this.value;
+
+        if (idKaryawan) {
+            const capaianHarian = await getCapaianHarian(idKaryawan);
+            document.getElementById('capaian_harian').value = capaianHarian;
+
+            const totalBonus = await calculateBonusAbsensi(idKaryawan);
+            document.getElementById('total_bonus').value = totalBonus;
+
+            const totalDenda = await calculateDendaAbsensi(idKaryawan);
+            document.getElementById('total_denda').value = totalDenda;
+        }
     });
+
+    document.getElementById('total_lembur').addEventListener('input', function () {
+        var totalLembur = parseFloat(this.value) || 0;
+        var gajiPerHari = 100000; // Gaji harian yang ditetapkan
+        var bonusLembur = (gajiPerHari / 8) * totalLembur;
+        document.getElementById('bonus_lembur').value = bonusLembur;
+
+        var capaianHarian = parseFloat(document.getElementById('capaian_harian').value) || 0;
+        var totalBonus = parseFloat(document.getElementById('total_bonus').value) || 0;
+        var totalDenda = parseFloat(document.getElementById('total_denda').value) || 0;
+
+        var totalGajiBorongan = (capaianHarian + bonusLembur + totalBonus) - totalDenda;
+        document.getElementById('total_gaji_borongan').value = totalGajiBorongan;
+    });
+});
+
+async function getCapaianHarian(idKaryawan) {
+    const response = await fetch(`/get-capaian/${idKaryawan}`);
+    const data = await response.json();
+    return data.capaian_harian;
+}
+
+async function calculateBonusAbsensi(idKaryawan) {
+    const response = await fetch(`/get-absensi-bonus/${idKaryawan}`);
+    const data = await response.json();
+    return data.total_bonus;
+}
+
+async function calculateDendaAbsensi(idKaryawan) {
+    const response = await fetch(`/get-absensi-denda/${idKaryawan}`);
+    const data = await response.json();
+    return data.total_denda;
+}
 </script>

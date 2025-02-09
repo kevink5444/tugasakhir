@@ -41,7 +41,7 @@ class GajiBoronganController extends Controller
 {
     // Validasi input
     $request->validate([
-        'id_karyawan' => 'required|exists:karyawan,id',
+        'id_karyawan' => 'required|exists:karyawan,id_karyawan',
         'tanggal' => 'required|date',
         'waktu_masuk' => 'required|date_format:H:i:s',
         'waktu_pulang' => 'required|date_format:H:i:s',
