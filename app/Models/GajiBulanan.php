@@ -19,7 +19,7 @@ class GajiBulanan extends Model
         'uang_makan',
         'bonus',
         'thr',
-        'total_gaji',
+        'total_gaji_bulanan',
         'total_lembur',
         'bonus_lembur',
         'denda',

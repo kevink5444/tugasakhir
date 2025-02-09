@@ -108,11 +108,6 @@ class AbsensiController extends Controller
         // Passing data filter ke view
         return view('absensi.index', compact('absensi', 'bulan', 'tahun'));
     }
-
-        
-     
-
-    
     private function updateGaji(Absensi $absensi)
     {
         $karyawan = $absensi->karyawan;

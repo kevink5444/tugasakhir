@@ -44,7 +44,10 @@
                             <button type="submit" class="btn btn-danger btn-sm mb-0">Hapus</button>
                         </form>
                         <a href="{{ route('lembur.create', $item->id_lembur) }}" class="btn btn-primary btn-sm mb-0 ms-1">Ajukan Lembur</a>
-                        <a href="{{ route('lembur.approve', $item->id_lembur) }}" class="btn btn-secondary btn-sm mb-0 ms-1">Persetujuan Lembur</a>
+                        <form action="{{ route('lembur.approveLembur', $item->id_lembur) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="btn btn-success btn-sm">Setujui</button>
                     </td>
                 </tr>
             @endforeach

@@ -91,7 +91,7 @@ class GajiHarianController extends Controller
     $gaji_harian_obj->gaji_harian = $totalGaji;
     $gaji_harian_obj->bonus_harian = $totalBonus;
     $gaji_harian_obj->denda_harian = $totalDenda;
-    $gaji_harian_obj->total_gaji = $totalGaji + $totalBonus - $totalDenda;
+    $gaji_harian_obj->total_gaji_harian = $totalGaji + $totalBonus - $totalDenda;
     $gaji_harian_obj->status_pengambilan = 0; // Belum diambil
     $gaji_harian_obj->save();
 
@@ -146,7 +146,7 @@ class GajiHarianController extends Controller
         $gaji_harian->gaji_harian = $gaji_harian_rate;
         $gaji_harian->bonus_harian = $bonus_harian;
         $gaji_harian->denda_harian = $denda_harian;
-        $gaji_harian->total_gaji = $gaji_harian_rate + $bonus_harian - $denda_harian;
+        $gaji_harian->total_gaji_harian = $gaji_harian_rate + $bonus_harian - $denda_harian;
         $gaji_harian->status_pengambilan = $request->status_pengambilan;
         $gaji_harian->save();
 
@@ -161,7 +161,7 @@ class GajiHarianController extends Controller
             return redirect()->back()->with('error', 'Gaji sudah diambil.');
         }
 
-        $gaji_harian->status_pengambilan = 1; // Tandai gaji sudah diambil
+        $gaji_harian->status_pengambilan = 1; 
         $gaji_harian->save();
 
         return redirect()->route('gaji_harian.index')->with('success', 'Gaji harian berhasil diambil.');
@@ -171,12 +171,8 @@ class GajiHarianController extends Controller
     {
 
         $gaji_harian = GajiHarian::findOrFail($id);
-
-        // Pastikan total gaji dihitung dengan benar
-    
-    
-       
-        $totalGajiPeriode = $gaji_harian->gaji_harian * 6; // Misalnya, jika gaji per hari dikali 6 hari
+           
+        $totalGajiPeriode = $gaji_harian->gaji_harian * 6; 
 
         return view('gaji_harian.slip_gaji', compact('gaji_harian', 'totalGajiPeriode'));
     

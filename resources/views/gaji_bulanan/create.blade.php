@@ -1,78 +1,89 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5">
-    <h1 class="mb-4">{{ isset($gajiBulanan) ? 'Edit Gaji Bulanan' : 'Tambah Gaji Bulanan' }}</h1>
-    
-    <form action="{{ isset($gajiBulanan) ? route('gaji_bulanan.update', $gajiBulanan->id_gaji_bulanan) : route('gaji_bulanan.store') }}" method="POST">
+<div class="container">
+    <h2>Tambah Gaji Bulanan</h2>
+
+    <form action="{{ route('gaji_bulanan.store') }}" method="POST">
         @csrf
-        @if(isset($gajiBulanan))
-            @method('PUT')
-        @endif
-        
+
         <div class="form-group">
-            <label for="id_karyawan">Nama Karyawan</label>
-            <select name="id_karyawan" id="id_karyawan" class="form-control">
-                @foreach($karyawans as $karyawan)
-                    <option value="{{ $karyawan->id_karyawan }}" {{ isset($gajiBulanan) && $gajiBulanan->id_karyawan == $karyawan->id_karyawan ? 'selected' : '' }}>
-                        {{ $karyawan->nama_karyawan }}
-                    </option>
+            <label for="id_karyawan">Pilih Karyawan</label>
+            <select id="id_karyawan" name="id_karyawan" class="form-control" required>
+                <option value="">-- Pilih Karyawan --</option>
+                @foreach ($karyawan as $k)
+                    <option value="{{ $k->id_karyawan }}">{{ $k->nama_karyawan }}</option>
                 @endforeach
             </select>
         </div>
-        
+
         <div class="form-group">
-            <label for="bulan">Bulan</label>
-            <input type="month" name="bulan" id="bulan" class="form-control" value="{{ isset($gajiBulanan) ? \Carbon\Carbon::parse($gajiBulanan->bulan)->format('Y-m') : '' }}" required>
+            <label for="bulan">Pilih Bulan</label>
+            <input type="month" id="bulan" name="bulan" class="form-control" required>
         </div>
 
         <div class="form-group">
             <label for="gaji_pokok">Gaji Pokok</label>
-            <input type="number" name="gaji_pokok" id="gaji_pokok" class="form-control" value="{{ isset($gajiBulanan) ? $gajiBulanan->gaji_pokok : '' }}" readonly>
+            <input type="text" id="gaji_pokok" name="gaji_pokok" class="form-control" readonly>
         </div>
-        
+
         <div class="form-group">
             <label for="uang_transport">Uang Transport</label>
-            <input type="number" name="uang_transport" id="uang_transport" class="form-control" value="{{ isset($gajiBulanan) ? $gajiBulanan->uang_transport : '350000' }}" readonly>
+            <input type="text" id="uang_transport" name="uang_transport" class="form-control" readonly>
         </div>
-        
+
         <div class="form-group">
             <label for="uang_makan">Uang Makan</label>
-            <input type="number" name="uang_makan" id="uang_makan" class="form-control" value="{{ isset($gajiBulanan) ? $gajiBulanan->uang_makan : '300000' }}" readonly>
+            <input type="text" id="uang_makan" name="uang_makan" class="form-control" readonly>
         </div>
-        
-        <button type="submit" class="btn btn-primary">{{ isset($gajiBulanan) ? 'Update' : 'Simpan' }}</button>
+
+        <div class="form-group">
+            <label for="bonus">Bonus</label>
+            <input type="text" id="bonus" name="bonus" class="form-control" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="denda">Denda</label>
+            <input type="text" id="denda" name="denda" class="form-control" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="bonus_lembur">Bonus Lembur</label>
+            <input type="text" id="bonus_lembur" name="bonus_lembur" class="form-control" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="total_gaji_bulanan">Total Gaji Bulanan</label>
+            <input type="text" id="total_gaji_bulanan" name="total_gaji_bulanan" class="form-control" readonly>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Simpan</button>
     </form>
 </div>
-@endsection
 
+{{-- Script AJAX untuk otomatis mengisi data --}}
 <script>
-document.getElementById('id_karyawan').addEventListener('change', function() {
-    var selectedKaryawan = this.options[this.selectedIndex];
-    var posisi = selectedKaryawan.getAttribute('data-posisi');
-    var gajiPokok = 0;
+    document.getElementById('id_karyawan').addEventListener('change', function() {
+        var idKaryawan = this.value;
+        var bulan = document.getElementById('bulan').value;
 
-    // Tentukan gaji pokok berdasarkan posisi
-    switch (posisi) {
-        case 'Karyawan Administrasi':
-            gajiPokok = 3000000;
-            break;
-        case 'Sopir':
-            gajiPokok = 2500000;
-            break;
-        case 'Supervisor Produksi':
-            gajiPokok = 3000000;
-            break;
-        case 'Manager Produksi':
-            gajiPokok = 4000000;
-            break;
-        case 'Karyawan Quality Control':
-            gajiPokok = 4500000;
-            break;
-        default:
-            gajiPokok = 0;
-    }
+        if (idKaryawan && bulan) {
+            fetch(`/gaji-karyawan/${idKaryawan}/${bulan}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('gaji_pokok').value = data.gaji_pokok;
+                    document.getElementById('uang_transport').value = data.uang_transport;
+                    document.getElementById('uang_makan').value = data.uang_makan;
+                    document.getElementById('bonus').value = data.bonus;
+                    document.getElementById('denda').value = data.denda;
+                    document.getElementById('bonus_lembur').value = data.bonus_lembur;
+                    document.getElementById('total_gaji_bulanan').value = data.total_gaji_bulanan;
+                });
+        }
+    });
 
-    document.getElementById('gaji_pokok').value = gajiPokok;
-});
+    document.getElementById('bulan').addEventListener('change', function() {
+        document.getElementById('id_karyawan').dispatchEvent(new Event('change'));
+    });
 </script>
+@endsection

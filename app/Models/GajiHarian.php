@@ -21,7 +21,7 @@ class GajiHarian extends Model
         'bonus_harian',
         'denda_harian',
         'status_pengambilan',
-        'total_gaji',
+        'total_gaji_harian',
         'bonus',
         'denda'
     ];

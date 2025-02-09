@@ -30,7 +30,7 @@
                     <td>{{ $item->jam_lembur }}</td>
                     <td><span class="badge bg-warning">{{ $item->status_lembur }}</span></td>
                     <td>
-                        <form action="{{ route('lembur.approve', $item->id_lembur) }}" method="POST" class="d-inline">
+                        <form action="{{ route('lembur.approveLembur', $item->id_lembur) }}" method="POST" class="d-inline">
                             @csrf
                             @method('PATCH')
                             <input type="hidden" name="status_lembur" value="Disetujui">

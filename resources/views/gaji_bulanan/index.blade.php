@@ -69,7 +69,7 @@
                 <td>{{ number_format($gaji->bonus, 0, ',', '.') }}</td>
                 <td>{{ number_format($gaji->denda, 0, ',', '.') }}</td>
                 <td>{{ number_format($gaji->bonus_lembur, 0, ',', '.') }}</td>
-                <td>{{ number_format($gaji->total_gaji, 0, ',', '.') }}</td>
+                <td>{{ number_format($gaji->total_gaji_bulanan, 0, ',', '.') }}</td>
                 <td>{{ $gaji->status_pengambilan ? 'Sudah Diambil' : 'Belum Diambil' }}</td>
                 <td>
                     <a href="{{ route('gaji_bulanan.cetak_slip', $gaji->id_gaji_bulanan) }}" class="btn btn-info btn-sm">Slip Gaji</a>

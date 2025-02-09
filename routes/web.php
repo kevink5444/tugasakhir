@@ -89,8 +89,8 @@ Route::delete('/karyawan/{id}', [\App\Http\Controllers\KaryawanController::class
 
 // Route untuk menampilkan form pengajuan lembur
 Route::get('/lembur/approval', [LemburController::class, 'approvalPage'])->name('lembur.approvalPage');
-Route::patch('/lembur/approve/{id}', [LemburController::class, 'approve'])->name('lembur.approve');
 Route::patch('/lembur/reject/{id}', [LemburController::class, 'reject'])->name('lembur.reject');
+Route::patch('/lembur/approve/{id}', [LemburController::class, 'approveLembur'])->name('lembur.approveLembur');
 
 
 
@@ -109,7 +109,8 @@ Route::post('/lembur/setujui/{id}', [LemburController::class, 'setujuiLembur'])-
     Route::prefix('penggajian')->group(function () {
         Route::get('gaji_bulanan/filter', [GajiBoronganController::class, 'filter'])->name('gaji_bulanan.filter');
         Route::get('gaji_borongan/filter', [GajiBoronganController::class, 'filter'])->name('gaji_borongan.filter');
-        
+        Route::get('/gaji-karyawan/{id_karyawan}/{bulan}', [GajiBulananController::class, 'getGajiKaryawan']);
+
         Route::delete('/gaji_harian/{id}', [GajiHarianController::class, 'destroy'])->name('gaji_harian.destroy');
         Route::get('/', [PenggajianController::class, 'index'])->name('penggajian.index');
         Route::get('gaji-bulanan', [PenggajianController::class, 'showGajiBulanan'])->name('penggajian.gaji_bulanan');

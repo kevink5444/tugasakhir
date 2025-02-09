@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="col-md-4 d-flex align-items-end">
-            <button type="submit" class="btn btn-primary me-2" id="filterBtn">Filter</button>
+            <button type="button" class="btn btn-primary me-2" id="filterBtn">Filter</button>
             <a href="{{ route('absensi.create') }}" class="btn btn-success">Tambah Absensi</a>
         </div>
         </div>
@@ -55,6 +55,9 @@
                 <th>ID Karyawan</th>
                 <th>Waktu Masuk</th>
                 <th>Waktu Pulang</th>
+                <th>Bonus</th>
+                <th>Denda</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody id="absensiTableBody">
@@ -64,6 +67,9 @@
                 <td>{{ $data->karyawan->id_karyawan }}</td>
                 <td>{{ $data->waktu_masuk }}</td>
                 <td>{{ $data->waktu_pulang }}</td>
+                <td>{{ $data->bonus }}</td>
+                <td>{{ $data->denda }}</td>
+                <td>{{ $data->status }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -71,17 +77,8 @@
 </div>
 @endsection
 
-@section('styles')
-<!-- Bootstrap CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-@endsection
-
 @section('scripts')
-<!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Bootstrap JS -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 <script>
   $(document).ready(function() {
     function loadAbsensi(bulan = '', tahun = '') {
@@ -91,13 +88,11 @@
             data: { bulan: bulan, tahun: tahun },
             dataType: 'json',
             success: function(data) {
-                console.log(data); // Debugging, bisa dihapus nanti
-                
                 var tableBody = $('#absensiTableBody');
                 tableBody.empty();
 
                 if (data.absensi.length === 0) {
-                    tableBody.append('<tr><td colspan="4">Data tidak ditemukan</td></tr>');
+                    tableBody.append('<tr><td colspan="7">Data tidak ditemukan</td></tr>');
                 } else {
                     data.absensi.forEach(function(item) {
                         var row = '<tr>' +
@@ -105,6 +100,9 @@
                             '<td>' + item.karyawan.id_karyawan + '</td>' +
                             '<td>' + item.waktu_masuk + '</td>' +
                             '<td>' + item.waktu_pulang + '</td>' +
+                            '<td>' + item.bonus + '</td>' +
+                            '<td>' + item.denda + '</td>' +
+                            '<td>' + item.status + '</td>' +
                             '</tr>';
                         tableBody.append(row);
                     });
@@ -116,16 +114,13 @@
         });
     }
 
-    // Saat halaman dimuat, tampilkan semua absensi
     loadAbsensi();
 
-    // Saat tombol filter ditekan
     $('#filterBtn').click(function() {
         var bulan = $('#bulan').val();
         var tahun = $('#tahun').val();
         loadAbsensi(bulan, tahun);
     });
 });
-
-    </script>
-    
+</script>
+@endsection

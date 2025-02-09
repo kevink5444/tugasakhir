@@ -21,8 +21,8 @@ class GajiBulananController extends Controller
     // Menampilkan form untuk menambah gaji bulanan
     public function create()
     {
-        $karyawans = Karyawan::all();
-        return view('gaji_bulanan.create', compact('karyawans'));
+        $karyawan = Karyawan::all();
+        return view('gaji_bulanan.create', compact('karyawan'));
     }
 
     // Proses penyimpanan data gaji bulanan ke database
@@ -61,7 +61,7 @@ class GajiBulananController extends Controller
             'uang_makan' => $uangMakan,
             'bonus' => $bonus,
             'thr' => $thr,
-            'total_gaji' => $totalGaji,
+            'total_gaji_bulanan' => $totalGaji,
             'total_lembur' => $totalLembur,
             'bonus_lembur' => $totalLembur, // Menganggap lembur dihitung sebagai bonus
             'denda' => $denda,
@@ -89,28 +89,51 @@ class GajiBulananController extends Controller
                 return 0; // Nilai default jika posisi tidak ditemukan
         }
     }
+    public function getGajiKaryawan($id_karyawan, $bulan)
+{
+    $karyawan = Karyawan::findOrFail($id_karyawan);
+    $gajiPokok = $this->getGajiPokokByPosisi($karyawan->posisi);
+
+    $uangTransport = 350000;
+    $uangMakan = 300000;
+    $bonus = $this->calculateBonus($id_karyawan, $bulan);
+    $denda = $this->calculateDenda($id_karyawan, $bulan);
+    $totalLembur = $this->calculateLembur($id_karyawan, $bulan);
+    $thr = $gajiPokok / 12;
+
+    $totalGaji = $gajiPokok + $uangTransport + $uangMakan + $bonus + $thr + $totalLembur - $denda;
+
+    return response()->json([
+        'gaji_pokok' => $gajiPokok,
+        'uang_transport' => $uangTransport,
+        'uang_makan' => $uangMakan,
+        'bonus' => $bonus,
+        'denda' => $denda,
+        'bonus_lembur' => $totalLembur,
+        'total_gaji_bulanan' => $totalGaji
+    ]);
+}
 
     // Menghitung bonus berdasarkan data absensi
     private function calculateBonus($id_karyawan, $bulan)
-    {
-        $absensi = Absensi::where('id_karyawan', $id_karyawan)
-            ->whereMonth('tanggal', date('m', strtotime($bulan)))
-            ->whereYear('tanggal', date('Y', strtotime($bulan)))
-            ->get();
+{
+    $absensi = Absensi::where('id_karyawan', $id_karyawan)
+        ->whereMonth('waktu_masuk', date('m', strtotime($bulan)))
+        ->whereYear('waktu_masuk', date('Y', strtotime($bulan)))
+        ->get();
 
-        return $absensi->sum('bonus'); // Bonus dari absensi
-    }
+    return $absensi->sum('bonus'); // Bonus dari absensi
+}
 
-    // Menghitung denda berdasarkan data absensi
-    private function calculateDenda($id_karyawan, $bulan)
-    {
-        $absensi = Absensi::where('id_karyawan', $id_karyawan)
-            ->whereMonth('tanggal', date('m', strtotime($bulan)))
-            ->whereYear('tanggal', date('Y', strtotime($bulan)))
-            ->get();
+private function calculateDenda($id_karyawan, $bulan)
+{
+    $absensi = Absensi::where('id_karyawan', $id_karyawan)
+        ->whereMonth('waktu_masuk', date('m', strtotime($bulan)))
+        ->whereYear('waktu_masuk', date('Y', strtotime($bulan)))
+        ->get();
 
-        return $absensi->sum('denda'); // Denda dari absensi
-    }
+    return $absensi->sum('denda'); // Denda dari absensi
+}
 
     // Menghitung lembur
     private function calculateLembur($id_karyawan, $bulan)

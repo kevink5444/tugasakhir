@@ -129,26 +129,21 @@ class LemburController extends Controller
         return view('lembur.approval', compact('lemburPending'));
     }
 
-    public function approve(Request $request, $id)
-    {
-        $lembur = Lembur::findOrFail($id);
-        $request->validate([
-            'status_lembur' => 'required|in:Disetujui,Ditolak',
-        ]);
+    
+    public function approveLembur($id)
+{
+    $lembur = Lembur::findOrFail($id);
+    $lembur->status_lembur = 'Disetujui';
+    
+    // Hitung bonus lembur otomatis (misalnya gaji sehari dibagi 8 jam dikali jam lembur)
+    $gaji_per_jam = $lembur->karyawan->gaji / 8;
+    $lembur->bonus_lembur = $gaji_per_jam * $lembur->jam_lembur;
 
-        $lembur->status_lembur = $request->status_lembur;
-        
-        if ($request->status_lembur === 'Disetujui') {
-            $karyawan = Karyawan::find($lembur->id_karyawan);
-            $gaji_per_hari = $this->getGajiPerHari($karyawan);
-            $lembur->bonus_lembur = $this->hitungBonusLembur($lembur->jam_lembur, $gaji_per_hari);
-            $this->updateGaji($karyawan, $lembur);
-        }
+    $lembur->save();
 
-        $lembur->save();
+    return redirect()->route('lembur.approvalPage')->with('status', 'Lembur berhasil disetujui!');
+}
 
-        return redirect()->route('lembur.approvalPage')->with('status', 'Status lembur berhasil diperbarui.');
-    }
 
     public function reject($id)
     {

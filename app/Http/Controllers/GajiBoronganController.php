@@ -91,7 +91,7 @@ class GajiBoronganController extends Controller
         'bonus' => $bonus,
         'denda' => $denda,
         'lembur' => $lembur,
-        'total_gaji' => $totalGaji,
+        'total_gaji_borongan' => $totalGaji,
     ]);
     
 
