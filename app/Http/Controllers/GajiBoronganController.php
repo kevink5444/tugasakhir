@@ -31,6 +31,7 @@ class GajiBoronganController extends Controller
         $gajiBorongan = $query->get();
     
         return view('gaji_borongan.index', compact('gajiBorongan'));
+
     }
 
     // Menampilkan form pembuatan gaji borongan baru
@@ -53,7 +54,6 @@ class GajiBoronganController extends Controller
         'status_pengambilan' => 'required|string',
     ]);
 
-    // Ambil data pekerjaan berdasarkan id_pekerjaan
     $pekerjaan = Pekerjaan::where('id_pekerjaan', $request->id_pekerjaan)->first();
 
     if (!$pekerjaan) {
@@ -88,7 +88,9 @@ class GajiBoronganController extends Controller
         'status_pengambilan' => $request->status_pengambilan,
     ]);
 
-    return redirect()->route('gajiBorongan.index')->with('success', 'Gaji borongan berhasil ditambahkan.');
+    return redirect()->route('gaji_borongan.index')->with('success', 'Gaji borongan berhasil ditambahkan.');
+
+
 }
 
     // Menampilkan form edit gaji borongan

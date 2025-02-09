@@ -128,7 +128,8 @@ Route::post('/lembur/setujui/{id}', [LemburController::class, 'setujuiLembur'])-
             Route::get('gaji_borongan/create', [GajiBoronganController::class, 'create'])->name('gajiBorongan.create');
             Route::post('gaji_borongan/store', [GajiBoronganController::class, 'store'])->name('gajiBorongan.store');
             Route::get('gaji_borongan/{id}/edit', [GajiBoronganController::class, 'edit'])->name('gaji_borongan.edit');
-            
+            Route::get('/gaji_borongan', [GajiBoronganController::class, 'index'])->name('gajiBorongan.index');
+
             Route::get('gaji_borongan/{id}/downloadPdf', [GajiBoronganController::class, 'downloadPdf'])->name('gaji-borongan.downloadPdf');
 
             Route::delete('/gaji_borongan/{id}/delete', [GajiBoronganController::class, 'destroy'])->name('gaji_borongan.destroy');

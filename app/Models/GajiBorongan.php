@@ -25,7 +25,8 @@ class GajiBorongan extends Model
         'bulan',
         'tahun',
         'bonus',
-        'denda'
+        'denda',
+        'id_pekerjaan'
     ];
 
     public function karyawan()
