@@ -22,7 +22,7 @@ class PekerjaanController extends Controller
         $request->validate([
             'nama_pekerjaan' => 'required|string|max:255',
             'target_harian' => 'required|integer',
-            'gaji_per_unit'=> 'required|numeric',
+            'gaji_per_pekerjaan'=> 'required|numeric',
         ]);
 
         Pekerjaan::create($request->all());
@@ -40,7 +40,7 @@ class PekerjaanController extends Controller
         $request->validate([
             'nama_pekerjaan' => 'required|string|max:255',
             'target_harian' => 'required|integer',
-            'gaji_per_unit'=> 'required|numeric',
+            'gaji_per_pekerjaan'=> 'required|numeric',
         ]);
 
         $pekerjaan = Pekerjaan::findOrFail($id_pekerjaan);

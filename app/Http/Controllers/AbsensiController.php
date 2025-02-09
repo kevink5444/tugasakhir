@@ -20,16 +20,18 @@ class AbsensiController extends Controller
 
         // Query absensi berdasarkan bulan dan tahun yang dipilih
         $absensi = Absensi::with('karyawan')
-            ->whereMonth('waktu_masuk', $bulan)
-            ->whereYear('waktu_masuk', $tahun)
-            ->get();
-
+    ->where(function ($query) use ($bulan, $tahun) {
+        $query->whereMonth('waktu_masuk', $bulan)
+              ->whereYear('waktu_masuk', $tahun)
+              ->orWhere('status', 'tidakmasuk'); // Tambah kondisi ini
+    })
+    ->get();
         return view('absensi.index', compact('absensi', 'bulanTahun'));
     }
 
     public function create()
     {
-        $karyawan = Karyawan::all(); // Ambil semua karyawan untuk form input
+        $karyawan = Karyawan::all(); 
         return view('absensi.create', compact('karyawan'));
     }
 
@@ -37,9 +39,9 @@ class AbsensiController extends Controller
     {
         $request->validate([
             'id_karyawan' => 'required|exists:karyawan,id_karyawan',
-            'status' => 'required|in:masuk,izin,sakit,alpha',
-            'waktu_masuk' => 'nullable|date_format:Y-m-d\TH:i',
-            'waktu_pulang' => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:waktu_masuk',
+            'status' => 'required|in:masuk,terlambat,tidakmasuk', 
+            'waktu_masuk' => $request->status !== 'tidakmasuk' ? 'required|date_format:Y-m-d\TH:i' : 'nullable',
+            'waktu_pulang' => $request->status !== 'tidakmasuk' ? 'nullable|date_format:Y-m-d\TH:i|after_or_equal:waktu_masuk' : 'nullable',
         ]);
 
         $absensi = new Absensi();
@@ -48,13 +50,18 @@ class AbsensiController extends Controller
 
         $timezone = config('app.timezone');
 
-        $absensi->waktu_masuk = $request->waktu_masuk 
-            ? Carbon::parse($request->waktu_masuk)->setTimezone($timezone)
-            : Carbon::now($timezone);
-
-        $absensi->waktu_pulang = $request->waktu_pulang 
-            ? Carbon::parse($request->waktu_pulang)->setTimezone($timezone)
-            : Carbon::now($timezone);
+        if ($request->status !== 'tidakmasuk') {
+            $absensi->waktu_masuk = $request->waktu_masuk 
+                ? Carbon::parse($request->waktu_masuk)->setTimezone($timezone)
+                : Carbon::now($timezone);
+        
+            $absensi->waktu_pulang = $request->waktu_pulang 
+                ? Carbon::parse($request->waktu_pulang)->setTimezone($timezone)
+                : null;
+        } else {
+            $absensi->waktu_masuk = null;
+            $absensi->waktu_pulang = null;
+        }
 
         $bonus = 0;
         $denda = 0;
@@ -69,9 +76,9 @@ class AbsensiController extends Controller
                 $bonus = 25000;
             }
 
-            if ($jamMasuk->gt($jamBatasTerlambat) && $jamMasuk->lte($jamBatasMaksDenda)) {
-                $denda = 10000;
-            }
+           if ($jamMasuk->greaterThan($jamBatasTerlambat)) {
+    $denda = 10000;
+}
         }
 
         $absensi->bonus = $bonus;
@@ -83,30 +90,23 @@ class AbsensiController extends Controller
 
         return redirect()->route('absensi.index')->with('success', 'Absensi berhasil dicatat.');
     }
-    
     public function filter(Request $request)
     {
-        $bulan = $request->input('bulan');
-        $tahun = $request->input('tahun');
-
-    // Validasi input bulan dan tahun
-    $request->validate([
-        'bulan' => 'nullable|integer|between:1,12',
-        'tahun' => 'nullable|integer|min:2000|max:' . date('Y'),
-    ]);
-
-    // Query data gaji harian dengan filter bulan dan tahun
-    $absensi = Absensi::with('karyawan')
-        ->when($bulan, function ($query, $bulan) {
-            return $query->whereMonth('waktu_masuk', $bulan);
-        })
-        ->when($tahun, function ($query, $tahun) {
-            return $query->whereYear('waktu_masuk', $tahun);
-        })
-        ->get();
-
-        // Passing data filter ke view
-        return view('absensi.index', compact('absensi', 'bulan', 'tahun'));
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+    
+        $absensi = Absensi::with('karyawan')
+            ->when($bulan, function ($query) use ($bulan) {
+                return $query->whereMonth('waktu_masuk', $bulan)
+                             ->orWhere('status', 'tidakmasuk'); // Ambil yang tidak masuk juga
+            })
+            ->when($tahun, function ($query) use ($tahun) {
+                return $query->whereYear('waktu_masuk', $tahun)
+                             ->orWhere('status', 'tidakmasuk'); // Ambil yang tidak masuk juga
+            })
+            ->get();
+    
+        return response()->json(['absensi' => $absensi]);
     }
     private function updateGaji(Absensi $absensi)
     {

@@ -17,11 +17,10 @@
         </div>
         <div class="form-group">
             <label for="status">Status</label>
-            <select name="status" id="status" class="form-control" required>
+            <select name="status" id="status" class="form-control" required onchange="toggleWaktuMasuk()">
                 <option value="masuk">Masuk</option>
-                <option value="izin">Izin</option>
-                <option value="sakit">Sakit</option>
-                <option value="alpha">Alpha</option>
+                <option value="terlambat">Terlambat</option>
+                <option value="tidakmasuk">Tidak Masuk</option>
             </select>
         </div>
         <div class="form-group">
@@ -36,3 +35,20 @@
     </form>
 </div>
 @endsection
+<script>
+    function toggleWaktuMasuk() {
+        let status = document.getElementById('status').value;
+        let waktuMasuk = document.getElementById('waktu_masuk');
+        let waktuPulang = document.getElementById('waktu_pulang');
+    
+        if (status === 'tidakmasuk') {
+            waktuMasuk.disabled = true;
+            waktuMasuk.value = '';
+            waktuPulang.disabled = true;
+            waktuPulang.value = '';
+        } else {
+            waktuMasuk.disabled = false;
+            waktuPulang.disabled = false;
+        }
+    }
+    </script>

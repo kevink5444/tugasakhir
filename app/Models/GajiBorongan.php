@@ -32,4 +32,8 @@ class GajiBorongan extends Model
     {
         return $this->belongsTo(Karyawan::class, 'id_karyawan');
     }
+    public function pekerjaan()
+    {
+        return $this->belongsTo(Pekerjaan::class, 'id_pekerjaan');
+    }
 }

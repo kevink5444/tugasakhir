@@ -77,7 +77,7 @@ class GajiBulananController extends Controller
         switch ($posisi) {
             case 'Karyawan Administrasi':
                 return 3000000;
-            case 'Sopir':
+            case 'Supir': 
                 return 2500000;
             case 'Supervisor Produksi':
                 return 3000000;
@@ -85,6 +85,10 @@ class GajiBulananController extends Controller
                 return 4000000;
             case 'Karyawan Quality Control':
                 return 4500000;
+            case 'Karyawan Tetap':
+                return 2750000;
+            case 'Karyawan Keuangan':
+                return 2900000;
             default:
                 return 0; // Nilai default jika posisi tidak ditemukan
         }

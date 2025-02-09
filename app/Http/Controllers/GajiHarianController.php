@@ -120,7 +120,7 @@ class GajiHarianController extends Controller
 
         $gaji_harian = GajiHarian::findOrFail($id);
         $pekerjaan = Pekerjaan::find($request->id_pekerjaan);
-        $gaji_per_unit = $pekerjaan->gaji_per_unit;
+        $gaji_per_pekerjaan = $pekerjaan->gaji_per_pekerjaan;
         $target_harian = $pekerjaan->target_harian;
 
         $gaji_harian_rate = $gaji_per_unit;

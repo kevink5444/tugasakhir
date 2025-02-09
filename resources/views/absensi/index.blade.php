@@ -98,8 +98,8 @@
                         var row = '<tr>' +
                             '<td>' + item.id_absensi + '</td>' +
                             '<td>' + item.karyawan.id_karyawan + '</td>' +
-                            '<td>' + item.waktu_masuk + '</td>' +
-                            '<td>' + item.waktu_pulang + '</td>' +
+                            <td>{{ $data->waktu_masuk ?? '-' }}</td>
+                            <td>{{ $data->waktu_pulang ?? '-' }}</td>
                             '<td>' + item.bonus + '</td>' +
                             '<td>' + item.denda + '</td>' +
                             '<td>' + item.status + '</td>' +
