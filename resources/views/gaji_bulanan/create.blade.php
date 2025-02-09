@@ -15,7 +15,7 @@
             <select name="id_karyawan" id="id_karyawan" class="form-control">
                 @foreach($karyawans as $karyawan)
                     <option value="{{ $karyawan->id_karyawan }}" {{ isset($gajiBulanan) && $gajiBulanan->id_karyawan == $karyawan->id_karyawan ? 'selected' : '' }}>
-                        {{ $karyawan->nama }}
+                        {{ $karyawan->nama_karyawan }}
                     </option>
                 @endforeach
             </select>

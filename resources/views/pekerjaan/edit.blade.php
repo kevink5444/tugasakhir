@@ -16,8 +16,8 @@
             <input type="number" name="target_harian" class="form-control" value="{{ isset($pekerjaan) ? $pekerjaan->target_harian : '' }}" required>
         </div>
         <div class="form-group">
-            <label for="gaji_per_unit">Harga per Unit:</label>
-            <input type="number" step="0.01" name="gaji_per_unit" id="gaji_per_unit" class="form-control" required>
+            <label for="gaji_per_unit">Gaji  per Pekerjaan:</label>
+            <input type="number" step="0.1" name="gaji_per_unit" id="gaji_per_unit" class="form-control" required>
         </div>
         <button type="submit" class="btn btn-success">{{ isset($pekerjaan) ? 'Update' : 'Simpan' }}</button>
     </form>
